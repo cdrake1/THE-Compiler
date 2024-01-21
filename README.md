@@ -8,6 +8,12 @@ THECompiler is, a Java compiler built off of this 6502 microprocessor instructio
 - Project 3
 - Project 4
 
-# Step By Step Setup For...THECompiler
+# What's Needed?
+To create an environment for THECompiler we will need the following:
+
 1. Make sure you are running a working version of Java. If you need help installing or updating it, look at this [link](https://www.java.com/en/download/help/download_options.html).
-2. 
+2. A sufficient IDE. That WORKS! I prefer using [VS Code](https://code.visualstudio.com/download)
+
+# Building and Running
+  Navigate to the src folder within THECompiler and compile the Java source code into byte code using the command "javac THECompiler.java"
+  This should create another file or update the current file, named "THECompiler.class".
