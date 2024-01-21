@@ -17,3 +17,4 @@ To create an environment for THECompiler we will need the following:
 # Building and Running
   - Navigate to the src folder within THECompiler and compile the Java source code into byte code using the command: "javac THECompiler.java"
   - This should create another file or update the current file, named: "THECompiler.class".
+  - To run the compiled code you can use: "java THECompiler.class" or if you would like to use a parameter: "java THECompiler.class example.txt"
