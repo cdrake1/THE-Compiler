@@ -1,6 +1,6 @@
 # THE-Compiler
 
-THECompiler is a Java compiler built off of [this](https://www.labouseur.com/commondocs/6502alan-instruction-set.pdf) 6502 microprocessor instruction set. This compiler build will be separated into four sections denoted by Project 1, Project 2, and so on.
+THECompiler is a Java based compiler built off of [this](https://www.labouseur.com/commondocs/6502alan-instruction-set.pdf) 6502 microprocessor instruction set. This compiler build will be separated into four sections denoted by Project 1, Project 2, and so on. Like a standard compiler this compiler will contain both a front end and back end. The front end will contain the lexer, parser, and semantic analysis in order to translate the high level input code into an intermediate representation, which for us will be an abstract syntax tree. Our back end, however, will simply translate our intermediate representation into 6502 machine instruction!
 
 # Sections
 - Project 1
