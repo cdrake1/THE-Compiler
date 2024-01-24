@@ -1,6 +1,10 @@
 /*
     Lexical Analysis
 */
-public class lexer {
+import java.util.ArrayList;
+
+public class Lexer {
+    public Lexer(){}
+    public ArrayList readFile(String inputFile){}
     
 }

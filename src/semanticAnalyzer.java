@@ -1,6 +1,6 @@
 /*
     Semantic Analysis
 */
-public class semanticAnalyzer {
+public class SemanticAnalyzer {
     
 }

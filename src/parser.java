@@ -1,6 +1,6 @@
 /*
     Syntax Analysis
 */
-public class parser {
+public class Parser {
     
 }
