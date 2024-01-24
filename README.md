@@ -9,10 +9,17 @@ THECompiler is a Java-based compiler built from [this](https://www.labouseur.com
 - Project 4
 
 # What's Needed?
-To create an environment for THECompiler we will need the following:
+To create an environment for THECompiler we will only need the following:
 
 1. A working version of Java. If you need help installing or updating it, look at this [link](https://www.java.com/en/download/help/download_options.html).
-2. A sufficient IDE....that WORKS! I prefer using [VS Code](https://code.visualstudio.com/download).
 
-# Building and Running
-  - Not yet completed
+# Building and Running THECompiler
+To build and run THECompiler follow these steps:
+
+1. Open a command line interface on your machine (terminal, command prompt, etc).
+2. Navigate to the **"src"** folder of THECompiler using the **"cd"** command
+3. Build the compiler by executing the following command: **"javac Compiler.java"**
+4. Run THECompiler with the following command: **"java Compiler"**
+5. Now you should see a welcome message indicating that the compiler is running!
+6. If you are attempting to compile code, ensure it is in a text file located within the same directory as the compiler's entry point: **"Compiler.java"**
+7. To run this code, execute the following command, replacing **"example"** with the name of your code text file: **"java Compiler example.txt"**
