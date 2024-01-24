@@ -17,5 +17,8 @@ public class Compiler {
         //call readfile to read the input text file into an arraylist. Arraylist keeps track of line numbers
         lexer.readFile(textFile);
       }
-    }   
+      else{
+        System.out.println("No arguments found. Please provide a command line argument to the compiler.");
+      }
+    }
 }
