@@ -15,15 +15,16 @@ public class Lexer
 
     public void readFile(String inputFile)
     {
-
+        //stores the values from the input file
         ArrayList<String> textFile = new ArrayList<>();
-
+        //tries to read the values from the input file into an arraylist, but if it fails it throws an error
         try
         {
             Scanner scanner = new Scanner(new File(inputFile));
             while(scanner.hasNextLine()){
                 textFile.add(scanner.nextLine());
             }
+            //close the scanner so Java can clean it up
             scanner.close();
         }
         catch(IOException exception)
