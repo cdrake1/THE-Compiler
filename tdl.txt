@@ -1,0 +1,7 @@
+TDL
+Lab1:
+1. fillout grammar.java with all of the grammar/identifiers from alans grammar pdf.
+2. figure out how to use regular expressions
+Lab2:
+1. use regular expressions to match the arraylist to the identifiers to make tokens
+2. put tokens in a new list
