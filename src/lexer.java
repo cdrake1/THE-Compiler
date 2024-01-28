@@ -8,7 +8,18 @@ import java.util.regex.*;
 
 public class Lexer 
 {
-    public Lexer(){}
+    public String lexer(String sourceCode) {
+        String tokens = "";
+        
+        /* 
+        read through source code and call a tokenizer to check reg expresions 
+        and then call token class to create tokens 
+        then add them to token string
+        */
+
+        return tokens;
+    }
+
     // reads input file into a string
     public void readFile(String inputFile)
     {
