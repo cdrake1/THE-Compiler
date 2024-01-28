@@ -1,4 +1,14 @@
 TDL
+
+- make token.java create tokens
+- define token types (keywords, identifiers, etc)
+- define kinds of token types
+
+
+
+
+
+
 Lab1:
 1. fillout grammar.java with all of the grammar/identifiers from alans grammar pdf.
 2. figure out how to use regular expressions
