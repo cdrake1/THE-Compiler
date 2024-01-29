@@ -1,6 +1,6 @@
 import java.util.regex.Pattern;
 /*
-    Holds all of the grammar/identifiers and defines tokens
+    Token object. Creates tokens for the Lexer.
 */
 
 public class Token {
@@ -14,13 +14,5 @@ public class Token {
         this.code = sCode;
         this.line = line;
         this.position = position;
-    }
-
-    class TokenType {
-        // <keywords>
-        // <identifiers>
-        // <symbols>
-        // <digits>
-        // <characters>
     }
 }

@@ -5,18 +5,32 @@ import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.regex.*;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Lexer 
 {
-    public ArrayList lexer(ArrayList sourceCode) {
+    public ArrayList lexicalAnalysis(ArrayList sourceCode) {
+        //final token stream
         ArrayList<Token> tokenStream = new ArrayList<>();
+        boolean inQuotes = false;
+
+        //RegEx.... does this go within the loop with the other regex maching?
+        String grammar = "";
+        Pattern pattern = Pattern.compile(grammar);
+        
+        //iterate through source code
+        for(int i = 0; i < sourceCode.length; i++){
+
+        }
         
         /* 
         read through source code and call a tokenizer to check reg expresions 
         and then call token class to create tokens 
         then add them to token string
         */
+
+        //return token stream to compiler
         return tokenStream;
     }
 
