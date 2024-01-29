@@ -2,48 +2,46 @@
     Lexical Analysis
 */
 import java.io.IOException;
-import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.*;
 
 public class Lexer 
 {
-    public String lexer(String sourceCode) {
-        String tokens = "";
+    public ArrayList lexer(ArrayList sourceCode) {
+        ArrayList<Token> tokenStream = new ArrayList<>();
         
         /* 
         read through source code and call a tokenizer to check reg expresions 
         and then call token class to create tokens 
         then add them to token string
         */
-
-        return tokens;
+        return tokenStream;
     }
 
     // reads input file into a string
     public void readFile(String inputFile)
     {
-        // all input file as a string
-        String sourceCode = "";
-        // tries to read the file line by line into a string builder
+        //stores the values from the input file
+        ArrayList<String> textFile = new ArrayList<>();
+        //tries to read the values from the input file into an arraylist, but if it fails it throws an error
         try
         {
-            StringBuilder input = new StringBuilder();
-            BufferedReader buffReader = new BufferedReader(new FileReader(inputFile));
-            String line = buffReader.readLine();
-            while(line != null){
-                input.append(line);
-                input.append("\n");
-                line = buffReader.readLine();
+            Scanner scanner = new Scanner(new File(inputFile));
+            while(scanner.hasNextLine()){
+                textFile.add(scanner.nextLine());
             }
-            sourceCode = input.toString();
+            //close the scanner so Java can clean it up
+            scanner.close();
         }
-        // catches any errors
         catch(IOException exception)
         {
             System.out.println("Something went wrong when trying to read the file");
         }
-        // test output
-        System.out.println(sourceCode);
+
+        for(int i = 0; i < textFile.size(); i++){
+            System.out.println(textFile.get(i));
+        }
     }
 }

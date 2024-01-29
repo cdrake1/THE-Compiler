@@ -1,6 +1,7 @@
 TDL
 
-- how to use regular expressions. store in a different class/file? compile prior?
+- how to use regular expressions. 
+- where to store regex? store in a different class/file? compile prior?
 - read through source code char by char?
 - define token types (keywords, identifiers, etc)
 - define kinds of token types
