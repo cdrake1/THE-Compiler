@@ -17,7 +17,7 @@ public class Compiler {
         String textFile = args[0];
         System.out.println("Processing file: " + textFile);
         //call readfile to read the input text file into a string
-        lexer.readFile(textFile);
+        lexer.readInput(textFile);
       }
       else{
         System.out.println("No arguments found. Please provide a command line argument to the compiler.");

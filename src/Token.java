@@ -4,14 +4,14 @@ import java.util.regex.Pattern;
 */
 
 public class Token {
-    String type;
-    String code;
+    String tokenName;
+    String lexeme;
     String position;
     String line;
 
     public Token(String tokenType, String sCode, String line,String position){
-        this.type = tokenType;
-        this.code = sCode;
+        this.tokenName = tokenType;
+        this.lexeme = sCode;
         this.line = line;
         this.position = position;
     }
