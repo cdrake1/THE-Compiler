@@ -2,4 +2,5 @@ TDL
 
 - line by line
 - how to determine line and position?
-- break regex into groups???
+- dont remove comments ignore them.
+- break regex into groups then switch case to find exact token

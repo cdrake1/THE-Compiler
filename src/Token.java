@@ -1,6 +1,7 @@
 import java.util.regex.Pattern;
 /*
-    Token object. Creates tokens for the Lexer.
+    Token object
+    Creates tokens for the Lexer
 */
 
 public class Token {

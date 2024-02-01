@@ -77,37 +77,77 @@ public class Lexer {
         String symbols = "(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==)";
         //digits: 0-9
         String digits = "[0-9]";
-        //characters: a-z (same as identifiers)
+        //characters: a-z (same as identifiers) (in quotes)
         String characters = "[a-z]";
         //whitespace and comments
         String whitespace = "\s";
         String comments = "/\\*";
 
 
+        /*
+            iterate line by line
+            on each line execute pattern matcher
+            for each match found
+            use if statements to determine what grammar it is
+            use switch statements to find out specific token
+            create token
+            add to token stream
+
+
+            then
+            figure out whitespace, comments, quotes
+            line and position
+        */
+
+
         //regular expression union
         String allTypes = keywords + "|" + ids;
         Pattern pattern = Pattern.compile(allTypes);
 
+        String buffer = sourceCode.get(3);
+        Matcher match = pattern.matcher(buffer);
+        while (match.find()) {
+            if(match.group().matches(keywords)){
+                String type;
+                String keyword = match.group();
+                System.out.println(keyword);
+
+                switch (keyword) {
+                    case "print":
+                        //code block
+                        break;
+                    case "while":
+                        //code block
+                        break;
+                    case "int":
+                        type = "TypeInt";
+                        Token newToken = new Token(type, keyword, "4", Integer.toString(position));
+                        break;
+                
+                    default:
+                        break;
+                }
+
+
+            }
+            else if(match.group().matches(ids)){
+                String id = match.group();
+                System.out.println(id);
+            }
+            
+            
+        }
 
         //how to break regex into groups?
-
-        for(String line: sourceCode){
-            Matcher match = pattern.matcher(line);
-            while(match.find()){
-                /*
-                if(match.group(1)!= null){
-                    String keyword = match.group(1);
-                    System.out.println(keyword);
-                }
+        /*
+        for(int i = 0; i < sourceCode.size(); i++){
+            String buffer = sourceCode.get(i);
+            Matcher match = pattern.matcher(buffer);
+            while (match.find()) {
                 
-                else if(match.group(2)!= null){
-                    String id = match.group(1);
-                    System.out.println(id);
-
-                }
-                */
             }
         }
+        */
 
         /*
         //iterate through source code
