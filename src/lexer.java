@@ -10,6 +10,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Pattern;
+
+import org.w3c.dom.events.EventException;
+
 import java.util.regex.Matcher;
 
 // Collin Drakes Lexer
@@ -34,7 +37,8 @@ public class Lexer {
         //tries to read the values from the input file into an arraylist
         try
         {
-            Scanner scanner = new Scanner(new File(textFile));
+            File file = new File(textFile);
+            Scanner scanner = new Scanner(file);
             while(scanner.hasNextLine()){
                 sourceCode.add(scanner.nextLine());
             }
@@ -75,8 +79,10 @@ public class Lexer {
         String digits = "[0-9]";
         //characters: a-z (same as identifiers)
         String characters = "[a-z]";
+        //whitespace and comments
+        String whitespace = "\s";
+        String comments = "/\\*";
 
-        //do I make a regex for whitespace? what about comments? and precedence?
 
         //regular expression union
         String allTypes = keywords + "|" + ids;
@@ -88,15 +94,18 @@ public class Lexer {
         for(String line: sourceCode){
             Matcher match = pattern.matcher(line);
             while(match.find()){
+                /*
                 if(match.group(1)!= null){
                     String keyword = match.group(1);
                     System.out.println(keyword);
                 }
+                
                 else if(match.group(2)!= null){
                     String id = match.group(1);
                     System.out.println(id);
 
                 }
+                */
             }
         }
 
