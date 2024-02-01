@@ -9,3 +9,8 @@ Each reference will be listed below along with where it was used and how it help
 - This helped me clean up my pushes to git by removing compiled class files. [automationpanda](https://automationpanda.com/2018/09/19/ignoring-files-with-git/#:~:text=Use%20the%20asterisk%20(%E2%80%9C*%E2%80%9D,class%E2%80%9D%20extension.))
 - The "dragon" textbook.... [dragon!](https://www.amazon.com/Compilers-Principles-Techniques-Tools-Edition/dp/0321486811)
 - Crafting THIS Compiler.... [Crafting a Compiler](https://www.amazon.com/Crafting-Compiler-Charles-N-Fischer/dp/0136067050)
+
+- RegEx[tutorialspoint](https://www.tutorialspoint.com/java/java_regular_expressions.htm)
+- RegEx[oracle](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)
+- RegEx[regex101](https://regex101.com/)
+- Compiler video[youtube](https://www.youtube.com/watch?v=6GvdZDnS2r8)

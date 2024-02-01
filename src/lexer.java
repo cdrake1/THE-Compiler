@@ -29,31 +29,65 @@ public class Lexer {
         this.inQuotes = false;
     }
 
+    //reads the input file into an arraylist called sourceCode. Prepare for Lexical Analysis
+    public void readInput(String textFile){
+        //tries to read the values from the input file into an arraylist
+        try
+        {
+            Scanner scanner = new Scanner(new File(textFile));
+            while(scanner.hasNextLine()){
+                sourceCode.add(scanner.nextLine());
+            }
+            //close the scanner so Java can clean it up
+            scanner.close();
+            System.out.println("The input file was read successfully");
+        }
+        //if it fails it throws an error
+        catch(IOException exception)
+        {
+            System.out.println("Something went wrong when trying to read the file");
+        }
+
+        /*
+        outputs the input to test
+        for(int i = 0; i < sourceCode.size(); i++){
+            System.out.println(sourceCode.get(i));
+        }
+        */
+    }
+
+    //outputs the results of the lexer. Also outputs warnings and errors
+    private void lexerLog(String output){
+        System.out.println(output);
+    }
+
     //performs the lexical analysis of the source code and creates a stream of tokens
     public void scanner(){
-        //Define grammar through RegEx
-        Pattern BeginBlock = Pattern.compile(null);
-        Pattern EndBlock = Pattern.compile(null);
-        Pattern LParen = Pattern.compile(null);
-        Pattern RParen = Pattern.compile(null);
-        Pattern Test4Equality = Pattern.compile(null);
-        Pattern Assignment = Pattern.compile(null);
-        Pattern IntOp = Pattern.compile(null);
-        Pattern BoolOp = Pattern.compile(null);
-        Pattern Digit = Pattern.compile(null);
-        Pattern Char = Pattern.compile(null);
-        Pattern FalseBool = Pattern.compile(null);
-        Pattern TrueBool = Pattern.compile(null);
-        Pattern WhiteSpace = Pattern.compile(null);
-        Pattern Quote = Pattern.compile(null);
-        Pattern Id = Pattern.compile(null);
-        Pattern IntType = Pattern.compile(null);
-        Pattern StringType = Pattern.compile(null);
-        Pattern BoolType = Pattern.compile(null);
-        Pattern Print = Pattern.compile(null);
-        Pattern While = Pattern.compile(null);
-        Pattern If = Pattern.compile(null);
-        Pattern EOP = Pattern.compile(null);
+        lexerLog("LEXER - Starting lexical analysis");
+
+        //keywords: print, while, if, int, string, boolean, true, false
+        Pattern keyword = Pattern.compile("\\b(print|while|if|int|string|boolean|true|false)");
+        //Identifiers: a-z (can only be characters)
+        Pattern id = Pattern.compile("[a-z]");
+        //symbols: {, }, (, ), ", =, +, !=, ==
+        Pattern symbol = Pattern.compile("(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==)");
+        //digits: 0-9
+        Pattern digit = Pattern.compile("[0-9]");
+        //characters: a-z (same as identifiers)
+        Pattern character = Pattern.compile("[a-z]");
+
+        //do I make a regex for whitespace? what about comments?
+
+        //regular expression union
+        Pattern allTypes = keyword;
+
+
+        for(String line: sourceCode){
+            Matcher match = allTypes.matcher(line);
+            while(match.find()){
+                System.out.println("did it work");
+            }
+        }
 
         /*
          * //RegEx.... does this go within the loop with the other regex maching?
@@ -77,33 +111,4 @@ public class Lexer {
 
         //return token stream to compiler
     }
-
-    //reads the input file into an arraylist called sourceCode. Prepare for Lexical Analysis
-    public void readInput(String textFile){
-        //tries to read the values from the input file into an arraylist
-        try
-        {
-            Scanner scanner = new Scanner(new File(textFile));
-            while(scanner.hasNextLine()){
-                sourceCode.add(scanner.nextLine());
-            }
-            //close the scanner so Java can clean it up
-            scanner.close();
-        }
-        //if it fails it throws an error
-        catch(IOException exception)
-        {
-            System.out.println("Something went wrong when trying to read the file");
-        }
-
-        /*
-        outputs the input to test
-        for(int i = 0; i < sourceCode.size(); i++){
-            System.out.println(sourceCode.get(i));
-        }
-        */
-    }
-
-    //outputs the results of the lexer. Also outputs warnings and errors
-    private void lexerLog(){}
 }
