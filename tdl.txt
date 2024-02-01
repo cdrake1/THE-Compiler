@@ -1,19 +1,7 @@
 TDL
 
-- how to use regular expressions. 
-- where to store regex? store in a different class/file? compile prior?
-- read through source code char by char?
-- define token types (keywords, identifiers, etc)
-- define kinds of token types
-
-
-
-
-
-
-Lab1:
-1. fillout grammar.java with all of the grammar/identifiers from alans grammar pdf.
-2. figure out how to use regular expressions
-Lab2:
-1. use regular expressions to match the arraylist to the identifiers to make tokens
-2. put tokens in a new list
+- read the txt into each spot in the arraylist or just the first
+- read through source code char by char or line by line?
+- make sure regular expressions are correct
+- how to determine line and position?
+-

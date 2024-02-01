@@ -66,7 +66,7 @@ public class Lexer {
         lexerLog("LEXER - Starting lexical analysis");
 
         //keywords: print, while, if, int, string, boolean, true, false
-        Pattern keyword = Pattern.compile("\\b(print|while|if|int|string|boolean|true|false)");
+        Pattern keyword = Pattern.compile("\\b(print|while|if|int|string|boolean|true|false)\\b");
         //Identifiers: a-z (can only be characters)
         Pattern id = Pattern.compile("[a-z]");
         //symbols: {, }, (, ), ", =, +, !=, ==
@@ -76,7 +76,7 @@ public class Lexer {
         //characters: a-z (same as identifiers)
         Pattern character = Pattern.compile("[a-z]");
 
-        //do I make a regex for whitespace? what about comments?
+        //do I make a regex for whitespace? what about comments? and precedence?
 
         //regular expression union
         Pattern allTypes = keyword;
@@ -84,16 +84,13 @@ public class Lexer {
 
         for(String line: sourceCode){
             Matcher match = allTypes.matcher(line);
+            System.out.println(line);
             while(match.find()){
                 System.out.println("did it work");
             }
         }
 
         /*
-         * //RegEx.... does this go within the loop with the other regex maching?
-        String grammar = "";
-        Pattern pattern = Pattern.compile(grammar);
-        
         //iterate through source code
         for(int line = 0; line < sourceCode.size(); line++){
             //pointers and buffer declaration
