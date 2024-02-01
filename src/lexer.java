@@ -66,27 +66,37 @@ public class Lexer {
         lexerLog("LEXER - Starting lexical analysis");
 
         //keywords: print, while, if, int, string, boolean, true, false
-        Pattern keyword = Pattern.compile("\\b(print|while|if|int|string|boolean|true|false)\\b");
+        String keywords = "\\b(print|while|if|int|string|boolean|true|false)\\b";
         //Identifiers: a-z (can only be characters)
-        Pattern id = Pattern.compile("[a-z]");
+        String ids = "[a-z]";
         //symbols: {, }, (, ), ", =, +, !=, ==
-        Pattern symbol = Pattern.compile("(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==)");
+        String symbols = "(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==)";
         //digits: 0-9
-        Pattern digit = Pattern.compile("[0-9]");
+        String digits = "[0-9]";
         //characters: a-z (same as identifiers)
-        Pattern character = Pattern.compile("[a-z]");
+        String characters = "[a-z]";
 
         //do I make a regex for whitespace? what about comments? and precedence?
 
         //regular expression union
-        Pattern allTypes = keyword;
+        String allTypes = keywords + "|" + ids;
+        Pattern pattern = Pattern.compile(allTypes);
 
+
+        //how to break regex into groups?
 
         for(String line: sourceCode){
-            Matcher match = allTypes.matcher(line);
-            System.out.println(line);
+            Matcher match = pattern.matcher(line);
             while(match.find()){
-                System.out.println("did it work");
+                if(match.group(1)!= null){
+                    String keyword = match.group(1);
+                    System.out.println(keyword);
+                }
+                else if(match.group(2)!= null){
+                    String id = match.group(1);
+                    System.out.println(id);
+
+                }
             }
         }
 

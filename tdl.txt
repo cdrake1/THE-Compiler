@@ -1,7 +1,7 @@
 TDL
 
-- read the txt into each spot in the arraylist or just the first
+- read the txt into each spot in the arraylist or just the first?
 - read through source code char by char or line by line?
 - make sure regular expressions are correct
 - how to determine line and position?
--
+- break regex into groups???
