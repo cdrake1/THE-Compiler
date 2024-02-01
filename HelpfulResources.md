@@ -12,3 +12,8 @@ Each reference will be listed below along with where it was used and how it help
 - RegEx assistance. [tutorialspoint](https://www.tutorialspoint.com/java/java_regular_expressions.htm)
 - RegEx assistance... again... [oracle](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)
 - RegEx assistance... the finale...[regex101](https://regex101.com/)
+
+
+- later [](https://www.javatpoint.com/post/java-matcher-group-method)
+- later [](https://stackoverflow.com/questions/21395110/how-to-check-a-string-in-java-equals-to-a-regex-pattern)
+- later [](https://www.w3schools.com/java/java_switch.asp)
