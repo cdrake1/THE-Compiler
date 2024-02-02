@@ -14,6 +14,6 @@ Each reference will be listed below along with where it was used and how it help
 - RegEx assistance... the finale...[regex101](https://regex101.com/)
 
 
-- later [](https://www.javatpoint.com/post/java-matcher-group-method)
-- later [](https://stackoverflow.com/questions/21395110/how-to-check-a-string-in-java-equals-to-a-regex-pattern)
-- later [](https://www.w3schools.com/java/java_switch.asp)
+- Regex groups [javatpoint](https://www.javatpoint.com/post/java-matcher-group-method)
+- Regex matches [stackoverflow](https://stackoverflow.com/questions/21395110 how-to-check-a-string-in-java-equals-to-a-regex-pattern)
+- switch statements [w3schools](https://www.w3schools.com/java/java_switch.asp)
