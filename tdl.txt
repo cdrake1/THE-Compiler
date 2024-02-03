@@ -4,3 +4,5 @@ TDL
 - how to determine line and position?
 - dont remove comments ignore them.
 - break regex into groups then switch case to find exact token
+
+- comments regex?
