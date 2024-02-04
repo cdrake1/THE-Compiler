@@ -19,9 +19,12 @@ public class Lexer {
     int lineNumber; //keeps track of what line we are on during lexical analysis
     int position; //keeps track of the position we are at during lexical analysis
     boolean inQuotes; //are we in quotes????
+    boolean inComment; //are win in a comment?
     boolean endOfProgram; //determines if $ is used
     int programCounter; //determines what program we are on
     boolean inBrackets; //are brackets used?
+    int warningCount; //counts total errors
+    int errorCount; //counts total warnings
 
     //creates a lexer and initializes everything. We are prepared to start lexing!
     public Lexer(){
@@ -30,9 +33,12 @@ public class Lexer {
         this.lineNumber = 1; //start at line 1 position 1
         this.position = 1;
         this.inQuotes = false;
+        this.inComment = false;
         this.endOfProgram = false;
-        this.programCounter = 1;
-        this.inBrackets = false;
+        this.programCounter = 1; //do I need this?????
+        this.inBrackets = false; //Do I need this???
+        this.errorCount = 0;
+        this.warningCount = 0;
     }
 
     //reads the input file into an arraylist called sourceCode. Prepare for Lexical Analysis
@@ -66,11 +72,11 @@ public class Lexer {
         lexerLog("Starting lexical analysis");
 
         //keywords: print, while, if, int, string, boolean, true, false
-        String keywords = "\\b(print|while|if|int|string|boolean|true|false)\\b";
+        String keywords = "(print|while|if|int|string|boolean|true|false)";
         //Identifiers: a-z (can only be characters)
         String ids = "[a-z]";
         //symbols: {, }, (, ), ", =, +, !=, ==
-        String symbols = "(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==)";
+        String symbols = "(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==|\\$)";
         //digits: 0-9
         String digits = "[0-9]";
         //characters: a-z (same as identifiers) (in quotes)
@@ -78,6 +84,8 @@ public class Lexer {
         //whitespace and comments
         String whitespace = "\s";
         String comments = "/\\*|\\*/|//";
+
+        //String Undefined = "";
 
         /*
             iterate line by line
@@ -90,8 +98,9 @@ public class Lexer {
 
 
             then
-            figure out whitespace, comments, quotes
-            line and position
+            figure out whitespace, comments, quotes, position
+            comments skip the line?
+            quotes inquotes var
         */
 
         //regular expression union
@@ -109,32 +118,31 @@ public class Lexer {
                 if(match.group().matches(keywords)){
                     String type = "";
                     String keyword = match.group();
-                    System.out.println(keyword);
 
                     switch (keyword) {
                         case "print":
-                            type = "Print";
+                            type = "PRINT";
                             break;
                         case "while":
-                            type = "While";
+                            type = "WHILE";
                             break;
                         case "if":
-                            type = "If";
+                            type = "IF";
                             break;
                         case "int":
-                            type = "Type_Int";
+                            type = "TYPE_INT";
                             break;
                         case "string":
-                            type = "Type_String";
+                            type = "TYPE_STRING";
                             break;
                         case "boolean":
-                            type = "Type_Boolean";
+                            type = "TYPE_BOOLEAN";
                             break;
                         case "true":
-                            type = "Bool_True";
+                            type = "BOOL_TRUE";
                             break;
                         case "false":
-                            type = "Bool_False";
+                            type = "BOOL_FALSE";
                             break;
                     }
                     Token newToken = new Token(type, keyword, Integer.toString(lineNumber), Integer.toString(position));
@@ -142,70 +150,84 @@ public class Lexer {
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
                 else if(match.group().matches(ids) && !inQuotes){
-                    String type = "Id";
+                    String type = "ID";
                     String id = match.group();
-                    System.out.println(id);
-
-                    //dont need any information/switch statements. Just create tokens
                 }
                 else if(match.group().matches(symbols)){
                     String type = "";
                     String symbol = match.group();
-                    System.out.println(symbol);
 
                     switch (symbol) {
                         case "{":
-                            type = "Opening_Brace";
+                            type = "OPENING_BRACE";
+                            inBrackets = true;
                             //code block
                             //create token
                             // pass to lex output function
                             break;
                         case "}":
-                            type = "Closing_Brace";
+                            type = "CLOSING_BRACE";
+                            inBrackets = false;
                             //code block
                             break;
                         case "(":
-                            type = "Opening_Parenthesis";
+                            type = "OPENING_PARENTHESIS";
                             break;
                         case ")":
-                            type = "Closing_Parenthesis";
+                            type = "CLOSING_PARENTHESIS";
                             break;
                         case "\"":
-                            type = "Quote";
+                            type = "QUOTE";
+                            if(inQuotes){
+                                inQuotes = false;
+                            }
+                            else{
+                                inQuotes = true;
+                            }
                             break;
                         case "=":
-                            type = "Assign";
+                            type = "ASSIGN";
                             break;
                         case "+":
-                            type = "Add";
+                            type = "ADD";
                             break;
                         case "==":
-                            type = "Equality_Op";
+                            type = "EQUALITY_OP";
                             break;
                         case "!=":
-                            type = "Inequality_OP";
+                            type = "INEQUALITY_OP";
                             break;
+                        case "$":
+                            type = "EOP";
+                            endOfProgram = true;
+                            programCounter++;
                     }
                 }
                 else if(match.group().matches(digits)){
-                    String type = "Digit";
+                    String type = "DIGIT";
                     String digit = match.group();
-                    System.out.println(digit);
-
-                    //dont need any information/switch statements. Just create tokens
                 }
                 else if(match.group().matches(characters) && inQuotes){
-                    String type = "Char";
+                    String type = "CHAR";
                     String character = match.group();
-                    System.out.println(character);
-
-                    //dont need any information/switch statements. Just create tokens
                     //have to check to make sure inside quotes
                 }
-                
+                else if(match.group().matches(comments)){
+                    String comment = match.group();
+                    switch (comment) {
+                        case "/*":
+                            inComment = true;
+                            break;
+                    
+                        case "*/":
+                            inComment = false;
+                            break;
+                    }
+                }
             }
             //increase line number
             lineNumber++;
         }
+        lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
     }
 }
