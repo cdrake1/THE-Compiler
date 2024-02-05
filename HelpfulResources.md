@@ -13,6 +13,6 @@ Each reference will be listed below along with where it was used and how it help
 - RegEx assistance... again... [oracle](https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html)
 - RegEx assistance... the finale...[regex101](https://regex101.com/)
 - Regex groups [javatpoint](https://www.javatpoint.com/post/java-matcher-group-method)
-- Regex matches [stackoverflow](https://stackoverflow.com/questions/21395110 how-to-check-a-string-in-java-equals-to-a-regex-pattern)
+- Regex matches [stackoverflow](https://stackoverflow.com/questions/21395110how-to-check-a-string-in-java-equals-to-a-regex-pattern)
 - switch statements [w3schools](https://www.w3schools.com/java/java_switch.asp)
 - Regex to find position [stackoverflow](https://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex)
