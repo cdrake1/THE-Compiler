@@ -1,8 +1,4 @@
 TDL
 
-- how to determine position?
-- comments regex need fix?
-- Add undefined regex string and throw warning
-- how to skip if in comment?
-- multiple programs per input file?
+- Add undefined regex string and throw warning for undefined.
 - use if statement to check for end of program and throw error

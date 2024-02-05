@@ -82,12 +82,12 @@ public class Lexer {
         //whitespace and comments
         String whitespace = "\s";
         String comments = "/\\*|\\*/";
-
-        //String Undefined = "";
+        //undefined characters
+        String undefined = ".";
         //add whitespace to characters? or gets its own?
 
         //regular expression union
-        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + comments;
+        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments;
         Pattern pattern = Pattern.compile(allTypes);
 
         //iterate through source code
@@ -216,6 +216,21 @@ public class Lexer {
                             inComment = false;
                             break;
                     }
+                }
+                else if(match.group().matches(whitespace) && inQuotes){
+                    String type = "WHITESPACE";
+                    String whitespaces = match.group();
+                    Token newToken = new Token(type, whitespaces, Integer.toString(lineNumber), Integer.toString(position));
+                    tokenStream.add(newToken);
+                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);   
+                }
+                else if(match.group().matches(undefined)){
+                    // thow warning for undefined
+                    // add to warning count
+                    String warning = match.group();
+                    lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ]");
+                    warningCount++;
+
                 }
             }
             //increase line number
