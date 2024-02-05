@@ -22,7 +22,6 @@ public class Lexer {
     boolean inComment; //are win in a comment?
     boolean endOfProgram; //determines if $ is used
     int programCounter; //determines what program we are on
-    boolean inBrackets; //are brackets used?
     int warningCount; //counts total errors
     int errorCount; //counts total warnings
 
@@ -36,7 +35,6 @@ public class Lexer {
         this.inComment = false;
         this.endOfProgram = false;
         this.programCounter = 1; //do I need this?????
-        this.inBrackets = false; //Do I need this???
         this.errorCount = 0;
         this.warningCount = 0;
     }
@@ -83,28 +81,13 @@ public class Lexer {
         String characters = "[a-z]";
         //whitespace and comments
         String whitespace = "\s";
-        String comments = "/\\*|\\*/|//";
+        String comments = "/\\*|\\*/";
 
         //String Undefined = "";
-
-        /*
-            iterate line by line
-            on each line execute pattern matcher
-            for each match found
-            use if statements to determine what grammar it is
-            use switch statements to find out specific token
-            create token
-            add to token stream
-
-
-            then
-            figure out whitespace, comments, quotes, position
-            comments skip the line?
-            quotes inquotes var
-        */
+        //add whitespace to characters? or gets its own?
 
         //regular expression union
-        String allTypes = keywords;
+        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + comments;
         Pattern pattern = Pattern.compile(allTypes);
 
         //iterate through source code
@@ -114,8 +97,9 @@ public class Lexer {
 
             //keep going while matches are found
             while (match.find()) {
+                position = match.end();
                 //use if statements to divide keywords, ids, symbols, digits, chars, etc
-                if(match.group().matches(keywords)){
+                if(match.group().matches(keywords) && !inComment && !inQuotes){
                     String type = "";
                     String keyword = match.group();
 
@@ -149,9 +133,12 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(ids) && !inQuotes){
+                else if(match.group().matches(ids) && !inQuotes && !inComment){
                     String type = "ID";
                     String id = match.group();
+                    Token newToken = new Token(type, id, Integer.toString(lineNumber), Integer.toString(position));
+                    tokenStream.add(newToken);
+                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
                 else if(match.group().matches(symbols)){
                     String type = "";
@@ -160,14 +147,12 @@ public class Lexer {
                     switch (symbol) {
                         case "{":
                             type = "OPENING_BRACE";
-                            inBrackets = true;
                             //code block
                             //create token
                             // pass to lex output function
                             break;
                         case "}":
                             type = "CLOSING_BRACE";
-                            inBrackets = false;
                             //code block
                             break;
                         case "(":
@@ -202,15 +187,23 @@ public class Lexer {
                             endOfProgram = true;
                             programCounter++;
                     }
+                    Token newToken = new Token(type, symbol, Integer.toString(lineNumber), Integer.toString(position));
+                    tokenStream.add(newToken);
+                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(digits)){
+                else if(match.group().matches(digits) && !inComment && !inQuotes){
                     String type = "DIGIT";
                     String digit = match.group();
+                    Token newToken = new Token(type, digit, Integer.toString(lineNumber), Integer.toString(position));
+                    tokenStream.add(newToken);
+                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(characters) && inQuotes){
+                else if(match.group().matches(characters) && inQuotes && !inComment){
                     String type = "CHAR";
                     String character = match.group();
-                    //have to check to make sure inside quotes
+                    Token newToken = new Token(type, character, Integer.toString(lineNumber), Integer.toString(position));
+                    tokenStream.add(newToken);
+                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
                 else if(match.group().matches(comments)){
                     String comment = match.group();
