@@ -39,6 +39,18 @@ public class Lexer {
         this.warningCount = 0;
     }
 
+    //resets the global variables for the next program
+    public void resetLexer(){
+        this.sourceCode.clear();
+        this.tokenStream.clear();
+        this.position = 1;
+        this.inQuotes = false;
+        this.inComment = false;
+        this.endOfProgram = false;
+        this.errorCount = 0;
+        this.warningCount = 0;
+    }
+
     //reads the input file into an arraylist called sourceCode. Prepare for Lexical Analysis
     public void readInput(String textFile){
         //tries to read the values from the input file into an arraylist
@@ -147,13 +159,9 @@ public class Lexer {
                     switch (symbol) {
                         case "{":
                             type = "OPENING_BRACE";
-                            //code block
-                            //create token
-                            // pass to lex output function
                             break;
                         case "}":
                             type = "CLOSING_BRACE";
-                            //code block
                             break;
                         case "(":
                             type = "OPENING_PARENTHESIS";
@@ -183,13 +191,20 @@ public class Lexer {
                             type = "INEQUALITY_OP";
                             break;
                         case "$":
+                            //mark end of program to reset global vars/lexer
                             type = "EOP";
                             endOfProgram = true;
                             programCounter++;
+                            break;
+
                     }
                     Token newToken = new Token(type, symbol, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+                    //reset global vars/lexer if flag is true
+                    if(endOfProgram){
+                        resetLexer();
+                    }
                 }
                 else if(match.group().matches(digits) && !inComment && !inQuotes){
                     String type = "DIGIT";
@@ -225,16 +240,19 @@ public class Lexer {
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);   
                 }
                 else if(match.group().matches(undefined)){
-                    // thow warning for undefined
-                    // add to warning count
+                    //thow warning for undefined and increment warning count
                     String warning = match.group();
                     lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ]");
                     warningCount++;
-
                 }
             }
             //increase line number
             lineNumber++;
+        }
+        //if statements to check if still in a comment at end of file, quote, or missing $
+        if(!endOfProgram){
+            lexerLog("ERROR! PROGRAM MISSING [ $ ]");
+            errorCount++;
         }
         lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
     }

@@ -1,5 +1,6 @@
 /*
   THECompiler entry point
+  Builds the parts of a compiler and connects them
 */
 public class Compiler {
     public static void main(String[] args) 
@@ -23,7 +24,7 @@ public class Compiler {
         lexer.scanner();
       }
       else{
-        System.out.println("No arguments found. Please provide a command line argument to the compiler.");
+        System.out.println("No program found. Please provide a command line argument to the compiler.");
       }
     }
 }
