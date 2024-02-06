@@ -14,12 +14,12 @@ import java.util.regex.Matcher;
 
 //Collin Drakes Lexer
 public class Lexer {
-    ArrayList<String> sourceCode;   //stores the values/"programs" from the input file
+    ArrayList<String> sourceCode;   //stores the values/programs from the input file
     ArrayList<Token> tokenStream;   //stores the sourceCode as tokens. Final result of Lexical Analysis
     int lineNumber; //keeps track of what line we are on during lexical analysis
     int position;   //keeps track of the position we are at during lexical analysis
     boolean inQuotes;   //are we in quotes????
-    boolean inComment;  //are win in a comment?
+    boolean inComment;  //are we in in a comment?
     boolean endOfProgram;   //determines if $ is used
     int programCounter; //determines what program we are on
     int warningCount;   //counts total errors
@@ -196,7 +196,7 @@ public class Lexer {
                         case "$":
                             type = "EOP";
 
-                            //create EOP token and add it to stream before checking to see if done
+                            //creates an EOP token and adds it to the token stream before checking to see if the program is done
                             Token newToken = new Token(type, symbol, Integer.toString(lineNumber), Integer.toString(position));
                             tokenStream.add(newToken);
                             lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
@@ -213,13 +213,13 @@ public class Lexer {
                                 lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
                             }
 
-                            //reset lexer/global vars and output counter if there is more code
+                            //reset lexer and global variables. Output next program intro if there is more code
                             resetLexer();
                             if(line < sourceCode.size() - 1){
                                 System.out.println("\n");
                                 lexerLog("Lexing program " + programCounter);
                             }
-                            continue;   //skip the rest of line because the program is over
+                            continue;   //skip the rest of the line because the program is over
                     }
 
                     //create tokens for symbols
@@ -268,7 +268,7 @@ public class Lexer {
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);   
                 }
                 else if(match.group().matches(undefined) && !inComment){
-                    //thow warning for undefined and increment warning count
+                    //throw warning for undefined grammar and increment the warning count
                     String warning = match.group();
                     lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ] at line " + lineNumber + " position " + position);
                     warningCount++;
