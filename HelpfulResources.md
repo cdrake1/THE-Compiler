@@ -2,7 +2,7 @@
 This file contains the resources I have used to create simple, readable, and beautiful code. 
 Each reference will be listed below along with where it was used and how it helped me.
 
-##Lexer Resources--
+## Lexer Resources
 - Receive input from the command line: [geeksforgeeks](https://www.geeksforgeeks.org/command-line-arguments-in-java/)
 - Provided access to resources such as slides, textbooks, and code snippets. I utilized some of the code listed under "AlanC, a simple lexer via JavaCC" to help structure my lexer: [labouseur.com](https://www.labouseur.com/courses/compilers/)
 - Basic Regular expressions in Java: [geeksforgeeks](https://www.w3schools.com/java/java_regex.asp)
