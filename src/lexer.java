@@ -205,8 +205,18 @@ public class Lexer {
                             endOfProgram = true;
                             programCounter++;
 
+                            //check for more warnings. Missing end of comment or quote before the end of a program
+                            if(inComment || inQuotes){
+                                if(inComment){
+                                    lexerLog("WARNING! MISSING END COMMENT [ */ ]");
+                                }
+                                else{
+                                    lexerLog("WARNING! MISSING END QUOTE [ \" ]");
+                                }
+                            }
+
                             //if statement to check if lexing was successful
-                            if(errorCount == 0){
+                            if(errorCount == 0 && endOfProgram){
                                 lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
                             }
                             else{
