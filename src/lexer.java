@@ -14,27 +14,27 @@ import java.util.regex.Matcher;
 
 // Collin Drakes Lexer
 public class Lexer {
-    ArrayList<String> sourceCode; //stores the values/"programs" from the input file
-    ArrayList<Token> tokenStream; //stores the sourceCode as tokens. Final result of Lexical Analysis
+    ArrayList<String> sourceCode;   //stores the values/"programs" from the input file
+    ArrayList<Token> tokenStream;   //stores the sourceCode as tokens. Final result of Lexical Analysis
     int lineNumber; //keeps track of what line we are on during lexical analysis
-    int position; //keeps track of the position we are at during lexical analysis
-    boolean inQuotes; //are we in quotes????
-    boolean inComment; //are win in a comment?
-    boolean endOfProgram; //determines if $ is used
+    int position;   //keeps track of the position we are at during lexical analysis
+    boolean inQuotes;   //are we in quotes????
+    boolean inComment;  //are win in a comment?
+    boolean endOfProgram;   //determines if $ is used
     int programCounter; //determines what program we are on
-    int warningCount; //counts total errors
+    int warningCount;   //counts total errors
     int errorCount; //counts total warnings
 
     //creates a lexer and initializes everything. We are prepared to start lexing!
     public Lexer(){
         this.sourceCode = new ArrayList<>();
         this.tokenStream = new ArrayList<>();
-        this.lineNumber = 1; //start at line 1 position 1
+        this.lineNumber = 1;
         this.position = 1;
         this.inQuotes = false;
         this.inComment = false;
         this.endOfProgram = false;
-        this.programCounter = 1; //do I need this?????
+        this.programCounter = 1;
         this.errorCount = 0;
         this.warningCount = 0;
     }
@@ -60,10 +60,10 @@ public class Lexer {
             while(scanner.hasNextLine()){
                 sourceCode.add(scanner.nextLine());
             }
-            //close the scanner so Java can clean it up
-            scanner.close();
+            scanner.close();    //close the scanner so Java can clean it up
             System.out.println("The input file was read successfully");
         }
+
         //if it fails it throws an error
         catch(IOException exception)
         {
@@ -90,19 +90,19 @@ public class Lexer {
         String digits = "[0-9]";
         //characters: a-z (same as identifiers) (in quotes)
         String characters = "[a-z]";
-        //whitespace and comments
+        //whitespace
         String whitespace = "\s";
+        //comments
         String comments = "/\\*|\\*/";
         //undefined characters
         String undefined = "[A-Z!@#%^&*;:<>?-_/~`|\\\\]";
-        //add whitespace to characters? or gets its own?
 
-        //regular expression union
+        //regular expression union and compilation
         String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments + "|" + undefined;
         Pattern pattern = Pattern.compile(allTypes);
 
-        lexerLog("Lexing program 1");
         //iterate through source code
+        lexerLog("Lexing program 1");
         for(int line = 0; line < sourceCode.size(); line++){
             String buffer = sourceCode.get(line);
             Matcher match = pattern.matcher(buffer);
@@ -110,11 +110,11 @@ public class Lexer {
             //keep going while matches are found
             while (match.find()) {
                 position = match.end();
-                //use if statements to divide keywords, ids, symbols, digits, chars, etc
+
+                //use switch cases to divide keywords, ids, symbols, digits, chars, etc
                 if(match.group().matches(keywords) && !inComment && !inQuotes){
                     String type = "";
                     String keyword = match.group();
-
                     switch (keyword) {
                         case "print":
                             type = "PRINT";
@@ -141,6 +141,8 @@ public class Lexer {
                             type = "BOOL_FALSE";
                             break;
                     }
+
+                    //create tokens for keywords
                     Token newToken = new Token(type, keyword, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
@@ -148,6 +150,8 @@ public class Lexer {
                 else if(match.group().matches(ids) && !inQuotes && !inComment){
                     String type = "ID";
                     String id = match.group();
+
+                    //create tokens for ids
                     Token newToken = new Token(type, id, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
@@ -155,7 +159,6 @@ public class Lexer {
                 else if(match.group().matches(symbols)){
                     String type = "";
                     String symbol = match.group();
-
                     switch (symbol) {
                         case "{":
                             type = "OPENING_BRACE";
@@ -209,16 +212,17 @@ public class Lexer {
                             else{
                                 lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
                             }
-                            //reset lexer/global vars
+
+                            //reset lexer/global vars and output counter if there is more code
                             resetLexer();
-                            //output if there is more code
                             if(line < sourceCode.size() - 1){
                                 System.out.println("\n");
                                 lexerLog("Lexing program " + programCounter);
                             }
-                            //skip the rest of line because the program is over
-                            continue;
+                            continue;   //skip the rest of line because the program is over
                     }
+
+                    //create tokens for symbols
                     Token newToken = new Token(type, symbol, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
@@ -226,6 +230,8 @@ public class Lexer {
                 else if(match.group().matches(digits) && !inComment && !inQuotes){
                     String type = "DIGIT";
                     String digit = match.group();
+
+                    //create tokens for digits
                     Token newToken = new Token(type, digit, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
@@ -233,11 +239,14 @@ public class Lexer {
                 else if(match.group().matches(characters) && inQuotes && !inComment){
                     String type = "CHAR";
                     String character = match.group();
+
+                    //create tokens for characters
                     Token newToken = new Token(type, character, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
                 else if(match.group().matches(comments)){
+                    //flag to determine if we are inside a comment
                     String comment = match.group();
                     switch (comment) {
                         case "/*":
@@ -252,6 +261,8 @@ public class Lexer {
                 else if(match.group().matches(whitespace) && inQuotes){
                     String type = "WHITESPACE";
                     String whitespaces = match.group();
+                    
+                    //create tokens for whitespace
                     Token newToken = new Token(type, whitespaces, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);   

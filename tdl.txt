@@ -1,4 +1,5 @@
 TDL
 
-- Add undefined regex string and throw warning for undefined.
-- use if statement to check for end of program and throw error
+- error throwing
+- testing
+- formatting
