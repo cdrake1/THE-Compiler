@@ -1,5 +1,4 @@
 TDL
 
-- error throwing
 - testing
 - formatting

@@ -207,6 +207,7 @@ public class Lexer {
 
                             //check for more warnings. Missing end of comment or quote before the end of a program
                             if(inComment || inQuotes){
+                                warningCount++;
                                 if(inComment){
                                     lexerLog("WARNING! MISSING END COMMENT [ */ ]");
                                 }
@@ -224,10 +225,10 @@ public class Lexer {
                             }
 
                             //reset lexer and global variables. Output next program intro if there is more code
-                            resetLexer();
                             if(line < sourceCode.size() - 1){
                                 System.out.println("\n");
                                 lexerLog("Lexing program " + programCounter);
+                                resetLexer();
                             }
                             continue;   //skip the rest of the line because the program is over
                     }
@@ -286,6 +287,23 @@ public class Lexer {
             }
             //increase line number
             lineNumber++;
+        }
+        
+        //check for error. Missing EOP
+        if (!endOfProgram) {
+            //check for more warnings. Missing end of comment or quote before the end of a program
+            if(inComment || inQuotes){
+                warningCount++;
+                if(inComment){
+                    lexerLog("WARNING! MISSING END COMMENT [ */ ]");
+                }
+                else{
+                    lexerLog("WARNING! MISSING END QUOTE [ \" ]");
+                }
+            }
+            lexerLog("ERROR! REACHED END OF FILE. MISSING EOP OPERATOR [ $ ]");
+            errorCount++; // Increment error count
+            lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
         }
     }
 }
