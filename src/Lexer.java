@@ -280,9 +280,9 @@ public class Lexer {
                 }
                 else if(match.group().matches(undefined) && !inComment){
                     //throw warning for undefined grammar and increment the warning count
-                    String warning = match.group();
-                    lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ] at line " + lineNumber + " position " + position);
-                    warningCount++;
+                    String error = match.group();
+                    lexerLog("ERROR! UNRECOGNIZED TOKEN [ " + error + " ] at line " + lineNumber + " position " + position);
+                    errorCount++;
                 }
             }
             //increase line number
