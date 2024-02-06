@@ -95,7 +95,7 @@ public class Lexer {
         String whitespace = "\s";
         String comments = "/\\*|\\*/";
         //undefined characters
-        String undefined = "[A-Z!@#%^&*;:<>?-_/]";
+        String undefined = "[A-Z!@#%^&*;:<>?-_/~`|\\\\]";
         //add whitespace to characters? or gets its own?
 
         //regular expression union
