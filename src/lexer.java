@@ -12,7 +12,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-// Collin Drakes Lexer
+//Collin Drakes Lexer
 public class Lexer {
     ArrayList<String> sourceCode;   //stores the values/"programs" from the input file
     ArrayList<Token> tokenStream;   //stores the sourceCode as tokens. Final result of Lexical Analysis

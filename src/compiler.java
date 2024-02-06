@@ -18,7 +18,6 @@ public class Compiler {
         //file handling and lexer initialization. Keep user updated on what happens and keeping naming obvious
         String textFile = args[0];
         System.out.println("Processing file: " + textFile);
-
         /*
           output to user
           call readfile to read the input text file into a string
