@@ -95,11 +95,11 @@ public class Lexer {
         String whitespace = "\s";
         String comments = "/\\*|\\*/";
         //undefined characters
-        String undefined = ".";
+        String undefined = "[A-Z!@#%^&*;:<>?-_/]";
         //add whitespace to characters? or gets its own?
 
         //regular expression union
-        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments;
+        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments + "|" + undefined;
         Pattern pattern = Pattern.compile(allTypes);
 
         //iterate through source code
@@ -202,9 +202,7 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                     //reset global vars/lexer if flag is true
-                    if(endOfProgram){
-                        resetLexer();
-                    }
+                   
                 }
                 else if(match.group().matches(digits) && !inComment && !inQuotes){
                     String type = "DIGIT";
@@ -242,7 +240,7 @@ public class Lexer {
                 else if(match.group().matches(undefined)){
                     //thow warning for undefined and increment warning count
                     String warning = match.group();
-                    lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ]");
+                    lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ] at line " + lineNumber + " position " + position);
                     warningCount++;
                 }
             }
@@ -250,10 +248,6 @@ public class Lexer {
             lineNumber++;
         }
         //if statements to check if still in a comment at end of file, quote, or missing $
-        if(!endOfProgram){
-            lexerLog("ERROR! PROGRAM MISSING [ $ ]");
-            errorCount++;
-        }
         lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
     }
 }
