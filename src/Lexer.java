@@ -293,7 +293,7 @@ public class Lexer {
         if (!endOfProgram) {
             //check for more warnings. Missing end of comment or quote before the end of a program
             if(inComment || inQuotes){
-                warningCount++;
+                warningCount++; //increment warning count
                 if(inComment){
                     lexerLog("WARNING! MISSING END COMMENT [ */ ]");
                 }
@@ -301,8 +301,8 @@ public class Lexer {
                     lexerLog("WARNING! MISSING END QUOTE [ \" ]");
                 }
             }
+            errorCount++;   //increment error count
             lexerLog("ERROR! REACHED END OF FILE. MISSING EOP OPERATOR [ $ ]");
-            errorCount++; // Increment error count
             lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
         }
     }
