@@ -16,3 +16,4 @@ Each reference will be listed below along with where it was used and how it help
 - Regex matches [stackoverflow](https://stackoverflow.com/questions/21395110how-to-check-a-string-in-java-equals-to-a-regex-pattern)
 - switch statements [w3schools](https://www.w3schools.com/java/java_switch.asp)
 - Regex to find position [stackoverflow](https://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex)
+- Escaping and escape character for regex [stackoverflow](https://stackoverflow.com/questions/9113328/java-regular-expression-need-to-escape-backslash-in-regex#:~:text=In%20short%2C%20you%20always%20need,as%20the%20escaped%20backslash%20character.)

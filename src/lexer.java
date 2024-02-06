@@ -41,7 +41,6 @@ public class Lexer {
 
     //resets the global variables for the next program
     public void resetLexer(){
-        this.sourceCode.clear();
         this.tokenStream.clear();
         this.position = 1;
         this.inQuotes = false;
@@ -102,6 +101,7 @@ public class Lexer {
         String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments + "|" + undefined;
         Pattern pattern = Pattern.compile(allTypes);
 
+        lexerLog("Lexing program 1");
         //iterate through source code
         for(int line = 0; line < sourceCode.size(); line++){
             String buffer = sourceCode.get(line);
@@ -191,18 +191,37 @@ public class Lexer {
                             type = "INEQUALITY_OP";
                             break;
                         case "$":
-                            //mark end of program to reset global vars/lexer
                             type = "EOP";
+
+                            //create EOP token and add it to stream before checking to see if done
+                            Token newToken = new Token(type, symbol, Integer.toString(lineNumber), Integer.toString(position));
+                            tokenStream.add(newToken);
+                            lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+
+                            //mark that the program is over and increment the program counter
                             endOfProgram = true;
                             programCounter++;
-                            break;
 
+                            //if statement to check if lexing was successful
+                            if(errorCount == 0){
+                                lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
+                            }
+                            else{
+                                lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
+                            }
+                            //reset lexer/global vars
+                            resetLexer();
+                            //output if there is more code
+                            if(line < sourceCode.size() - 1){
+                                System.out.println("\n");
+                                lexerLog("Lexing program " + programCounter);
+                            }
+                            //skip the rest of line because the program is over
+                            continue;
                     }
                     Token newToken = new Token(type, symbol, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
-                    //reset global vars/lexer if flag is true
-                   
                 }
                 else if(match.group().matches(digits) && !inComment && !inQuotes){
                     String type = "DIGIT";
@@ -237,7 +256,7 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);   
                 }
-                else if(match.group().matches(undefined)){
+                else if(match.group().matches(undefined) && !inComment){
                     //thow warning for undefined and increment warning count
                     String warning = match.group();
                     lexerLog("WARNING! UNRECOGNIZED TOKEN [ " + warning + " ] at line " + lineNumber + " position " + position);
@@ -247,7 +266,5 @@ public class Lexer {
             //increase line number
             lineNumber++;
         }
-        //if statements to check if still in a comment at end of file, quote, or missing $
-        lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
     }
 }
