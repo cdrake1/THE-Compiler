@@ -225,7 +225,7 @@ public class Lexer {
                             }
 
                             //reset lexer and global variables. Output next program intro if there is more code
-                            if(line < sourceCode.size() - 1){
+                            if(line < sourceCode.size() - 1 || position < sourceCode.get(line).length()-1){
                                 System.out.println("\n");
                                 lexerLog("Lexing program " + programCounter);
                                 resetLexer();
