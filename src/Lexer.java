@@ -85,7 +85,7 @@ public class Lexer {
         //Identifiers: a-z (can only be characters)
         String ids = "[a-z]";
         //symbols: {, }, (, ), ", =, +, !=, ==
-        String symbols = "(\\{|\\}|\\(|\\)|\"|\\==|\\+|\\!=|\\=|\\$)";
+        String symbols = "(\\{|\\}|\\(|\\)|\\==|\\+|\\!=|\\=|\\$)";
         //digits: 0-9
         String digits = "[0-9]";
         //characters: a-z (same as identifiers) (in quotes)
@@ -94,11 +94,13 @@ public class Lexer {
         String whitespace = "\s";
         //comments
         String comments = "/\\*|\\*/";
+        //quotes
+        String quotes = "\"";
         //undefined characters
         String undefined = "[A-Z!$@#%^&*;:<>?-_/~`|\\\\]";
 
         //regular expression union and compilation
-        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments + "|" + undefined;
+        String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments + "|" + quotes + "|" + undefined;
         Pattern pattern = Pattern.compile(allTypes);
 
         //iterate through source code
@@ -156,7 +158,7 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(symbols) && !inComment){
+                else if(match.group().matches(symbols) && !inComment && !inQuotes){
                     String type = "";
                     String symbol = match.group();
                     switch (symbol) {
@@ -171,15 +173,6 @@ public class Lexer {
                             break;
                         case ")":
                             type = "CLOSING_PARENTHESIS";
-                            break;
-                        case "\"":
-                            type = "QUOTE";
-                            if(inQuotes){
-                                inQuotes = false;
-                            }
-                            else{
-                                inQuotes = true;
-                            }
                             break;
                         case "=":
                             type = "ASSIGN";
@@ -292,6 +285,22 @@ public class Lexer {
                             inComment = false;
                             break;
                     }
+                }
+                else if(match.group().matches(quotes)){
+                    String type = "QUOTE";
+                    String quote = match.group();
+                    
+                    if(inQuotes){
+                        inQuotes = false;
+                    }
+                    else{
+                        inQuotes = true;
+                    }
+
+                    //create tokens for characters
+                    Token newToken = new Token(type, quote, Integer.toString(lineNumber), Integer.toString(position));
+                    tokenStream.add(newToken);
+                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
                 else if(match.group().matches(whitespace) && inQuotes){
                     String type = "WHITESPACE";
