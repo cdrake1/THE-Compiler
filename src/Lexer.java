@@ -52,6 +52,7 @@ public class Lexer {
 
     //reads the input file into an arraylist called sourceCode. Prepare for Lexical Analysis
     public void readInput(String textFile){
+
         //tries to read the values from the input file into an arraylist
         try
         {
@@ -64,7 +65,7 @@ public class Lexer {
             System.out.println("The input file was read successfully");
         }
 
-        //if it fails it throws an error
+        //if it fails it throws an error and exits the program
         catch(IOException exception)
         {
             System.out.println("Something went wrong when trying to read the file");
@@ -85,7 +86,7 @@ public class Lexer {
         String keywords = "(print|while|if|int|string|boolean|true|false)";
         //Identifiers: a-z (can only be characters)
         String ids = "[a-z]";
-        //symbols: {, }, (, ), ", =, +, !=, ==
+        //symbols: {, }, (, ), =, +, !=, ==
         String symbols = "(\\{|\\}|\\(|\\)|\\==|\\+|\\!=|\\=|\\$)";
         //digits: 0-9
         String digits = "[0-9]";
@@ -224,7 +225,7 @@ public class Lexer {
                                 lexerLog("Lexing program " + programCounter);
                                 resetLexer();
                             }
-                            continue;   //skip the rest of the line because the program is over
+                            continue;   //breaks 1 iteration
                     }
 
                     //create tokens for symbols
@@ -242,6 +243,7 @@ public class Lexer {
                         lexerLog("ERROR! UNRECOGNIZED TOKEN [ " + digit + " ] at line " + lineNumber + " position " + position);
                     }
                     else{
+
                         //create tokens for digits
                         Token newToken = new Token(type, digit, Integer.toString(lineNumber), Integer.toString(position));
                         tokenStream.add(newToken);
@@ -259,6 +261,7 @@ public class Lexer {
                         char[] word = character.toCharArray();
                         position = position - (character.length() - 1); //set position correctly
                         for(char c: word){
+
                             //create tokens for characters
                             Token newToken = new Token(type, String.valueOf(c), Integer.toString(lineNumber), Integer.toString(position));
                             tokenStream.add(newToken);
@@ -275,6 +278,7 @@ public class Lexer {
                     }
                 }
                 else if(match.group().matches(comments)){
+
                     //flag to determine if we are inside a comment
                     String comment = match.group();
                     switch (comment) {
@@ -291,6 +295,7 @@ public class Lexer {
                     String type = "QUOTE";
                     String quote = match.group();
                     
+                    //flag to determine if we are inside quotes
                     if(inQuotes){
                         inQuotes = false;
                     }
@@ -298,7 +303,7 @@ public class Lexer {
                         inQuotes = true;
                     }
 
-                    //create tokens for characters
+                    //create tokens for quotes
                     Token newToken = new Token(type, quote, Integer.toString(lineNumber), Integer.toString(position));
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
@@ -313,19 +318,22 @@ public class Lexer {
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);   
                 }
                 else if(match.group().matches(undefined) && !inComment){
+
                     //throw warning for undefined grammar and increment the warning count
                     String error = match.group();
                     lexerLog("ERROR! UNRECOGNIZED TOKEN [ " + error + " ] at line " + lineNumber + " position " + position);
                     errorCount++;
                 }
             }
+
             //increase line number
             lineNumber++;
         }
         
-        //check for error. Missing EOP
+        //check for error (Missing EOP)
         if (!endOfProgram) {
-            //check for more warnings. Missing end of comment or quote before the end of a program
+
+            //check for more warnings (Missing end comment or quote)
             if(inComment || inQuotes){
                 warningCount++; //increment warning count
                 if(inComment){
