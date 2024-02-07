@@ -89,7 +89,7 @@ public class Lexer {
         //digits: 0-9
         String digits = "[0-9]";
         //characters: a-z (same as identifiers) (in quotes)
-        String characters = "[a-z]";
+        String characters = "[a-z]+";
         //whitespace
         String whitespace = "\s";
         //comments
@@ -258,10 +258,27 @@ public class Lexer {
                     String type = "CHAR";
                     String character = match.group();
 
-                    //create tokens for characters
-                    Token newToken = new Token(type, character, Integer.toString(lineNumber), Integer.toString(position));
-                    tokenStream.add(newToken);
-                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+                    //if a keyword is in a string do this. Otherwise just make a token. Deals with keywords in strings
+                    if(match.group().matches(characters) && match.group().matches(keywords)){
+
+                        //break the keyword into a char array and create tokens for each letter
+                        char[] word = character.toCharArray();
+                        position = position - (character.length() - 1); //set position correctly
+                        for(char c: word){
+                            //create tokens for characters
+                            Token newToken = new Token(type, String.valueOf(c), Integer.toString(lineNumber), Integer.toString(position));
+                            tokenStream.add(newToken);
+                            lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+                            position++;
+                        }
+                    }
+                    else{
+
+                        //create tokens for characters
+                        Token newToken = new Token(type, character, Integer.toString(lineNumber), Integer.toString(position));
+                        tokenStream.add(newToken);
+                        lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+                    }
                 }
                 else if(match.group().matches(comments)){
                     //flag to determine if we are inside a comment
