@@ -1,5 +1,4 @@
 TDL
 
+- figure out keywords in strings (Chars)
 - testing
-- formatting
-- error for digit in quotes

@@ -4,7 +4,7 @@
     Performs lexical analysis on input program/s and returns an ordered stream of tokens
 */
 
-//import regEx for pattern matching, and a scanner to read the input into an arraylist
+//import RegEx for pattern matching, and a scanner to read the input into an arraylist
 import java.io.IOException;
 import java.io.File;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class Lexer {
         //Identifiers: a-z (can only be characters)
         String ids = "[a-z]";
         //symbols: {, }, (, ), ", =, +, !=, ==
-        String symbols = "(\\{|\\}|\\(|\\)|\"|\\=|\\+|\\!=|\\==|\\$)";
+        String symbols = "(\\{|\\}|\\(|\\)|\"|\\==|\\+|\\!=|\\=|\\$)";
         //digits: 0-9
         String digits = "[0-9]";
         //characters: a-z (same as identifiers) (in quotes)
@@ -238,14 +238,21 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(digits) && !inComment && !inQuotes){
+                else if(match.group().matches(digits) && !inComment){
                     String type = "DIGIT";
                     String digit = match.group();
 
-                    //create tokens for digits
-                    Token newToken = new Token(type, digit, Integer.toString(lineNumber), Integer.toString(position));
-                    tokenStream.add(newToken);
-                    lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+                    //Thow an error for a digit within quotes
+                    if(inQuotes){
+                        errorCount++;
+                        lexerLog("ERROR! UNRECOGNIZED TOKEN [ " + digit + " ] at line " + lineNumber + " position " + position);
+                    }
+                    else{
+                        //create tokens for digits
+                        Token newToken = new Token(type, digit, Integer.toString(lineNumber), Integer.toString(position));
+                        tokenStream.add(newToken);
+                        lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
+                    }
                 }
                 else if(match.group().matches(characters) && inQuotes && !inComment){
                     String type = "CHAR";

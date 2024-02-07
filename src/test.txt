@@ -1,11 +1,5 @@
-{}
-{{{{{{}}}}}}
-{{{{{{}}} /* comments are ignored */ }}}}$
-{ /* comments are still ignored */ int @}$
-{
-  int a
-  a = a
-  string b
-  a=b
-  "
-}
+{/* Comment!!!*/ ()
+print=whileif"teststring"
+intstringbooleanfalse
+true
+==!=+ a 0123456789}$

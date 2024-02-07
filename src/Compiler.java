@@ -21,7 +21,7 @@ public class Compiler {
         /*
           output to user
           call readfile to read the input text file into a string
-          call scanner the lex the input file
+          call scanner to the lex the input file
         */
         System.out.println("Powering on the LEXER...");
         lexer.readInput(textFile);
