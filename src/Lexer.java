@@ -95,7 +95,7 @@ public class Lexer {
         //comments
         String comments = "/\\*|\\*/";
         //undefined characters
-        String undefined = "[A-Z!@#%^&*;:<>?-_/~`|\\\\]";
+        String undefined = "[A-Z!$@#%^&*;:<>?-_/~`|\\\\]";
 
         //regular expression union and compilation
         String allTypes = keywords + "|" + ids + "|" + symbols + "|" + digits + "|" + characters + "|" + whitespace + "|" + comments + "|" + undefined;
@@ -156,7 +156,7 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(symbols)){
+                else if(match.group().matches(symbols) && !inComment){
                     String type = "";
                     String symbol = match.group();
                     switch (symbol) {
