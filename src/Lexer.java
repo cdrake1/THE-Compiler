@@ -68,6 +68,7 @@ public class Lexer {
         catch(IOException exception)
         {
             System.out.println("Something went wrong when trying to read the file");
+            System.exit(0);
         }
     }
 

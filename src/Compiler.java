@@ -23,8 +23,8 @@ public class Compiler {
           call readfile to read the input text file into a string
           call scanner to the lex the input file
         */
-        System.out.println("Powering on the LEXER...");
         lexer.readInput(textFile);
+        System.out.println("Powering on the LEXER...");
         lexer.scanner();
       }
       else{

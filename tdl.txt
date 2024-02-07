@@ -1,4 +1,3 @@
 TDL
 
-- figure out keywords in strings (Chars)
-- testing
+- comments and formatting
