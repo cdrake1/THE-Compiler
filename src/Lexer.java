@@ -24,6 +24,7 @@ public class Lexer {
     int programCounter; //determines what program we are on
     int warningCount;   //counts total errors
     int errorCount; //counts total warnings
+    boolean multiLineQuoteError;    //flag to check if multi line quote/string error was thrown
 
     //creates a lexer and initializes everything. We are prepared to start lexing!
     public Lexer(){
@@ -37,6 +38,7 @@ public class Lexer {
         this.programCounter = 1;
         this.errorCount = 0;
         this.warningCount = 0;
+        this.multiLineQuoteError = false;
     }
 
     //resets the global variables for the next program
@@ -48,6 +50,7 @@ public class Lexer {
         this.endOfProgram = false;
         this.errorCount = 0;
         this.warningCount = 0;
+        this.multiLineQuoteError = false;
     }
 
     //reads the input file into an arraylist called sourceCode. Prepare for Lexical Analysis
@@ -110,6 +113,13 @@ public class Lexer {
         for(int line = 0; line < sourceCode.size(); line++){
             String buffer = sourceCode.get(line);
             Matcher match = pattern.matcher(buffer);
+
+            //throws error if quote/string spans multiple lines
+            if(inQuotes && !multiLineQuoteError){
+                lexerLog("ERROR! STRING SPANNING MULTIPLE LINES");
+                errorCount++;
+                multiLineQuoteError = true;
+            }
 
             //keep going while matches are found
             while (match.find()) {
@@ -308,7 +318,7 @@ public class Lexer {
                     tokenStream.add(newToken);
                     lexerLog(newToken.tokenType + " [ " + newToken.lexeme + " ] on line " + newToken.line + " position " + newToken.position);
                 }
-                else if(match.group().matches(whitespace) && inQuotes){
+                else if(match.group().matches(whitespace) && inQuotes && !inComment){
                     String type = "WHITESPACE";
                     String whitespaces = match.group();
                     
