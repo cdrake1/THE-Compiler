@@ -21,3 +21,12 @@ a = 1+a
 }
 }
 $
+/*LongTestCase-EverythingExceptBooleanDeclaration*/{/*IntDeclaration*/intaintba=0b=0/*WhileLoop*/while(a!=3){print(a)while(b!=3){print(b)b=1+bif(b==2){/*PrintStatement*/print("there is no spoon"/*Thiswilldonothing*/)}}b=0a=1+a}}$
+{}$/*$$$ This should be ignored */$$$"the$tringstillsplits"
+{
+    string a = "I took the dog for/*dont work*/ a walk already"
+    print(a + " perfect)
+    "@
+    /*$/**/
+}
+$
