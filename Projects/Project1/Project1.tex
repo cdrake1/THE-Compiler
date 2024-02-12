@@ -74,3 +74,327 @@
    \huge Project One  \\     	    % Assignment title
    \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
 }
+
+\author{Collin Drake \\ \normalsize Collin.Drake1@Marist.edu}
+
+\date{\normalsize\today} 	% Today's date.
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   start LAB ONE
+%----------------------------------------------------------------------------------------
+\section*{Lab 1}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 1.11 (MOSS)}
+    The Measure of Software Similarity (MOSS) [SWA03] tool can detect the similarity of programs written in a variety of modern programming languages. Its main application has been in detecting similarity of programs submitted in computer science classes, where such similarity may indicate plagiarism (students, beware!). In theory, detecting equivalence of two programs is undecidable, but MOSS does a very good job of finding similarity in spite of that limitation.
+    Investigate the techniques MOSS uses to find similarities. How does MOSS differ from other approaches for detecting possible plagiarism?
+
+    The Measure of Software Similarity tool, commonly referred to as MOSS runs through several steps to determine the possibility of a submission being plagiarism. It starts by removing irrelevant elements from code such as whitespace and identifiers. Secondly, it generates the fingerprints, or unique identifiers of a submission by hashing the input. These fingerprints are then compared to other submissions, counting the frequency of matches to determine the likelihood of plagiarism. This differs from other approaches because it uses tools like hashing and it throws away identifiers and whitespace.
+
+\subsubsection*{Exercise: 3.1}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    1. Assume the following text is presented to a C scanner:
+
+    main(){
+    const float payment = 384.00; float bal;
+    int month = 0;
+    bal=15000;
+    while (bal>0){
+    printf("Month: %2d Balance: %10.2f\n", month, bal); bal=bal-payment+0.015*bal;
+    month=month+1;
+    } }
+
+    What token sequence is produced? 
+    For which tokens must extra information be
+    returned in addition to the token code?
+\end{lstlisting}
+Token Stream: <ID> <LParen> <RParen> <LBrace> <TypeConst> <TypeFloat> <ID> <Assign> <Number> <EOS> <TypeFloat> <ID> <EOS> <TypeInt> <ID> <Assign> <Number> <EOS> <ID> <Assign> <Number> <EOS> <While> <LParen> <ID> <GreaterThan> <Number> <RParen> <LBrace> <ID> <LParen> <Quote> <StringLiteral> <Quote> <Comma> <ID> <Comma> <ID> <RParen> <EOS> <ID> <Assign> <ID> <Subtract> <ID> <Add> <Number> <Multiply> <ID> <EOS> <ID> <Assign> <Assign> <Add> <Number> <EOS> <RBrace> <RBrace>
+\newline
+Extra Information would be returned for any numbers, identifiers, and string literals.
+
+\subsection*{Dragon}
+
+\subsubsection*{Exercise: 1.1.4}
+    A compiler that translates a high-level language into another high-level language is called a source-to-source translator. What advantages are there to using C as a target language for a compiler?
+
+    Using C as a target language for a Transpiler comes with many advantages. One of those being that C is very common, which means that C code can be run on many different devices.
+    
+\subsubsection*{Exercise: 1.6.1}
+For the block-structured C code of Fig. 1.13(a), indicate the values assigned to w, x, y, and z.
+
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    int w, x, y, z
+    int i = 4; int j = 5;
+    { 
+        int j = 7;
+        i = 6;
+        w = i + j;
+    }
+    x = i + j;
+    {
+        int i = 8;
+        y = i + j;
+    }
+    z = i + j;
+    \end{lstlisting}
+    w is assigned 13,
+    x is assigned 11,
+    y is assigned 13,
+    and z is assigned 11,
+    
+
+%----------------------------------------------------------------------------------------
+%   end LAB ONE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+
+%----------------------------------------------------------------------------------------
+%   start LAB TWO
+%----------------------------------------------------------------------------------------
+\section*{Lab 2}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 3.3}
+Write regular expressions that define the strings recognized by the FAs in Figure 3.33 on page 107.
+\newline
+\begin{center}
+\includegraphics[width=10cm]{3.3.png}
+\end{center}
+
+\begin{enumerate}
+    \item (ab*a)|(ba*b)
+    \item a((bc|c)d)*
+    \item (ab*c)
+\end{enumerate}
+    
+
+\subsubsection*{Exercise: 3.4}
+ Write DFAs that recognize the tokens defined by the following regular expressions:
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    (a) (a | (bc)* d)+
+    (b) ((0 | 1)* (2 | 3)+) | 0011
+    (c) (a Not(a))* aaa
+    \end{lstlisting}
+    \begin{center}
+    \includegraphics[width=10cm]{3.4 a.png}
+    \end{center}
+    \begin{center}
+    \includegraphics[width=10cm]{3.4 b.png}
+    \end{center}
+    \begin{center}
+    \includegraphics[width=10cm]{3.4 c.png}
+    \end{center}
+
+\subsection*{Dragon}
+
+\subsubsection*{Exercise: 3.3.4}
+Most languages are case sensitive, so keywords can be written only one way, and the regular expressions describing their lexeme is very simple. However, some languages, like SQL, are case insensitive, so a keyword can be written either in lowercase or in uppercase, or in any mixture of cases. Thus, the SQL keyword SELECT can also be written select, Select, or sElEcT, for instance. Show how to write a regular expression for a keyword in a case-insensitive language. Illustrate the idea by writing the expression for "select" in SQL.
+
+Regular Expression: /select/i
+\newline
+The i indicates that the RegEx is case insensitive.
+
+
+%----------------------------------------------------------------------------------------
+%   end LAB TWO
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   start PROJECT DETAIL
+%----------------------------------------------------------------------------------------
+\section{Project 1}
+
+\subsection{Lexical Analysis}
+A Compiler consists of multiple parts, including a Lexer, also known as a Scanner or Lexical Analyzer. The Lexer's primary function is to turn the source code into an ordered stream of tokens based on the language's grammar rules. Tokens, as described in our slides are "a sequence of characters that we treat as a unit in the grammar of our language." A Token is made up of two components: a type, and the corresponding value represented in the source code. The Lexer's only focus during the compilation process is on the words, symbols, whitespace, and comments used within the source code, not its order or meaning.
+
+To test my lexer I used test cases provided by our professor as well as hall-of-fame projects. You can find the test cases below:
+
+\subsubsection*{Test Case 1}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {}$
+    {{{{{{}}}}}}$
+    {{{{{{}}} /* comments are ignored */ }}}}$
+    { /* comments are still ignored */ int @}$
+    {
+      int a
+      a = a
+      string b
+      a=b
+    }$
+\end{lstlisting}
+
+\subsubsection*{Test Case 2}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {}$/*$$$ This should be ignored */$$$"the$tringstillsplits"
+\end{lstlisting}
+
+\subsubsection*{Test Case 3}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    /*Long Test Case - Everything Except Boolean Declaration */
+    {
+    /* Int Declaration */
+    int a
+    int b
+    a = 0
+    b=0
+    /* While Loop */
+    while (a != 3) {
+    print(a)
+    while (b != 3) {
+    print(b)
+    b = 1 + b
+    if (b == 2) {
+    /* Print Statement */
+    print("there is no spoon" /* This will do nothing */ )
+    }
+    }
+    b = 0
+    a = 1+a
+    }
+    }
+    $
+\end{lstlisting}
+
+
+%----------------------------------------------------------------------------------------
+%   end PROJECT ONE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   Appendix
+%----------------------------------------------------------------------------------------
+
+\section{Appendix}
+
+\subsubsection*{Token Class (Constructor)}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    /*
+        Token Constructor
+        Creates tokens for the Lexer
+    */
+    
+    public class Token {
+        //each token has a type, lexeme, position, and line
+        String tokenType;
+        String lexeme;
+        String position;
+        String line;
+        
+        //creating tokens!
+        public Token(String tType, String sCode, String line,String position){
+            this.tokenType = tType;
+            this.lexeme = sCode;
+            this.line = line;
+            this.position = position;
+        }
+    }
+    \end{lstlisting}
+
+\subsubsection*{Compiler Class (Entry Point)}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    /*
+      THECompiler entry point
+      Builds the parts of a compiler, connects them, and calls them
+    */
+    
+    public class Compiler {
+        public static void main(String[] args) 
+        {
+          //create the parts of a compiler
+          Lexer lexer = new Lexer();
+    
+          //introductory output
+          System.out.println("Welcome to THECompiler by Collin Drake!");
+    
+          //check for command line arguments
+          if(args.length > 0)
+          {
+            //file handling and lexer initialization.
+            Keep user updated on what happens and keeping naming obvious
+            String textFile = args[0];
+            System.out.println("Processing file: " + textFile);
+            /*
+              output to user
+              call readfile to read the input text file into a string
+              call scanner to the lex the input file
+            */
+            lexer.readInput(textFile);
+            System.out.println("Powering on the LEXER...");
+            lexer.scanner();
+          }
+          else{
+            System.out.println("No program found. 
+            Please provide a command line argument to the compiler.");
+          }
+        }
+    }
+    \end{lstlisting}
+
+%----------------------------------------------------------------------------------------
+%   Links of References
+%----------------------------------------------------------------------------------------
+\pagebreak
+
+\section{References}
+
+\subsection{Links}
+Below are the resources I have used to create simple, readable, and beautiful code.
+
+\begin{itemize}
+    \item Receive input from the command line: \href{https://www.geeksforgeeks.org/command-line-arguments-in-java/}{geeks4geeks}
+    \item Provided access to resources such as slides, textbooks, and code snippets. I utilized some of the code listed under "AlanC, a simple lexer via JavaCC" to help structure my lexer: \href{https://www.labouseur.com/courses/compilers/}{Labouseur.com}
+    \item Basic Regular expressions in Java: \href{https://www.w3schools.com/java/java_regex.asp}{geeks4geeks}
+    \item Reading an input file into an arraylist: \href{https://stackoverflow.com/questions/5343689/java-reading-a-file-into-an-arraylist}{stackoverflow}
+    \item Clean up my pushes to git by removing compiled class files: \href{https://automationpanda.com/2018/09/19/ignoring-files-with-git/#:~:text=Use%20the%20asterisk%20(%E2%80%9C*%E2%80%9D,class%E2%80%9D%20extension.)}{automationpanda}
+    \item The "dragon" textbook....: \href{https://www.amazon.com/Compilers-Principles-Techniques-Tools-Edition/dp/0321486811}{dragon}
+    \item Crafting THIS Compiler....: \href{https://www.amazon.com/Crafting-Compiler-Charles-N-Fischer/dp/0136067050}{Crafting a Compiler}
+    \item RegEx assistance...: \href{https://www.tutorialspoint.com/java/java_regular_expressions.htm}{tutorialspoint}
+    \item RegEx assistance... again...: \href{https://docs.oracle.com/javase/7/docs/api/java/util/regex/Pattern.html}{oracle}
+    \item RegEx assistance... the finale...: \href{https://regex101.com/}{regex101}
+    \item Regex groups: \href{https://www.javatpoint.com/post/java-matcher-group-method}{javatpoint}
+    \item Regex matches: \href{https://stackoverflow.com/questions/21395110how-to-check-a-string-in-java-equals-to-a-regex-pattern}{stackoverflow}
+    \item switch statements: \href{https://www.w3schools.com/java/java_switch.asp}{w3schools}
+    \item Regex finding position: \href{https://stackoverflow.com/questions/8938498/get-the-index-of-a-pattern-in-a-string-using-regex}{stackoverflow}
+    \item Escaping an escape character. Regex: \href{https://stackoverflow.com/questions/9113328/java-regular-expression-need-to-escape-backslash-in-regex#:~:text=In%20short%2C%20you%20always%20need,as%20the%20escaped%20backslash%20character.}{stackoverflow}
+    \item Java break and continue: \href{https://www.w3schools.com/java/java_break.asp}{w3schools}
+    \item Java exit program: \href{https://www.baeldung.com/java-stop-running-code#:~:text=a%20flag%20variable.-,System.,an%20exit%20status%20of%200.&text=We%20terminate%20the%20program%20using%20System.}{baeldung}
+    \item MOSS Understanding: \href{https://yangdanny97.github.io/blog/2019/05/03/MOSS}{github}
+    \item Creating DFAs: \href{https://madebyevan.com/fsm/}{madebyevan}
+    \item Test Cases: \href{https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html}{Labouseur.com and Gabriel Arnell}
+    
+\end{itemize}
+
+\pagebreak
+%----------------------------------------------------------------------------------------
+%   APA REFERENCES
+%----------------------------------------------------------------------------------------
+% The following two commands are all you need in the initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+%\bibliography{lab1} 
+% You must have a proper ".bib" file and remember to run:
+% latex bibtex latex latex
+% to resolve all references.
+
+
+
+\end{document}
