@@ -20,6 +20,6 @@ Each reference will be listed below along with where it was used and how it help
 - Escaping an escape character. Regex: [stackoverflow](https://stackoverflow.com/questions/9113328/java-regular-expression-need-to-escape-backslash-in-regex#:~:text=In%20short%2C%20you%20always%20need,as%20the%20escaped%20backslash%20character.)
 - Java break and continue: [w3schools](https://www.w3schools.com/java/java_break.asp)
 - Java exit program: [baeldung](https://www.baeldung.com/java-stop-running-code#:~:text=a%20flag%20variable.-,System.,an%20exit%20status%20of%200.&text=We%20terminate%20the%20program%20using%20System.)
-- MOSS explanation and understanding for write up: [github]{https://yangdanny97.github.io/blog/2019/05/03/MOSS}
-- Website to create DFAs: [madebyevan]{https://madebyevan.com/fsm/}
-- Test cases: [Labouseur.com and Gabriel Arnell]{https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html}
+- MOSS explanation and understanding for write up: [github](https://yangdanny97.github.io/blog/2019/05/03/MOSS)
+- Website to create DFAs: [madebyevan](https://madebyevan.com/fsm/)
+- Test cases: [Labouseur.com and Gabriel Arnell](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
