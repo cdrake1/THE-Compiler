@@ -116,7 +116,7 @@ public class Lexer {
 
             //throws error if quote/string spans multiple lines
             if(inQuotes && !multiLineQuoteError){
-                lexerLog("ERROR! STRING SPANNING MULTIPLE LINES");
+                lexerLog("ERROR! UNCLOSED QUOTE SPANNING MULTIPLE LINES");
                 errorCount++;
                 multiLineQuoteError = true;
             }
