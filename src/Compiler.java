@@ -25,6 +25,7 @@ public class Compiler {
         */
         lexer.readInput(textFile);
         System.out.println("Powering on the LEXER...");
+        System.out.println("Powering on the PARSER...\n");
         lexer.scanner();
       }
       else{

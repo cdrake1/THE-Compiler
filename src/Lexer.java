@@ -76,6 +76,12 @@ public class Lexer {
         }
     }
 
+    //when called passes the token stream of the current program to the parser.
+    private void callParse(){
+        Parser parser = new Parser();
+        parser.parseProgram(tokenStream);
+    }
+
     //outputs the results of the lexer. Also outputs warnings and errors
     private void lexerLog(String output){
         System.out.println("LEXER - " + output);
@@ -224,6 +230,8 @@ public class Lexer {
                             //if statement to check if lexing was successful
                             if(errorCount == 0 && endOfProgram){
                                 lexerLog("Lexical Analysis Complete... " + "Warnings: " + warningCount + " Errors: " + errorCount);
+                                System.out.print("\n");
+                                callParse();    //call parse if lex passes successfully
                             }
                             else{
                                 lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
