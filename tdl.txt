@@ -1,0 +1,7 @@
+TDL for project 2 - Parser
+
+- understand match more
+- learn more about LL1 and top down parsing
+- get current or get next or both?
+- make sure the way you are passing info from lexer and starting parsing is proper
+- what other variables are needed

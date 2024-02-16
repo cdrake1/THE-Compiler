@@ -5,16 +5,20 @@
     Uses recursive descent
 */
 
-//import necessary packages
+//import arraylist
 import java.util.ArrayList;
 
 //Collin Drakes Parser
 public class Parser{
+    ArrayList<Token> tokenStream;   //the current token stream
+    int tokenStreamIndex; //keeps track of current position within the token stream
     int parseError; //counts the number of parse errors
     int parseWarnings;   //counts the number of parse warnings
 
     //creates a parser and initializes all variables. We are prepared to start parsing!
-    public Parser(){
+    public Parser(ArrayList<Token> programTokenStream){
+        this.tokenStream = programTokenStream;
+        this.tokenStreamIndex = 0;
         this.parseError = 0;
         this.parseWarnings = 0;
     }
@@ -24,24 +28,39 @@ public class Parser{
         System.out.println("PARSER - " + output);
     }
 
-    //calls the other functions to parse the tokenstream and build out the CST
-    public void parseTokenStream(ArrayList<Token> programTokenStream){}
+    //returns the next token in the token stream
+    public Token getNextToken(){
+        return tokenStream.get(tokenStreamIndex);
+    }
+    public Token getCurrentToken(){}    //not sure if needed
+
+
+    ////programs and match below
 
     //parse program
-    private void parseProgram(){
+    public void parseProgram(){
         parserLog("Parsing program");
         parseBlock();
-        match();
+        match(); //passes in expected token
     }
 
     //parse block
     private void parseBlock(){
+        match();
+        parseStatementList();
         match();
     }
 
     //parse statement list
     private void parseStatementList(){
         match();
+        if(){
+            parseStatement();
+            parseStatementList();
+        }
+        else{
+            
+        }
     }
 
     //parse statement
@@ -141,5 +160,5 @@ public class Parser{
     }
 
     //matches and consumes tokens
-    private void match(){}
+    private void match(Token expectedToken){}
 }
