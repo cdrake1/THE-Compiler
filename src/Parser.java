@@ -2,7 +2,7 @@
     Parser file
     Takes a stream of tokens as an input and creates and Concrete Syntax Tree (Parse tree)
     "Takes tokens and groups them into phrases according to the syntax specification"
-    Uses recursive descent
+    Uses recursive descent, LL1, and top down parsing
 */
 
 //import arraylist
@@ -11,6 +11,8 @@ import java.util.ArrayList;
 //Collin Drakes Parser
 public class Parser{
     ArrayList<Token> tokenStream;   //the current token stream
+    Token currentToken; //the current token we are on
+    Token nextToken;    //the next token in the stream
     int tokenStreamIndex; //keeps track of current position within the token stream
     int parseError; //counts the number of parse errors
     int parseWarnings;   //counts the number of parse warnings
@@ -28,137 +30,161 @@ public class Parser{
         System.out.println("PARSER - " + output);
     }
 
-    //returns the next token in the token stream
+    //returns the current token in the token stream
     public Token getNextToken(){
         return tokenStream.get(tokenStreamIndex);
     }
-    public Token getCurrentToken(){}    //not sure if needed
 
-
-    ////programs and match below
+    //returns the next token in the token stream
+    public Token getCurrentToken(){
+        return tokenStream.get(tokenStreamIndex+1);
+    }
 
     //parse program
     public void parseProgram(){
         parserLog("Parsing program");
         parseBlock();
-        match(); //passes in expected token
+        match("$"); //passes in expected token
     }
 
     //parse block
     private void parseBlock(){
-        match();
+        match("{");
         parseStatementList();
-        match();
+        match("}");
     }
 
     //parse statement list
     private void parseStatementList(){
-        match();
-        if(){
-            parseStatement();
-            parseStatementList();
-        }
-        else{
-            
-        }
+        //switch case or if statement?
     }
 
     //parse statement
     private void parseStatement(){
-        match();
+        //switch case or if statement?
     }
 
     //parse print statement
     private void parsePrintStatement(){
-        match();
+        match("print");
+        match("(");
+        parseExpr();
+        match(")");
     }
 
     //parse assignment statement
     private void parseAssignmentStatement(){
-        match();
+        parseID();
+        match("=");
+        parseExpr();
     }
 
     //parse variable declaration
     private void parseVarDecl(){
-        match();
+        parseType();
+        parseID();
     }
 
     //parse while statement
     private void parseWhileStatement(){
-        match();
+        match("while");
+        parseBooleanExpr();
+        parseBlock();
     }
 
     //parse if statement
     private void parseIfStatement(){
-        match();
+        match("if");
+        parseBooleanExpr();
+        parseBlock();
     }
 
     //parse expression
     private void parseExpr(){
-        match();
+        //switch case or if statement?
     }
 
     //parse int expression
     private void parseIntExpr(){
-        match();
+        //switch case or if statement?
     }
 
     //parse string expression
     private void parseStringExpr(){
-        match();
+        match("\"");
+        parseCharList();
+        match("\"");
     }
 
     //parse boolean expression
     private void parseBooleanExpr(){
-        match();
+        //switch case or if statement?
     }
 
     //parse ID
     private void parseID(){
-        match();
+        //switch case or if statement?
+        //always call match with char? 
     }
 
     //parse charlist: char, space, Empty statement
     private void parseCharList(){
         //switch or if to check if char space or empty
-        match();
     }
 
     //parse types: int, string, bool
     private void parseType(){
-        match();
+        //switch case or if statement?
+        //always call match with types?
     }
 
     //parse chars a-z
     private void parseChar(){
-        match();
+        //switch case or if statement?
+        //always call match with char?
     }
 
     //parse whitespace
     private void parseSpace(){
-        match();
+        match(" ");
     }
 
     //parse digits 0-9
     private void parseDigit(){
-        match();
+        //switch case or if statement?
+        //always call match with digit? 
     }
 
     //parse bool operators
     private void parseBoolOp(){
-        match();
+        //switch case or if statement?
+        //always call match with bool op? 
     }
 
     //parse bool values
     private void parseBoolVal(){
-        match();
+        //switch case or if statement?
+        //always call match with char? 
     }
 
     //parse add op (+)
     private void parseIntOp(){
-        match();
+        match("+");
     }
 
     //matches and consumes tokens
-    private void match(Token expectedToken){}
+    private void match(String expectedToken){
+
+        //check if the current token is equal to the expected
+        if(currentToken.lexeme.equals(expectedToken)){
+
+            //if equal consume and increment index
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
+            nextToken = getNextToken();
+        }
+        else{
+            //throw error if it doesnt match
+        }
+    }
 }
