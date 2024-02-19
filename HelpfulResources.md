@@ -25,3 +25,5 @@ Each reference will be listed below along with where it was used and how it help
 - Test cases: [Labouseur.com and Gabriel Arnell](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
 
 ## Parser Resources
+
+- Multiple switch cases for the same result: [stackoverflow](https://stackoverflow.com/questions/5086322/java-switch-statement-multiple-cases)

@@ -50,8 +50,9 @@ public class Parser{
 
     //parse statement list
     private void parseStatementList(){
-        //switch case or if statement?
-        if(currentToken.lexeme.equals("print")){
+
+        //check if there are still tokens left
+        if(!tokenStream.isEmpty()){
             parseStatement();
             parseStatementList();
         }
@@ -63,9 +64,8 @@ public class Parser{
 
     //parse statement
     private void parseStatement(){
-        //switch case or if statement?
 
-        //change to if?
+        //check token to determine what function to call
         switch (currentToken.tokenType) {
             case "PRINT":
                 parsePrintStatement();
@@ -73,7 +73,9 @@ public class Parser{
             case "ID":
                 parseAssignmentStatement();
                 break;
-            case "print":
+            case "TYPE_INT":
+            case "TYPE_STRING":
+            case "TYPE_BOOLEAN":
                 parseVarDecl();
                 break;
             case "WHILE":
@@ -82,11 +84,9 @@ public class Parser{
             case "IF":
                 parseIfStatement();
                 break;
-            case "{":
+            case "OPENING_BRACE":
                 parseBlock();
                 break;
-        
-            
         }
     }
 
@@ -127,12 +127,36 @@ public class Parser{
 
     //parse expression
     private void parseExpr(){
-        //switch case or if statement?
+
+        //check token to determine what function to call
+        switch (currentToken.tokenType) {
+            case "DIGIT":
+                parseIntExpr();
+                break;
+            case "QUOTE":
+                parseStringExpr();
+                break;
+            case "OPENING_PARENTHESIS":
+                parseBooleanExpr();
+                break;
+            case "ID":
+                parseID();
+                break;
+        }
     }
 
     //parse int expression
     private void parseIntExpr(){
-        //switch case or if statement?
+
+        //check if next token is '+'
+        if(tokenStream.get(tokenStreamIndex+1).tokenType.equals("ADD")){
+            parseDigit();
+            parseIntOp();
+            parseExpr();
+        }
+        else{
+            parseDigit();
+        }
     }
 
     //parse string expression
@@ -144,18 +168,38 @@ public class Parser{
 
     //parse boolean expression
     private void parseBooleanExpr(){
-        //switch case or if statement?
+        if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
+            match("(");
+            parseExpr();
+            parseBoolOp();
+            parseExpr();
+            match(")");
+        }
+        else{
+            parseBoolVal();
+        }
     }
 
     //parse ID
     private void parseID(){
-        //switch case or if statement?
-        //always call match with char? 
+        parseChar();
     }
 
     //parse charlist: char, space, Empty statement
     private void parseCharList(){
         //switch or if to check if char space or empty
+        if(currentToken.tokenType.equals("CHAR")){
+            parseChar();
+            parseCharList();
+        }
+        else if(currentToken.tokenType.equals("WHITESPACE")){
+            parseSpace();
+            parseCharList();
+        }
+        else{
+            //do nothing
+            //epsilon case
+        }
     }
 
     //parse types: int, string, bool
