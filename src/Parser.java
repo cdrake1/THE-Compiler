@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class Parser{
     ArrayList<Token> tokenStream;   //the current token stream
     Token currentToken; //the current token we are on
-    Token nextToken;    //the next token in the stream
     int tokenStreamIndex; //keeps track of current position within the token stream
     int parseError; //counts the number of parse errors
     int parseWarnings;   //counts the number of parse warnings
@@ -30,14 +29,9 @@ public class Parser{
         System.out.println("PARSER - " + output);
     }
 
-    //returns the current token in the token stream
-    public Token getNextToken(){
-        return tokenStream.get(tokenStreamIndex);
-    }
-
     //returns the next token in the token stream
     public Token getCurrentToken(){
-        return tokenStream.get(tokenStreamIndex+1);
+        return tokenStream.get(tokenStreamIndex);
     }
 
     //parse program
@@ -57,11 +51,43 @@ public class Parser{
     //parse statement list
     private void parseStatementList(){
         //switch case or if statement?
+        if(currentToken.lexeme.equals("print")){
+            parseStatement();
+            parseStatementList();
+        }
+        else{
+            //do nothing
+            //epsilon case
+        }
     }
 
     //parse statement
     private void parseStatement(){
         //switch case or if statement?
+
+        //change to if?
+        switch (currentToken.tokenType) {
+            case "PRINT":
+                parsePrintStatement();
+                break;
+            case "ID":
+                parseAssignmentStatement();
+                break;
+            case "print":
+                parseVarDecl();
+                break;
+            case "WHILE":
+                parseWhileStatement();
+                break;
+            case "IF":
+                parseIfStatement();
+                break;
+            case "{":
+                parseBlock();
+                break;
+        
+            
+        }
     }
 
     //parse print statement
@@ -181,7 +207,6 @@ public class Parser{
             //if equal consume and increment index
             tokenStreamIndex++;
             currentToken = getCurrentToken();
-            nextToken = getNextToken();
         }
         else{
             //throw error if it doesnt match
