@@ -13,14 +13,14 @@ public class Parser{
     ArrayList<Token> tokenStream;   //the current token stream
     Token currentToken; //the current token we are on
     int tokenStreamIndex; //keeps track of current position within the token stream
-    int parseError; //counts the number of parse errors
+    int parseErrors; //counts the number of parse errors
     int parseWarnings;   //counts the number of parse warnings
 
     //creates a parser and initializes all variables. We are prepared to start parsing!
     public Parser(ArrayList<Token> programTokenStream){
         this.tokenStream = programTokenStream;
         this.tokenStreamIndex = 0;
-        this.parseError = 0;
+        this.parseErrors = 0;
         this.parseWarnings = 0;
     }
 
@@ -204,14 +204,12 @@ public class Parser{
 
     //parse types: int, string, bool
     private void parseType(){
-        //switch case or if statement?
-        //always call match with types?
+        matchKind();
     }
 
     //parse chars a-z
     private void parseChar(){
-        //switch case or if statement?
-        //always call match with char?
+        matchKind();
     }
 
     //parse whitespace
@@ -221,20 +219,17 @@ public class Parser{
 
     //parse digits 0-9
     private void parseDigit(){
-        //switch case or if statement?
-        //always call match with digit? 
+        matchKind(); 
     }
 
     //parse bool operators
     private void parseBoolOp(){
-        //switch case or if statement?
-        //always call match with bool op? 
+        matchKind();
     }
 
     //parse bool values
     private void parseBoolVal(){
-        //switch case or if statement?
-        //always call match with char? 
+        matchKind();
     }
 
     //parse add op (+)
@@ -256,4 +251,7 @@ public class Parser{
             //throw error if it doesnt match
         }
     }
+
+    //matches and consumes tokens when expected token is a range.... ie CHAR, ID
+    private void matchKind(){}
 }
