@@ -44,11 +44,9 @@ public class Parser{
     }
 
     public void test(){
-        System.out.println("hello");
         for(int i = 0; i < tokenStream.size(); i++){
-            System.out.println("hello");
             System.out.println(tokenStream.get(i).tokenType);
-            System.out.println(tokenStream.get(i).position);
+            System.out.println(tokenStream.get(i).lexeme);
         }
         
         
