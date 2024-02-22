@@ -5,8 +5,10 @@
     Uses recursive descent, LL1, and top down parsing
 */
 
-//import arraylist
+//import arraylist, list, arrays
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 //Collin Drakes Parser
 public class Parser{
@@ -16,12 +18,30 @@ public class Parser{
     int parseErrors; //counts the number of parse errors
     int parseWarnings;   //counts the number of parse warnings
 
+    //expected lists of tokens
+    List<String> expectedType;
+    List<String> expectedChar;
+    List<String> expectedDigit;
+    List<String> expectedBoolOp;
+    List<String> expectedBoolVal;
+
     //creates a parser and initializes all variables. We are prepared to start parsing!
     public Parser(ArrayList<Token> programTokenStream){
+        System.out.println("Hello World");
         this.tokenStream = programTokenStream;
         this.tokenStreamIndex = 0;
         this.parseErrors = 0;
         this.parseWarnings = 0;
+
+        //initialize expected lists
+        expectedType = Arrays.asList("string", "int", "boolean");
+        expectedChar = new ArrayList<>();
+        for(char c = 'a'; c <= 'z'; c++){
+            expectedChar.add(String.valueOf(c));
+        }
+        expectedDigit = Arrays.asList("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+        expectedBoolOp = Arrays.asList("==", "!=");
+        expectedBoolVal = Arrays.asList("true", "false");
     }
 
     //outputs the results of the parser. Also outputs warnings and errors...
@@ -29,7 +49,7 @@ public class Parser{
         System.out.println("PARSER - " + output);
     }
 
-    //returns the next token in the token stream
+    //returns the current token in the token stream
     public Token getCurrentToken(){
         return tokenStream.get(tokenStreamIndex);
     }
@@ -137,6 +157,8 @@ public class Parser{
                 parseStringExpr();
                 break;
             case "OPENING_PARENTHESIS":
+            case "BOOL_TRUE":
+            case "BOOL_FALSE":
                 parseBooleanExpr();
                 break;
             case "ID":
@@ -204,12 +226,12 @@ public class Parser{
 
     //parse types: int, string, bool
     private void parseType(){
-        matchKind();
+        matchKind(expectedType);
     }
 
     //parse chars a-z
     private void parseChar(){
-        matchKind();
+        matchKind(expectedChar);
     }
 
     //parse whitespace
@@ -219,17 +241,17 @@ public class Parser{
 
     //parse digits 0-9
     private void parseDigit(){
-        matchKind(); 
+        matchKind(expectedDigit); 
     }
 
     //parse bool operators
     private void parseBoolOp(){
-        matchKind();
+        matchKind(expectedBoolOp);
     }
 
     //parse bool values
     private void parseBoolVal(){
-        matchKind();
+        matchKind(expectedBoolVal);
     }
 
     //parse add op (+)
@@ -248,10 +270,24 @@ public class Parser{
             currentToken = getCurrentToken();
         }
         else{
+
             //throw error if it doesnt match
+            parseErrors++;
         }
     }
 
     //matches and consumes tokens when expected token is a range.... ie CHAR, ID
-    private void matchKind(){}
+    private void matchKind(List<String> expectedTokens){
+        if(expectedTokens.contains(currentToken.lexeme)){
+
+            //if equal consume and increment index
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
+        }
+        else{
+
+            //throw error if it doesnt match
+            parseErrors++;
+        }
+    }
 }
