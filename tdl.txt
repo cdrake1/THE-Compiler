@@ -12,3 +12,9 @@ TDL for project 2 - Parser
 - make sure the way you are passing info from lexer and starting parsing is proper
 - what other variables are needed
 - passing null to match?
+
+
+--- have to figure out how to build parser alongside compiler. or change readme?
+- parser not being built when running in command line.
+- fix null pointer
+- temp  is temporary holding parser functions
