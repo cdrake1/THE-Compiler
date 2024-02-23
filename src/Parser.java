@@ -17,6 +17,7 @@ public class Parser{
     int tokenStreamIndex; //keeps track of current position within the token stream
     int parseErrors; //counts the number of parse errors
     int parseWarnings;   //counts the number of parse warnings
+    int programCounter = 1; //counts programs
 
     //expected lists of tokens
     List<String> expectedType;
@@ -56,6 +57,8 @@ public class Parser{
 
     //parse program
     public void parseProgram(){
+        programCounter++;
+        parserLog("Parsing program " + programCounter);
         parserLog("Parsing program");
         parseBlock();
         match("$"); //passes in expected token
@@ -74,7 +77,7 @@ public class Parser{
         parserLog("Parsing statement list");
 
         //check if there are still tokens left
-        if(!tokenStream.isEmpty()){
+        if(!currentToken.lexeme.equals("}")){
             parseStatement();
             parseStatementList();
         }
@@ -304,7 +307,9 @@ public class Parser{
 
             //if equal consume and increment index
             tokenStreamIndex++;
-            currentToken = getCurrentToken();
+            if(tokenStreamIndex < tokenStream.size()){
+                currentToken = getCurrentToken();
+            }
         }
         else{
 
@@ -317,9 +322,11 @@ public class Parser{
     private void matchKind(List<String> expectedTokens){
         if(expectedTokens.contains(currentToken.lexeme)){
 
-            //if equal consume and increment index
-            tokenStreamIndex++;
-            currentToken = getCurrentToken();
+           //if equal consume and increment index
+           tokenStreamIndex++;
+           if(tokenStreamIndex < tokenStream.size()){
+               currentToken = getCurrentToken();
+           }
         }
         else{
 

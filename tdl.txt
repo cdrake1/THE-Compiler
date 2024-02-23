@@ -1,18 +1,9 @@
 TDL for project 2 - Parser
 
-- build out functions using if or switch case statements
+- add comments
 - finish match function
 - test
+- build out node functions
 - build out cst functions
 - implement cst into other functions
 - test
-
-
-- learn more about LL1 and top down parsing
-- make sure the way you are passing info from lexer and starting parsing is proper
-- what other variables are needed
-- passing null to match?
-
-
-- fix null pointer
-- temp  is temporary holding parser functions
