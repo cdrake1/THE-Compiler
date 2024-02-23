@@ -79,7 +79,7 @@ public class Lexer {
     //when called passes the token stream of the current program to the parser.
     private void callParse(){
         Parser parser = new Parser(tokenStream);
-        parser.test();
+        parser.parseProgram();
     }
 
     //outputs the results of the lexer. Also outputs warnings and errors
