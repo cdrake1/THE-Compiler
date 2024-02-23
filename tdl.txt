@@ -14,7 +14,5 @@ TDL for project 2 - Parser
 - passing null to match?
 
 
---- have to figure out how to build parser alongside compiler. or change readme?
-- parser not being built when running in command line.
 - fix null pointer
 - temp  is temporary holding parser functions
