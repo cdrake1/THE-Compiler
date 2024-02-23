@@ -18,7 +18,7 @@ To build and run THECompiler follow these steps:
 
 1. Open a command line interface on your machine (terminal, command prompt, etc).
 2. Navigate to the **"src"** folder of THECompiler using the **"cd"** command
-3. Build the compiler by executing the following command: **"javac //*.java"**
+3. Build the compiler by executing the following command: **"javac \*.java"**
 4. Run THECompiler with the following command: **"java Compiler"**
 5. Now you should see a welcome message indicating that the compiler is running!
 6. If you are attempting to compile code, ensure it is in a text file located within the same directory as the compiler's entry point: **"Compiler.java"**
