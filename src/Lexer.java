@@ -78,7 +78,7 @@ public class Lexer {
 
     //when called passes the token stream of the current program to the parser.
     private void callParse(){
-        Parser parser = new Parser(tokenStream);
+        Parser parser = new Parser(tokenStream, programCounter - 1);
         parser.parseProgram();
     }
 

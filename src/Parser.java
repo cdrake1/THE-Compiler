@@ -16,8 +16,7 @@ public class Parser{
     Token currentToken; //the current token we are on
     int tokenStreamIndex; //keeps track of current position within the token stream
     int parseErrors; //counts the number of parse errors
-    int parseWarnings;   //counts the number of parse warnings
-    int programCounter = 1; //counts programs
+    int programCounter; //counts programs
 
     //expected lists of tokens
     List<String> expectedType;
@@ -27,12 +26,12 @@ public class Parser{
     List<String> expectedBoolVal;
 
     //creates a parser and initializes all variables. We are prepared to start parsing!
-    public Parser(ArrayList<Token> programTokenStream){
+    public Parser(ArrayList<Token> programTokenStream, int programCounter){
         this.tokenStream = programTokenStream;
         this.currentToken = tokenStream.get(0);
         this.tokenStreamIndex = 0;
         this.parseErrors = 0;
-        this.parseWarnings = 0;
+        this.programCounter = programCounter;
 
         //initialize expected lists
         expectedType = Arrays.asList("string", "int", "boolean");
@@ -57,7 +56,6 @@ public class Parser{
 
     //parse program
     public void parseProgram(){
-        programCounter++;
         parserLog("Parsing program " + programCounter);
         parserLog("Parsing program");
         parseBlock();
@@ -119,7 +117,6 @@ public class Parser{
     //parse print statement
     private void parsePrintStatement(){
         parserLog("Parsing print statement");
-
         match("print");
         match("(");
         parseExpr();
@@ -129,7 +126,6 @@ public class Parser{
     //parse assignment statement
     private void parseAssignmentStatement(){
         parserLog("Parsing assignment statement");
-
         parseID();
         match("=");
         parseExpr();
@@ -138,7 +134,6 @@ public class Parser{
     //parse variable declaration
     private void parseVarDecl(){
         parserLog("Parsing variable declaration");
-
         parseType();
         parseID();
     }
@@ -146,7 +141,6 @@ public class Parser{
     //parse while statement
     private void parseWhileStatement(){
         parserLog("Parsing while statement");
-
         match("while");
         parseBooleanExpr();
         parseBlock();
@@ -155,7 +149,6 @@ public class Parser{
     //parse if statement
     private void parseIfStatement(){
         parserLog("Parsing if statement");
-
         match("if");
         parseBooleanExpr();
         parseBlock();
@@ -202,7 +195,6 @@ public class Parser{
     //parse string expression
     private void parseStringExpr(){
         parserLog("Parsing string expression");
-
         match("\"");
         parseCharList();
         match("\"");
@@ -212,6 +204,7 @@ public class Parser{
     private void parseBooleanExpr(){
         parserLog("Parsing boolean expression");
 
+        //check token to determine where to go
         if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
             match("(");
             parseExpr();
@@ -227,7 +220,6 @@ public class Parser{
     //parse ID
     private void parseID(){
         parserLog("Parsing ID");
-
         parseChar();
     }
 
@@ -253,49 +245,42 @@ public class Parser{
     //parse types: int, string, bool
     private void parseType(){
         parserLog("Parsing type");
-
         matchKind(expectedType);
     }
 
     //parse chars a-z
     private void parseChar(){
         parserLog("Parsing char");
-        
         matchKind(expectedChar);
     }
 
     //parse whitespace
     private void parseSpace(){
         parserLog("Parsing whitespace");
-        
         match(" ");
     }
 
     //parse digits 0-9
     private void parseDigit(){
         parserLog("Parsing digit");
-
         matchKind(expectedDigit); 
     }
 
     //parse bool operators
     private void parseBoolOp(){
         parserLog("Parsing boolean operation");
-
         matchKind(expectedBoolOp);
     }
 
     //parse bool values
     private void parseBoolVal(){
         parserLog("Parsing boolean value");
-
         matchKind(expectedBoolVal);
     }
 
     //parse add op (+)
     private void parseIntOp(){
         parserLog("Parsing int operation");
-
         match("+");
     }
 
@@ -315,11 +300,14 @@ public class Parser{
 
             //throw error if it doesnt match
             parseErrors++;
+            parserLog("ERROR! EXPECTED: " + expectedToken  + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);
         }
     }
 
     //matches and consumes tokens when expected token is a range.... ie CHAR, ID
     private void matchKind(List<String> expectedTokens){
+
+        //check if the current token is within the list of expected tokens
         if(expectedTokens.contains(currentToken.lexeme)){
 
            //if equal consume and increment index
@@ -332,6 +320,8 @@ public class Parser{
 
             //throw error if it doesnt match
             parseErrors++;
+            String expected = expectedTokens.toString();
+            parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);  
         }
     }
 }
