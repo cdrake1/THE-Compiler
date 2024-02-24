@@ -1,11 +1,11 @@
 /*
     Parser file
-    Takes a stream of tokens as an input and creates and Concrete Syntax Tree (Parse tree)
+    Takes a stream of tokens as an input and creates a Concrete Syntax Tree (Parse tree)
     "Takes tokens and groups them into phrases according to the syntax specification"
     Uses recursive descent, LL1, and top down parsing
 */
 
-//import arraylist, list, arrays
+//import arraylist, list, and arrays
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -56,7 +56,7 @@ public class Parser{
 
     //parse program
     public void parseProgram(){
-        parserLog("Parsing program " + programCounter);
+        parserLog("Parsing program " + programCounter); //output to update user on progress
         parserLog("Parsing program");
         parseBlock();
         match("$"); //passes in expected token
@@ -74,7 +74,7 @@ public class Parser{
     private void parseStatementList(){
         parserLog("Parsing statement list");
 
-        //check if there are still tokens left
+        //check if token matches end brace to determine what to call
         if(!currentToken.lexeme.equals("}")){
             parseStatement();
             parseStatementList();
@@ -89,7 +89,7 @@ public class Parser{
     private void parseStatement(){
         parserLog("Parsing statement");
 
-        //check token to determine what function to call
+        //check token type to determine what function to call
         switch (currentToken.tokenType) {
             case "PRINT":
                 parsePrintStatement();
@@ -158,7 +158,7 @@ public class Parser{
     private void parseExpr(){
         parserLog("Parsing expression");
 
-        //check token to determine what function to call
+        //check token type to determine what function to call
         switch (currentToken.tokenType) {
             case "DIGIT":
                 parseIntExpr();
@@ -204,7 +204,7 @@ public class Parser{
     private void parseBooleanExpr(){
         parserLog("Parsing boolean expression");
 
-        //check token to determine where to go
+        //check token type to determine what function to call
         if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
             match("(");
             parseExpr();
@@ -227,7 +227,7 @@ public class Parser{
     private void parseCharList(){
         parserLog("Parsing char list");
 
-        //switch or if to check if char space or empty
+        //check token type to determine what function to call
         if(currentToken.tokenType.equals("CHAR")){
             parseChar();
             parseCharList();
@@ -290,21 +290,26 @@ public class Parser{
         //check if the current token is equal to the expected
         if(currentToken.lexeme.equals(expectedToken)){
 
-            //if equal consume and increment index
+            //check if we are at the end of the program and if there were any errors
+            if(currentToken.lexeme.equals("$") && parseErrors == 0){
+                parserLog("Parsing completed successfully");
+            }
+
+            //if match passes consume and increment index
             tokenStreamIndex++;
             if(tokenStreamIndex < tokenStream.size()){
-                currentToken = getCurrentToken();
+                currentToken = getCurrentToken();   //update current token
             }
         }
         else{
 
-            //throw error if it doesnt match
+            //throw error if token doesnt match
             parseErrors++;
             parserLog("ERROR! EXPECTED: " + expectedToken  + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);
         }
     }
 
-    //matches and consumes tokens when expected token is a range.... ie CHAR, ID
+    //matches and consumes tokens when expected token is a range.... ie CHAR, ID, etc
     private void matchKind(List<String> expectedTokens){
 
         //check if the current token is within the list of expected tokens
@@ -313,12 +318,12 @@ public class Parser{
            //if equal consume and increment index
            tokenStreamIndex++;
            if(tokenStreamIndex < tokenStream.size()){
-               currentToken = getCurrentToken();
+               currentToken = getCurrentToken();    //update current token
            }
         }
         else{
 
-            //throw error if it doesnt match
+            //throw error if token doesnt match
             parseErrors++;
             String expected = expectedTokens.toString();
             parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);  
