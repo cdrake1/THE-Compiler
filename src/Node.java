@@ -8,8 +8,8 @@ import java.util.ArrayList;
 
 //The Node class!
 public class Node {
-    String name;    //The name of the node
-    Node parent;    //Pointer to the nodes parent
+    String name;    //the name of the node
+    Node parent;    //pointer to the nodes parent
     ArrayList<Node> children;   //list of pointers to child nodes
 
     //Node constructor -- creates a node and initializes its variables

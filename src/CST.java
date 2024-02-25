@@ -1,6 +1,7 @@
 /*
     Concrete Syntax tree file
     Creates CSTs to be used in Parse
+    Created with help from Alan G. Labouseur, Michael Ardizzone, and Tim Smith
 */
 
 //The CST class!
@@ -42,15 +43,35 @@ public class CST {
             current.children.add(newNode);
         }
 
-        //output that a node was added to the tree
-        CSTLog("Added " + label + "node");
-
         //if the new node is not a leaf node make it the current
         if(!kind.equals("leaf")){
             current = newNode;
         }
+        else{
+            
+            //output that a node was added to the tree
+            CSTLog("Added " + label + " node");
+        }
     }
 
     //traverses up the tree
-    public void moveUp(){}
+    public void moveUp(){
+
+        //move up to parent node if possible
+        if(this.current.parent != null && this.current.parent.name != null){
+            this.current = this.current.parent;
+        }
+        else{
+
+            // error logging
+            CSTLog("ERROR! There was an error when trying to move up the tree...");
+        }
+    }
+
+    //outputs the current programs CST if it parsed successfully
+    public void outputCST(){
+        
+        //initialize the CST output string
+        String traversal = "";
+    }
 }

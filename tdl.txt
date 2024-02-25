@@ -1,7 +1,5 @@
 TDL for project 2 - Parser
 
-- add and check comments
-- make sure match functions are built out properly
-- test parser functions -- seems to be an error
-- check node and cst files
-- integrate cst/node into parser
+- finish CST move up and output functions
+- check all comments
+- test parser

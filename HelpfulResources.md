@@ -28,3 +28,4 @@ Each reference will be listed below along with where it was used and how it help
 
 - Multiple switch cases for the same result: [stackoverflow](https://stackoverflow.com/questions/5086322/java-switch-statement-multiple-cases)
 - create lists from array: [geeks4geeks](https://www.geeksforgeeks.org/arrays-aslist-method-in-java-with-examples/)
+- CST and Node builds: [labouseur.com](https://www.labouseur.com/projects/jsTreeDemo/treeDemo.js)
