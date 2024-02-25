@@ -8,11 +8,13 @@
 public class CST {
     Node root;  //pointer to the root node
     Node current;   //pointer to the current node
+    String traversal;   //string to hold CST traversal
 
     //CST constructor -- creates a CST and initializes all variables
     public CST(){
         this.root = null;
         this.current = null;
+        traversal = "";
     }
 
     //outputs the processes completed within the CST
@@ -58,8 +60,8 @@ public class CST {
     public void moveUp(){
 
         //move up to parent node if possible
-        if(this.current.parent != null && this.current.parent.name != null){
-            this.current = this.current.parent;
+        if(current.parent != null){
+            current = current.parent;
         }
         else{
 
@@ -70,8 +72,32 @@ public class CST {
 
     //outputs the current programs CST if it parsed successfully
     public void outputCST(){
-        
-        //initialize the CST output string
-        String traversal = "";
+        expand(root, 0);
+        System.out.print("\n");
+        CSTLog("\n" + traversal);
+    }
+
+    public void expand(Node node, int depth){
+
+        //space nodes out based off of the current depth
+        for(int i = 0; i < depth; i++){
+            traversal += "-";
+        }
+
+        //if this node is a leaf node output the name
+        if(node.children.size() == 0){
+            traversal += "[" + node.name + "]";
+            traversal += "\n";
+        }
+        else{
+
+            //this node is not a leaf node
+            traversal += "<" + node.name + "> \n";
+
+            //recursion!!! -- call the next child and increment the depth
+            for(int j = 0; j < node.children.size(); j++){
+                expand(node.children.get(j), depth + 1);
+            }
+        }
     }
 }

@@ -1,5 +1,8 @@
 TDL for project 2 - Parser
 
-- finish CST move up and output functions
-- check all comments
 - test parser
+
+- three things in parse need attention - 
+    -- output and nodes for certain functions
+    -- lots of statementlists?
+    -- parse failing output in match...

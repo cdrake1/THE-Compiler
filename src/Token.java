@@ -10,7 +10,7 @@ public class Token {
     String position;
     String line;
     
-    //creating tokens!
+    //Token constructor -- creating tokens!
     public Token(String tType, String sCode, String line,String position){
         this.tokenType = tType;
         this.lexeme = sCode;

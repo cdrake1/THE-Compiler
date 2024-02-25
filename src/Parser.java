@@ -19,14 +19,14 @@ public class Parser{
     int programCounter; //counts programs
     CST cst;    //creates a concrete syntax tree
 
-    //expected lists of tokens
+    //lists of expected tokens
     List<String> expectedType;
     List<String> expectedChar;
     List<String> expectedDigit;
     List<String> expectedBoolOp;
     List<String> expectedBoolVal;
 
-    //creates a parser and initializes all variables. We are prepared to start parsing!
+    //Parser constructor -- creates a parser and initializes all variables. We are prepared to start parsing!
     public Parser(ArrayList<Token> programTokenStream, int programCounter){
         this.tokenStream = programTokenStream;
         this.currentToken = tokenStream.get(0);
@@ -46,7 +46,7 @@ public class Parser{
         expectedBoolVal = Arrays.asList("true", "false");
     }
 
-    //outputs the results of the parser. Also outputs warnings and errors...
+    //outputs the results of the parser. Also outputs errors...
     private void parserLog(String output){
         System.out.println("PARSER - " + output);
     }
@@ -60,9 +60,9 @@ public class Parser{
     public void parseProgram(){
         parserLog("Parsing program " + programCounter); //output to update user on progress
         cst.addNode("root", "Program"); //create tree node
-        parserLog("Parsing program");
-        parseBlock();
-        match("$"); //passes in expected token
+        parserLog("Parsing program");   //log for function
+        parseBlock();   //call next function
+        match("$"); //passes in expected token to match and consume
     }
 
     //parse block
@@ -72,6 +72,7 @@ public class Parser{
         match("{");
         parseStatementList();
         match("}");
+        cst.moveUp();   //move up the tree
     }
 
     //parse statement list
@@ -79,7 +80,7 @@ public class Parser{
         parserLog("Parsing statement list");
         cst.addNode("branch", "Statement list");
 
-        //check if token matches end brace to determine what to call
+        //check if token matches '}' to determine what to call
         if(!currentToken.lexeme.equals("}")){
             parseStatement();
             parseStatementList();
@@ -88,6 +89,7 @@ public class Parser{
             //do nothing
             //epsilon case
         }
+        cst.moveUp();
     }
 
     //parse statement
@@ -118,6 +120,7 @@ public class Parser{
                 parseBlock();
                 break;
         }
+        cst.moveUp();
     }
 
     //parse print statement
@@ -128,6 +131,7 @@ public class Parser{
         match("(");
         parseExpr();
         match(")");
+        cst.moveUp();
     }
 
     //parse assignment statement
@@ -137,6 +141,7 @@ public class Parser{
         parseID();
         match("=");
         parseExpr();
+        cst.moveUp();
     }
 
     //parse variable declaration
@@ -145,6 +150,7 @@ public class Parser{
         cst.addNode("branch", "Variable declaration");
         parseType();
         parseID();
+        cst.moveUp();
     }
 
     //parse while statement
@@ -154,6 +160,7 @@ public class Parser{
         match("while");
         parseBooleanExpr();
         parseBlock();
+        cst.moveUp();
     }
 
     //parse if statement
@@ -163,6 +170,7 @@ public class Parser{
         match("if");
         parseBooleanExpr();
         parseBlock();
+        cst.moveUp();
     }
 
     //parse expression
@@ -187,6 +195,7 @@ public class Parser{
                 parseID();
                 break;
         }
+        cst.moveUp();
     }
 
     //parse int expression
@@ -203,6 +212,7 @@ public class Parser{
         else{
             parseDigit();
         }
+        cst.moveUp();
     }
 
     //parse string expression
@@ -212,6 +222,7 @@ public class Parser{
         match("\"");
         parseCharList();
         match("\"");
+        cst.moveUp();
     }
 
     //parse boolean expression
@@ -230,6 +241,7 @@ public class Parser{
         else{
             parseBoolVal();
         }
+        cst.moveUp();
     }
 
     //parse ID
@@ -237,6 +249,7 @@ public class Parser{
         parserLog("Parsing ID");
         cst.addNode("branch", "ID");
         parseChar();
+        cst.moveUp();
     }
 
     //parse charlist: char, space, Empty statement
@@ -257,13 +270,17 @@ public class Parser{
             //do nothing
             //epsilon case
         }
+        cst.moveUp();
     }
+
+    // DO I CREATE NODES FOR THE FUNCTIONS BELOW?? --------------------
 
     //parse types: int, string, bool
     private void parseType(){
         parserLog("Parsing type");
         cst.addNode("branch", "Type");
         matchKind(expectedType);
+        cst.moveUp();
     }
 
     //parse chars a-z
@@ -271,6 +288,7 @@ public class Parser{
         parserLog("Parsing char");
         cst.addNode("branch", "Char");
         matchKind(expectedChar);
+        cst.moveUp();
     }
 
     //parse whitespace
@@ -278,13 +296,15 @@ public class Parser{
         parserLog("Parsing whitespace");
         cst.addNode("branch", "Whitespace");
         match(" ");
+        cst.moveUp();
     }
 
     //parse digits 0-9
     private void parseDigit(){
         parserLog("Parsing digit");
         cst.addNode("branch", "Digit");
-        matchKind(expectedDigit); 
+        matchKind(expectedDigit);
+        cst.moveUp();
     }
 
     //parse bool operators
@@ -292,6 +312,7 @@ public class Parser{
         parserLog("Parsing boolean operation");
         cst.addNode("branch", "Boolean operator");
         matchKind(expectedBoolOp);
+        cst.moveUp();
     }
 
     //parse bool values
@@ -299,6 +320,7 @@ public class Parser{
         parserLog("Parsing boolean value");
         cst.addNode("branch", "Boolean value");
         matchKind(expectedBoolVal);
+        cst.moveUp();
     }
 
     //parse add op (+)
@@ -306,6 +328,7 @@ public class Parser{
         parserLog("Parsing int operation");
         cst.addNode("branch", "Int operation");
         match("+");
+        cst.moveUp();
     }
 
     //matches and consumes tokens
@@ -321,6 +344,9 @@ public class Parser{
             if(currentToken.lexeme.equals("$") && parseErrors == 0){
                 parserLog("Parsing Complete... Errors: " + parseErrors);
                 cst.outputCST();
+            }
+            else if(currentToken.lexeme.equals("$") && parseErrors > 0){    //not sure if I need?
+                parserLog("Parsing Failed... Errors: " + parseErrors);
             }
 
             //if match passes consume and increment index
