@@ -1,8 +1,5 @@
 TDL for project 2 - Parser
 
 - test parser
-
-- three things in parse need attention - 
-    -- output and nodes for certain functions
-    -- lots of statementlists?
-    -- parse failing output in match...
+- create output/fix for when parser fails -- done. now make sure works properly
+- spacing for output

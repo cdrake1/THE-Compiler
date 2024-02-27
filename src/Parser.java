@@ -273,8 +273,6 @@ public class Parser{
         cst.moveUp();
     }
 
-    // DO I CREATE NODES FOR THE FUNCTIONS BELOW?? --------------------
-
     //parse types: int, string, bool
     private void parseType(){
         parserLog("Parsing type");
@@ -345,8 +343,9 @@ public class Parser{
                 parserLog("Parsing Complete... Errors: " + parseErrors);
                 cst.outputCST();
             }
-            else if(currentToken.lexeme.equals("$") && parseErrors > 0){    //not sure if I need?
+            else if(currentToken.lexeme.equals("$") && parseErrors > 0){
                 parserLog("Parsing Failed... Errors: " + parseErrors);
+                cst.CSTLog("Skipped due to Parse errors");
             }
 
             //if match passes consume and increment index
@@ -360,6 +359,12 @@ public class Parser{
             //throw error if token doesnt match
             parseErrors++;
             parserLog("ERROR! EXPECTED: " + expectedToken  + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);
+
+            //error outputting if we are expecting EOP, but current is incorrect
+            if(expectedToken.equals("$") && parseErrors > 0){
+                parserLog("Parsing Failed... Errors: " + parseErrors);
+                cst.CSTLog("Skipped due to Parse errors...");
+            }
         }
     }
 
