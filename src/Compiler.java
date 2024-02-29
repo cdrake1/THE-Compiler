@@ -17,19 +17,31 @@ public class Compiler {
       {
         //file handling and lexer initialization. Keep user updated on what happens and keeping naming obvious
         String textFile = args[0];
-        System.out.println("Processing file: " + textFile);
+        compilerLog("Processing file: " + textFile);
         /*
           output to user
           call readfile to read the input text file into a string
           call scanner to the lex the input file
         */
-        lexer.readInput(textFile);
-        System.out.println("Powering on the LEXER...");
-        System.out.println("Powering on the PARSER...\n");
-        lexer.scanner();
+        try{
+          lexer.readInput(textFile);
+          compilerLog("Powering on the LEXER...");
+          compilerLog("Powering on the PARSER...\n");
+          lexer.scanner();
+        }
+        catch(Exception e){ //catch exceptions and output errors
+          compilerLog("Parsing Failed...");
+          compilerLog("CST skipped due to Parse errors");
+        }
       }
       else{
-        System.out.println("No program found. Please provide a command line argument to the compiler.");
+        //output error if no argument is provided
+        compilerLog("No program found. Please provide a command line argument to the compiler.");
       }
+    }
+
+    //log function -- outputs errors and information
+    static void compilerLog(String output){
+      System.out.println("COMPILER - " + output);
     }
 }

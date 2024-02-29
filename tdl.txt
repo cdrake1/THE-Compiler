@@ -1,5 +1,4 @@
 TDL for project 2 - Parser
 
-- test parser --  found 2 error locations
-- find out how to break out of recursion
+- test parser more
 - spacing for output

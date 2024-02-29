@@ -120,12 +120,9 @@ public class Parser{
                 parseBlock();
                 break;
             default:
+                //match expected and throw exception to break out of recursion
                 match("}");
-                //how to break out of recursion
-
-                
-                return;
-
+                throw new RuntimeException();
         }
         cst.moveUp();
     }
@@ -202,11 +199,9 @@ public class Parser{
                 parseID();
                 break;
             default:
-               match("");
-                //how to break out of recursion
-
-
-                break;
+                //match one of the expected and throw exception to break out of recursion
+                matchKind(expectedChar);
+                throw new RuntimeException();
         }
         cst.moveUp();
     }
@@ -343,7 +338,7 @@ public class Parser{
     }
 
     //matches and consumes tokens
-    private boolean match(String expectedToken){
+    private void match(String expectedToken){
 
         //check if the current token is equal to the expected
         if(currentToken.lexeme.equals(expectedToken)){
@@ -366,25 +361,23 @@ public class Parser{
             if(tokenStreamIndex < tokenStream.size()){
                 currentToken = getCurrentToken();   //update current token
             }
-            return true;    //match successful
         }
         else{
 
             //throw error if token doesnt match
             parseErrors++;
-            parserLog("ERROR! EXPECTED: " + expectedToken  + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);
+            parserLog("ERROR! EXPECTED: " + expectedToken  + " FOUND: " + currentToken.lexeme + " ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
 
             //error outputting if we are expecting EOP, but current is incorrect
             if(expectedToken.equals("$") && parseErrors > 0){
                 parserLog("Parsing Failed... Errors: " + parseErrors);
                 cst.CSTLog("Skipped due to Parse errors...");
             }
-            return false;   //match failed
         }
     }
 
     //matches and consumes tokens when expected token is a range.... ie CHAR, ID, etc
-    private boolean matchKind(List<String> expectedTokens){
+    private void matchKind(List<String> expectedTokens){
 
         //check if the current token is within the list of expected tokens
         if(expectedTokens.contains(currentToken.lexeme)){
@@ -397,15 +390,13 @@ public class Parser{
            if(tokenStreamIndex < tokenStream.size()){
                currentToken = getCurrentToken();    //update current token
            }
-           return true; //match successful
         }
         else{
 
             //throw error if token doesnt match
             parseErrors++;
             String expected = expectedTokens.toString();
-            parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);
-            return false;   //match failed
+            parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
         }
     }
 }

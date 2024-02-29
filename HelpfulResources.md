@@ -31,3 +31,5 @@ Each reference will be listed below along with where it was used and how it help
 - CST and Node builds: [labouseur.com](https://www.labouseur.com/projects/jsTreeDemo/treeDemo.js)
 - Parser understanding and build out:  [labouseur.com](https://www.labouseur.com/courses/compilers/parse.pdf)
 - test cases and output checking: [Labouseur.com and Gabriel Arnell](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
+- try catch: [w3schools](https://www.w3schools.com/java/java_try_catch.asp)
+- throwing exceptions: [rollbar.com](https://rollbar.com/guides/java/how-to-throw-exceptions-in-java/)
