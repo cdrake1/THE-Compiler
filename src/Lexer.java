@@ -235,6 +235,8 @@ public class Lexer {
                             }
                             else{
                                 lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
+                                lexerLog("Parse Skipped due to Lex errors...");
+                                lexerLog("CST Skipped due to Lex errors...");
                             }
 
                             //reset lexer and global variables. Output next program intro if there is more code

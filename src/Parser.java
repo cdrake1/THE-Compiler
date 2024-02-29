@@ -119,6 +119,13 @@ public class Parser{
             case "OPENING_BRACE":
                 parseBlock();
                 break;
+            default:
+                match("}");
+                //how to break out of recursion
+
+                
+                return;
+
         }
         cst.moveUp();
     }
@@ -193,6 +200,12 @@ public class Parser{
                 break;
             case "ID":
                 parseID();
+                break;
+            default:
+               match("");
+                //how to break out of recursion
+
+
                 break;
         }
         cst.moveUp();
@@ -330,7 +343,7 @@ public class Parser{
     }
 
     //matches and consumes tokens
-    private void match(String expectedToken){
+    private boolean match(String expectedToken){
 
         //check if the current token is equal to the expected
         if(currentToken.lexeme.equals(expectedToken)){
@@ -353,6 +366,7 @@ public class Parser{
             if(tokenStreamIndex < tokenStream.size()){
                 currentToken = getCurrentToken();   //update current token
             }
+            return true;    //match successful
         }
         else{
 
@@ -365,11 +379,12 @@ public class Parser{
                 parserLog("Parsing Failed... Errors: " + parseErrors);
                 cst.CSTLog("Skipped due to Parse errors...");
             }
+            return false;   //match failed
         }
     }
 
     //matches and consumes tokens when expected token is a range.... ie CHAR, ID, etc
-    private void matchKind(List<String> expectedTokens){
+    private boolean matchKind(List<String> expectedTokens){
 
         //check if the current token is within the list of expected tokens
         if(expectedTokens.contains(currentToken.lexeme)){
@@ -382,13 +397,15 @@ public class Parser{
            if(tokenStreamIndex < tokenStream.size()){
                currentToken = getCurrentToken();    //update current token
            }
+           return true; //match successful
         }
         else{
 
             //throw error if token doesnt match
             parseErrors++;
             String expected = expectedTokens.toString();
-            parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);  
+            parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ON LINE " + currentToken.line + " POSITION " + currentToken.position);
+            return false;   //match failed
         }
     }
 }
