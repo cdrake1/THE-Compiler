@@ -1,5 +1,9 @@
-{/* Comment!!!*/ ()
-print=whileif"teststring"
-intstringbooleanfalse
-true
-==!=+ a 0123456789}$
+{
+    while true {
+        if (a == 2+b){
+            a = b
+        }
+    }
+
+
+}$

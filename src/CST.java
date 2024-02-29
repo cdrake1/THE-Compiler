@@ -52,7 +52,7 @@ public class CST {
         else{
             
             //output that a node was added to the tree
-            CSTLog("Added " + label + " node");
+            CSTLog("Added [ " + label + " ] node");
         }
     }
 

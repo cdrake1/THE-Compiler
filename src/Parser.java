@@ -256,7 +256,7 @@ public class Parser{
     private void parseID(){
         parserLog("Parsing ID");
         cst.addNode("branch", "ID");
-        parseChar();
+        matchKind(expectedChar);
         cst.moveUp();
     }
 
@@ -366,7 +366,7 @@ public class Parser{
 
             //throw error if token doesnt match
             parseErrors++;
-            parserLog("ERROR! EXPECTED: " + expectedToken  + " FOUND: " + currentToken.lexeme + " ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
+            parserLog("ERROR! EXPECTED: [ " + expectedToken  + " ] FOUND: [ " + currentToken.lexeme + " ] ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
 
             //error outputting if we are expecting EOP, but current is incorrect
             if(expectedToken.equals("$") && parseErrors > 0){
@@ -396,7 +396,7 @@ public class Parser{
             //throw error if token doesnt match
             parseErrors++;
             String expected = expectedTokens.toString();
-            parserLog("ERROR! EXPECTED: " + expected + " FOUND: " + currentToken.lexeme + " ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
+            parserLog("ERROR! EXPECTED: [ " + expected + " ] FOUND: [ " + currentToken.lexeme + " ] ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
         }
     }
 }

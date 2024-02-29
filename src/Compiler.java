@@ -6,42 +6,42 @@
 public class Compiler {
     public static void main(String[] args) 
     {
-      //create the parts of a compiler
-      Lexer lexer = new Lexer();
+        //create the parts of a compiler
+        Lexer lexer = new Lexer();
 
-      //introductory output
-      System.out.println("Welcome to THECompiler by Collin Drake!");
+        //introductory output
+        System.out.println("Welcome to THECompiler by Collin Drake!");
 
-      //check for command line arguments
-      if(args.length > 0)
-      {
-        //file handling and lexer initialization. Keep user updated on what happens and keeping naming obvious
-        String textFile = args[0];
-        compilerLog("Processing file: " + textFile);
-        /*
-          output to user
-          call readfile to read the input text file into a string
-          call scanner to the lex the input file
-        */
-        try{
-          lexer.readInput(textFile);
-          compilerLog("Powering on the LEXER...");
-          compilerLog("Powering on the PARSER...\n");
-          lexer.scanner();
+        //check for command line arguments
+        if(args.length > 0)
+        {
+            //file handling and lexer initialization. Keep user updated on what happens and keeping naming obvious
+            String textFile = args[0];
+            compilerLog("Processing file: " + textFile);
+            /*
+            output to user
+            call readfile to read the input text file into a string
+            call scanner to the lex the input file
+            */
+            try{
+                lexer.readInput(textFile);
+                compilerLog("Powering on the LEXER...");
+                compilerLog("Powering on the PARSER...\n");
+                lexer.scanner();
+            }
+                catch(Exception e){ //catch exceptions and output errors
+                compilerLog("Parsing Failed...");
+                compilerLog("CST skipped due to Parse errors");
+            }
         }
-        catch(Exception e){ //catch exceptions and output errors
-          compilerLog("Parsing Failed...");
-          compilerLog("CST skipped due to Parse errors");
+        else{
+            //output error if no argument is provided
+            compilerLog("No program found. Please provide a command line argument to the compiler.");
         }
-      }
-      else{
-        //output error if no argument is provided
-        compilerLog("No program found. Please provide a command line argument to the compiler.");
-      }
     }
 
-    //log function -- outputs errors and information
-    static void compilerLog(String output){
-      System.out.println("COMPILER - " + output);
-    }
+        //log function -- outputs errors and information
+        static void compilerLog(String output){
+            System.out.println("COMPILER - " + output);
+        }
 }

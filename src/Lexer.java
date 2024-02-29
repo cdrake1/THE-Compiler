@@ -65,7 +65,7 @@ public class Lexer {
                 sourceCode.add(scanner.nextLine());
             }
             scanner.close();    //close the scanner so Java can clean it up
-            System.out.println("The input file was read successfully");
+            lexerLog("The input file was read successfully");
         }
 
         //if it fails it throws an error and exits the program
@@ -234,7 +234,7 @@ public class Lexer {
                                 callParse();    //call parse if lex passes successfully
                             }
                             else{
-                                lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
+                                lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount + "\n");
                                 lexerLog("Parse skipped due to Lex errors...");
                                 lexerLog("CST skipped due to Lex errors...");
                             }
