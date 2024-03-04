@@ -23,16 +23,10 @@ public class Compiler {
             call readfile to read the input text file into a string
             call scanner to the lex the input file
             */
-            try{
-                compilerLog("Powering on the LEXER...");
-                compilerLog("Powering on the PARSER...\n");
-                lexer.readInput(textFile);
-                lexer.scanner();
-            }
-                catch(Exception e){ //catch exceptions and output errors
-                compilerLog("Parsing Failed...");
-                compilerLog("CST skipped due to Parse errors");
-            }
+            compilerLog("Powering on the LEXER...");
+            compilerLog("Powering on the PARSER...\n");
+            lexer.readInput(textFile);
+            lexer.scanner();
         }
         else{
             //output error if no argument is provided

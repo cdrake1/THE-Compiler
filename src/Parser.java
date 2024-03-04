@@ -80,14 +80,22 @@ public class Parser{
         parserLog("Parsing statement list");
         cst.addNode("branch", "Statement list");
 
-        //check if token matches '}' to determine what to call
-        if(!currentToken.lexeme.equals("}")){
-            parseStatement();
-            parseStatementList();
-        }
-        else{
-            //do nothing
-            //epsilon case
+        switch (currentToken.tokenType) {
+            case "PRINT":
+            case "ID":
+            case "TYPE_INT":
+            case "TYPE_STRING":
+            case "TYPE_BOOLEAN":
+            case "WHILE":
+            case "IF":
+            case "OPENING_BRACE":
+                parseStatement();
+                parseStatementList();
+                break;
+            default:
+                //do nothing
+                //epsilon case
+                break;
         }
         cst.moveUp();
     }
@@ -123,7 +131,6 @@ public class Parser{
                 //match expected and throw exception to break out of recursion
                 List<String> expectedStmt = Arrays.asList("print", "ID", "int", "string", "boolean", "while", "if", "{");
                 matchKind(expectedStmt);
-                throw new RuntimeException();
         }
         cst.moveUp();
     }
