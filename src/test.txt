@@ -1,9 +1,9 @@
+/*test case for string, int, print, bool */
 {
-    while true {
-        if (a == 2+b){
-            a = b
-        }
-    }
-
-
+while(int x = 5)
+print(x = 8)
+string a
+5 + 5
 }$
+
+{}$

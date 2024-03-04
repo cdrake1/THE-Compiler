@@ -121,7 +121,8 @@ public class Parser{
                 break;
             default:
                 //match expected and throw exception to break out of recursion
-                match("}");
+                List<String> expectedStmt = Arrays.asList("print", "ID", "int", "string", "boolean", "while", "if", "{");
+                matchKind(expectedStmt);
                 throw new RuntimeException();
         }
         cst.moveUp();
@@ -200,8 +201,8 @@ public class Parser{
                 break;
             default:
                 //match one of the expected and throw exception to break out of recursion
-                matchKind(expectedChar);
-                throw new RuntimeException();
+                List<String> expectedExpr = Arrays.asList("Digit", "\"", "(", "true", "false");
+                matchKind(expectedExpr);
         }
         cst.moveUp();
     }
@@ -396,7 +397,7 @@ public class Parser{
             //throw error if token doesnt match
             parseErrors++;
             String expected = expectedTokens.toString();
-            parserLog("ERROR! EXPECTED: [ " + expected + " ] FOUND: [ " + currentToken.lexeme + " ] ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
+            parserLog("ERROR! EXPECTED: " + expected + " FOUND: [ " + currentToken.lexeme + " ] ... ON LINE " + currentToken.line + " POSITION " + currentToken.position);
         }
     }
 }

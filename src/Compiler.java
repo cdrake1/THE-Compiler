@@ -24,9 +24,9 @@ public class Compiler {
             call scanner to the lex the input file
             */
             try{
-                lexer.readInput(textFile);
                 compilerLog("Powering on the LEXER...");
                 compilerLog("Powering on the PARSER...\n");
+                lexer.readInput(textFile);
                 lexer.scanner();
             }
                 catch(Exception e){ //catch exceptions and output errors

@@ -1,0 +1,8 @@
+/*test case for string, int, print, bool */
+{
+print(string)
+    print(int)
+    int c
+    while string
+    "hello"
+}$
