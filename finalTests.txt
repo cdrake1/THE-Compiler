@@ -1,8 +1,18 @@
-/*test case for string, int, print, bool */
+/*test case for string, int, print */
 {
-print(string)
+    print(string)
     print(int)
     int c
     while string
     "hello"
 }$
+/*test case 2 */
+{
+print(7 true a)
+while(int x = 5)
+print(x = 858)
+string a
+5 + 5
+}$
+
+{}$
