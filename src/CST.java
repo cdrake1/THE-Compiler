@@ -33,13 +33,11 @@ public class CST {
 
         //check if the tree has a root node
         if(root == null){
-
             //update root node to new node
             root = newNode;
             newNode.parent = null;
         }
         else{
-
             //if there is already a root then add the newnode to child array
             newNode.parent = current;
             current.children.add(newNode);
@@ -50,7 +48,6 @@ public class CST {
             current = newNode;
         }
         else{
-            
             //output that a node was added to the tree
             CSTLog("Added [ " + label + " ] node");
         }
@@ -58,13 +55,11 @@ public class CST {
 
     //traverses up the tree
     public void moveUp(){
-
         //move up to parent node if possible
         if(current.parent != null){
             current = current.parent;
         }
         else{
-
             // error logging
             CSTLog("ERROR! There was an error when trying to move up the tree...");
         }
@@ -78,7 +73,6 @@ public class CST {
     }
 
     public void expand(Node node, int depth){
-
         //space nodes out based off of the current depth
         for(int i = 0; i < depth; i++){
             traversal += "-";
@@ -90,7 +84,6 @@ public class CST {
             traversal += "\n";
         }
         else{
-
             //this node is not a leaf node
             traversal += "<" + node.name + "> \n";
 

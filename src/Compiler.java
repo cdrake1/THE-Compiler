@@ -15,13 +15,13 @@ public class Compiler {
         //check for command line arguments
         if(args.length > 0)
         {
-            //file handling and lexer initialization. Keep user updated on what happens and keeping naming obvious
+            //file handling and lexer initialization. Keep user updated on what happens and keep naming obvious
             String textFile = args[0];
             compilerLog("Processing file: " + textFile);
             /*
-            output to user
-            call readfile to read the input text file into a string
-            call scanner to the lex the input file
+                output to user
+                call readfile to read the input text file into a string
+                call scanner to the lex the input file
             */
             compilerLog("Powering on the LEXER...");
             compilerLog("Powering on the PARSER...\n");

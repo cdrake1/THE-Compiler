@@ -1,5 +1,4 @@
 TDL for project 2 - Parser
 
-- how to break out of infinite loop without try catch in compiler. try catch in compiler works but prevents parsing/lexing other programs
-- test parser more
-- spacing for output
+- test parser more //do final tests
+- finish write up and add it

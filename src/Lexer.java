@@ -263,7 +263,6 @@ public class Lexer {
                         lexerLog("ERROR! UNRECOGNIZED TOKEN [ " + digit + " ] at line " + lineNumber + " position " + position);
                     }
                     else{
-
                         //create tokens for digits
                         Token newToken = new Token(type, digit, Integer.toString(lineNumber), Integer.toString(position));
                         tokenStream.add(newToken);
@@ -276,7 +275,6 @@ public class Lexer {
 
                     //if a keyword is in a string do this. Otherwise just make a token. Deals with keywords in strings
                     if(match.group().matches(characters) && match.group().matches(keywords)){
-
                         //break the keyword into a char array and create tokens for each letter
                         char[] word = character.toCharArray();
                         position = position - (character.length() - 1); //set position correctly
@@ -290,7 +288,6 @@ public class Lexer {
                         }
                     }
                     else{
-
                         //create tokens for characters
                         Token newToken = new Token(type, character, Integer.toString(lineNumber), Integer.toString(position));
                         tokenStream.add(newToken);
@@ -352,7 +349,6 @@ public class Lexer {
         
         //check for error (Missing EOP)
         if (!endOfProgram) {
-
             //check for more warnings (Missing end comment or quote)
             if(inComment || inQuotes){
                 warningCount++; //increment warning count
