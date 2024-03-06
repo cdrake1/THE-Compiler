@@ -1,0 +1,592 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT 432
+% Spring 2024
+% Project 2
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm,xfrac} % Math packages
+\usepackage{sectsty} % Allows customizing section commands
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{parskip}
+\usepackage{lastpage}
+\usepackage{listings}
+\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+\lstset{
+    language=Java
+}
+
+\allsectionsfont{\normalfont\scshape} % Make all section titles in default font and small caps.
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{page \thepage\ of \pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs.
+
+\binoppenalty=3000
+\relpenalty=3000
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 432 - Spring 2024 - Dr. Labouseur} \\[10pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Project Two  \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Collin Drake \\ \normalsize Collin.Drake1@Marist.edu}
+
+\date{\normalsize\today} 	% Today's date.
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   start LAB THREE
+%----------------------------------------------------------------------------------------
+\section*{Lab 3}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 4.7}
+A grammar for infix expressions follows:
+
+    1 Start → E \$ \newline
+    2 E → T plus E \newline
+    3   |T \newline
+    4 T → T times F \newline
+    5   |F \newline
+    6 F → (E) \newline
+    7   | num \newline
+
+\begin{enumerate}
+    \item Show the leftmost derivation of the following string.
+num plus num times num plus num \$
+    
+    S. Start \newline
+    1. E \$ \newline
+    2. T plus E \$ \newline
+    5. F plus E \$ \newline
+    7. num plus E \$ \newline
+    2. num plus T plus E \$ \newline
+    4. num plus T times F plus E \$ \newline
+    5. num plus F times F plus E \$ \newline
+    7. num plus num times F plus E \$ \newline
+    7. num plus num times num plus E \$ \newline
+    3. num plus num times num plus T \$ \newline
+    5. num plus num times num plus F \$ \newline
+    7. num plus num times num plus num \$ \newline
+    
+    \item Show the rightmost derivation of the following string.
+num times num plus num times num \$
+
+    S. Start \newline
+    1. E \$ \newline
+    2. T plus E \$ \newline
+    3. T plus T \$ \newline
+    4. T plus T times F \$ \newline
+    7. T plus T times num \$ \newline
+    5. T plus F times num \$ \newline
+    7. T plus num times num \$ \newline
+    4. T times F plus num times num \$ \newline
+    7. T times num plus num times num \$ \newline
+    5. F times num plus num times num \$ \newline
+    7. num times num plus num times num \$ \newline
+
+
+    \item Describe how this grammar structures expressions, in terms of the precedence and left- or right-associativity of the operator.
+
+    The grammar provided above structures expressions with a rightmost operator precedence. I came to this result because of production 2. I noticed that within this production we can see that E is located on the right side of the expression meaning that larger expansions would have to occur on the right side of the production. Also, we know operators of higher importance are placed lower on the parse tree when performing a depth-first traversal.
+\end{enumerate}
+
+
+\subsubsection*{Exercise: 5.2c}
+
+Construct a recursive-descent parser based on the grammar: \newline
+
+    1 Start → Value \$ \newline
+    2 Value → num \newline
+    3       | lparen Expr rparen \newline
+    4 Expr  → plus Value Value \newline
+    5       | prod Values \newline
+    6 Values→ Value Values \newline
+    7       | $\Lambda$ \newline
+
+    \newpage
+    
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        parseStart(){
+            parseValue();
+            match($);
+        }
+
+        parseValue(){
+            if(Token == lparen){
+                match(lparen);
+                parseExpr();
+                match(rparen);
+            }
+            else{
+                match(num);
+            }
+        }
+
+        parseExpr(){
+            if(Token == plus){
+                match(plus);
+                parseValue();
+                parseValue();
+            }
+            else{
+                match(prod);
+                parseValues();
+            }
+        }
+
+        parseValues(){
+            if(Token == lparen || Token == num){
+                parseValue();
+                parseValues();
+            }
+            else{
+                match($\Lambda$);
+            }
+        }
+    
+    \end{lstlisting}
+
+
+\subsection*{Dragon Exercises:}
+
+\subsubsection*{Exercise: 4.2.1 a,b,c}
+
+Consider the context-free grammar: \newline
+
+    1. S → S S + \newline
+    2.   | S S * \newline
+    3.   | a    \newline
+
+and the string aa + a* \newline
+
+\newpage
+
+a) Give a leftmost derivation for the string \newline
+
+    S. S \newline
+    2. S S * \newline
+    1. S S + S * \newline
+    3. a S + S * \newline
+    3. a a + S * \newline
+    3. a a + a * \newline
+    
+
+
+    
+b) Give a rightmost derivation for the string \newline
+
+    S. S \newline
+    2. S S * \newline
+    3. S a * \newline
+    1. S S + a * \newline
+    3. S a + a * \newline
+    3. a a + a * \newline
+
+    
+c) Give a parse tree for the string \newline
+
+    \begin{center}
+        \includegraphics[width=10cm]{ParseTree.png}
+    \end{center}   
+
+%----------------------------------------------------------------------------------------
+%   end LAB THREE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+
+%----------------------------------------------------------------------------------------
+%   start LAB FOUR
+%----------------------------------------------------------------------------------------
+\section*{Lab 4}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 4.9}
+Compute First and Follow sets for the nonterminals of the following
+grammar
+
+    1. S → a S e \newline
+    2.   |B \newline
+    3. B → b B e \newline
+    4.   |C \newline
+    5. C → c C e \newline
+    6.   |d \newline
+
+    S: First\{a,b,c,d\} -- Follow\{\$,e\} \newline
+    B: First\{b,c,d\} -- Follow\{\$,e\} \newline
+    C: First\{c,d\} -- Follow\{\$,e\} \newline     
+    
+\subsubsection*{Exercise: 5.10}
+Show the two distinct parse trees that can be constructed for \newline
+
+if expr then if expr then other else other \newline
+
+1 S → Stmt \$ \newline
+2 Stmt → if expr then Stmt else Stmt \newline
+3      | if expr then Stmt \newline
+4      | other \newline
+
+    \begin{center}
+        \includegraphics[width=10cm]{LDerivation Lab4.png}
+    \end{center}
+
+    \begin{center}
+        \includegraphics[width=10cm]{RDerivation Lab4.png}
+    \end{center}
+
+using the grammar given in Figure 5.17. For each parse tree, explain the correspondence of then and else \newline
+
+In regards to the first parse tree, we notice that an "if" is always followed by a "then", however, an "else" does not always follow behind a "then". The first parse tree contains an "else" within the first production expansion, but within the second tree, it occurs in the second expansion. Therefore, we understand that an "else" node can only occur after the presence of a "then", but it is not required.
+ 
+\subsection*{Dragon Exercises:}
+
+\subsubsection*{Exercise: 4.4.3}
+Compute FIRST and FOLLOW for the grammar of Exercise 4.2.1
+
+    1. S → S S + \newline
+    2.   | S S * \newline
+    3.   | a    \newline
+
+    S: First\{a\} -- Follow\{\$,+,*,a\} \newline
+
+
+%----------------------------------------------------------------------------------------
+%   end LAB FOUR
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   start LAB FIVE
+%----------------------------------------------------------------------------------------
+\section*{Lab 5}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 9.2}
+Assume that we add a new kind of conditional statement to C or Java, the signtest. Its structure is: \newline
+
+    signtest ( exp ) \{ \newline
+    \space    neg: stmts \newline
+    \space    zero: stmts \newline
+    \space    pos: stmts \newline
+    \} \newline
+
+    \begin{center}
+        \includegraphics[width=10cm]{AST.png}
+    \end{center}
+
+
+%----------------------------------------------------------------------------------------
+%   end LAB FIVE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   start PROJECT DETAIL
+%----------------------------------------------------------------------------------------
+\section{Project 2}
+
+\subsection{Syntax Analysis}
+Syntax Analysis, otherwise known as Parsing is the second step within the Compilation process. In the Parser we accept the Token Stream produced by the Lexer and validate each token with the language grammar. As the Parser verifies that each token aligns properly with the grammar it builds a Concrete Syntax Tree, containing root, branch, and leaf nodes representing each terminal and non-terminal within the grammar. The result of the Parsing process is a parse tree.
+
+To test my Parser I used the test cases below:
+
+
+\subsubsection*{Test Case 1}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*test case for string, int, print */
+        {
+            print(string)
+            print(int)
+            int c
+            while string
+            "hello"
+        }$
+        
+    \end{lstlisting}
+
+\subsubsection*{Test Case 2}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*test case 2 */
+        {
+        print(7 true a)
+        while(int x = 5)
+        print(x = 858)
+        string a
+        5 + 5
+        }$
+        
+    \end{lstlisting}
+
+\subsubsection*{Test Case 3}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*Long Test Case - Everything Except Boolean Declaration */
+        {
+        /* Int Declaration */
+        int a
+        int b
+        a = 0
+        b=0
+        /* While Loop */
+        while (a != 3) {
+        print(a)
+        while (b != 3) {
+        print(b)
+        b = 1 + b
+        if (b == 2) {
+        /* Print Statement */
+        print("there is no spoon" /* This will do nothing */ )
+        }
+        }
+        b = 0
+        a = 1+a
+        }
+        }
+        $
+    \end{lstlisting}
+
+\subsubsection*{Test Case 4}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        {}$
+        {{{{{{}}}}}}$
+        {{{{{{}}}/*comments	are	ignored	*/}}}}$
+        { /* comments are still ignored*/int@}$
+    \end{lstlisting}
+
+
+%----------------------------------------------------------------------------------------
+%   end PROJECT ONE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   Appendix
+%----------------------------------------------------------------------------------------
+
+\section{Appendix}
+
+\subsubsection*{Node.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*
+        Node file
+        Creates Nodes to be used in the Parsers CST
+        */
+        
+        //import arraylist
+        import java.util.ArrayList;
+        
+        //The Node class!
+        public class Node {
+            String name;    //the name of the node
+            Node parent;    //pointer to the nodes parent
+            ArrayList<Node> children;   //list of pointers to child nodes
+        
+            //Node constructor -- creates a node and initializes its variables
+            public Node(String label){
+                this.name = label;
+                this.parent = null;
+                this.children = new ArrayList<>();
+            }   
+        }
+
+    \end{lstlisting}
+
+    \subsubsection*{CST.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*
+            Concrete Syntax tree file
+            Creates CSTs to be used in Parse
+            Created with help from Alan G. Labouseur, Michael Ardizzone, and Tim Smith
+        */
+        
+        //The CST class!
+        public class CST {
+            Node root;  //pointer to the root node
+            Node current;   //pointer to the current node
+            String traversal;   //string to hold CST traversal
+        
+            //CST constructor -- creates a CST and initializes all variables
+            public CST(){
+                this.root = null;
+                this.current = null;
+                traversal = "";
+            }
+        
+            //outputs the processes completed within the CST
+            public void CSTLog(String output){
+                System.out.println("PARSER - CST - " + output);
+            }
+        
+            //adds a node to the CST
+            public void addNode(String kind, String label){
+        
+                //kind - what kind of node is it?
+                //label - what is the parse function?
+        
+                //create a new node to be added to the CST
+                Node newNode = new Node(label);
+        
+                //check if the tree has a root node
+                if(root == null){
+                    //update root node to new node
+                    root = newNode;
+                    newNode.parent = null;
+                }
+                else{
+                    //if there is already a root then add the newnode to child array
+                    newNode.parent = current;
+                    current.children.add(newNode);
+                }
+        
+                //if the new node is not a leaf node make it the current
+                if(!kind.equals("leaf")){
+                    current = newNode;
+                }
+                else{
+                    //output that a node was added to the tree
+                    CSTLog("Added [ " + label + " ] node");
+                }
+            }
+        
+            //traverses up the tree
+            public void moveUp(){
+                //move up to parent node if possible
+                if(current.parent != null){
+                    current = current.parent;
+                }
+                else{
+                    // error logging
+                    CSTLog("ERROR! There was an error when trying to move up the tree...");
+                }
+            }
+        
+            //outputs the current programs CST if it parsed successfully
+            public void outputCST(){
+                expand(root, 0);
+                System.out.print("\n");
+                CSTLog("\n" + traversal);
+            }
+        
+            public void expand(Node node, int depth){
+                //space nodes out based off of the current depth
+                for(int i = 0; i < depth; i++){
+                    traversal += "-";
+                }
+        
+                //if this node is a leaf node output the name
+                if(node.children.size() == 0){
+                    traversal += "[" + node.name + "]";
+                    traversal += "\n";
+                }
+                else{
+                    //this node is not a leaf node
+                    traversal += "<" + node.name + "> \n";
+        
+                    //recursion!!! -- call the next child and increment the depth
+                    for(int j = 0; j < node.children.size(); j++){
+                        expand(node.children.get(j), depth + 1);
+                    }
+                }
+            }
+        }
+    \end{lstlisting}
+
+%----------------------------------------------------------------------------------------
+%   Links of References
+%----------------------------------------------------------------------------------------
+\pagebreak
+
+\section{References}
+
+\subsection{Links}
+Below are the resources I have used to create simple, readable, and beautiful code.
+
+\begin{itemize}
+    \item Multiple switch cases for the same result: \href{https://stackoverflow.com/questions/5086322/java-switch-statement-multiple-cases}{stackoverflow}
+    \item Create lists from array: \href{https://www.geeksforgeeks.org/arrays-aslist-method-in-java-with-examples/}{geeks4geeks}
+    \item CST and Node builds: \href{https://www.labouseur.com/projects/jsTreeDemo/treeDemo.js}{labouseur.com}
+    \item Parser understanding and build out: \href{labouseur.com}{https://www.labouseur.com/courses/compilers/parse.pdf}
+    \item Test cases and output checking: \href{ttps://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html}{Labouseur.com and Gabriel Arnell}
+    \item Try-catch: \href{https://www.w3schools.com/java/java_try_catch.asp}{w3schools}
+    \item Throwing exceptions: \href{https://rollbar.com/guides/java/how-to-throw-exceptions-in-java/}{rollbar.com}
+    
+    
+\end{itemize}
+
+\pagebreak
+%----------------------------------------------------------------------------------------
+%   APA REFERENCES
+%----------------------------------------------------------------------------------------
+% The following two commands are all you need in the initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+%\bibliography{lab1} 
+% You must have a proper ".bib" file and remember to run:
+% latex bibtex latex latex
+% to resolve all references.
+
+
+
+\end{document}

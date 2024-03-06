@@ -1,4 +1,3 @@
 TDL for project 2 - Parser
 
-- test parser more //do final tests
-- finish write up and add it
+- Done!
