@@ -33,3 +33,7 @@ Each reference will be listed below along with where it was used and how it help
 - Test cases and output checking: [Labouseur.com and Gabriel Arnell](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
 - Try catch: [w3schools](https://www.w3schools.com/java/java_try_catch.asp)
 - Tßhrowing exceptions: [rollbar.com](https://rollbar.com/guides/java/how-to-throw-exceptions-in-java/)
+
+## Semantic Analysis Resources
+
+- one: []()

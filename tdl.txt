@@ -1,3 +1,5 @@
-TDL for project 2 - Parser
+TDL for project 3 - Semantic Analysis
 
-- Done!
+- Check Parser error messages
+- create proj 3 files
+- start project 3 AST gen
