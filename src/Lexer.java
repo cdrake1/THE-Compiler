@@ -234,9 +234,11 @@ public class Lexer {
                                 callParse();    //call parse if lex passes successfully
                             }
                             else{
-                                lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount + "\n");
+                                lexerLog("Lexical Analysis Failed... " + "Warnings: " + warningCount + " Errors: " + errorCount);
                                 lexerLog("Parse skipped due to Lex errors...");
                                 lexerLog("CST skipped due to Lex errors...");
+                                lexerLog("Semantic Analysis skipped due to Lex errors...");
+                                lexerLog("AST skipped due to Lex errors...");
                             }
 
                             //reset lexer and global variables. Output next program intro if there is more code

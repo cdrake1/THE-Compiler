@@ -51,6 +51,12 @@ public class Parser{
         System.out.println("PARSER - " + output);
     }
 
+    //when called passes the token stream of the current program to the Semantic Analyzer
+    private void callSemanticAnalysis(){
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
+        semanticAnalyzer.test();
+    }
+
     //returns the current token in the token stream
     public Token getCurrentToken(){
         return tokenStream.get(tokenStreamIndex);
@@ -358,10 +364,13 @@ public class Parser{
             if(currentToken.lexeme.equals("$") && parseErrors == 0){
                 parserLog("Parsing Complete... Errors: " + parseErrors);
                 cst.outputCST();
+                callSemanticAnalysis();
             }
             else if(currentToken.lexeme.equals("$") && parseErrors > 0){
                 parserLog("Parsing Failed... Errors: " + parseErrors);
-                cst.CSTLog("Skipped due to Parse errors");
+                cst.CSTLog("Skipped due to Parse errors...");
+                parserLog("Semantic Analysis skipped due to Parse errors...");
+                parserLog("AST skipped due to Parse errors...");
             }
 
             //if match passes consume and increment index
@@ -380,6 +389,8 @@ public class Parser{
             if(expectedToken.equals("$") && parseErrors > 0){
                 parserLog("Parsing Failed... Errors: " + parseErrors);
                 cst.CSTLog("Skipped due to Parse errors...");
+                parserLog("Semantic Analysis skipped due to Parse errors...");
+                parserLog("AST skipped due to Parse errors...");
             }
         }
     }

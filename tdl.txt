@@ -1,5 +1,4 @@
 TDL for project 3 - Semantic Analysis
 
-- create proj 3 files
 - start project 3 AST gen
 - fix 3 parse error messages if have time

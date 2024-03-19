@@ -24,7 +24,8 @@ public class Compiler {
                 call scanner to the lex the input file
             */
             compilerLog("Powering on the LEXER...");
-            compilerLog("Powering on the PARSER...\n");
+            compilerLog("Powering on the PARSER...");
+            compilerLog("Powering on the SEMANTIC ANALYZER...\n");
             lexer.readInput(textFile);
             lexer.scanner();
         }
