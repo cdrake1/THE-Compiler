@@ -1,4 +1,4 @@
 TDL for project 3 - Semantic Analysis
 
-- start project 3 AST gen
-- fix 3 parse error messages if have time
+- create a whole new parse that only adds nodes for the essential parts. no match function manually increment index
+- what functions do I not need?

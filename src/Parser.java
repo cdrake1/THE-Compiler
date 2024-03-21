@@ -53,8 +53,8 @@ public class Parser{
 
     //when called passes the token stream of the current program to the Semantic Analyzer
     private void callSemanticAnalysis(){
-        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer();
-        semanticAnalyzer.test();
+        SemanticAnalyzer semanticAnalyzer = new SemanticAnalyzer(tokenStream, programCounter);
+        semanticAnalyzer.startSemanticAnalysis();
     }
 
     //returns the current token in the token stream
