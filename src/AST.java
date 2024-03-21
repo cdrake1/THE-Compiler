@@ -9,11 +9,14 @@
 public class AST {
     Node root;  //pointer to the root node
     Node current;   //pointer to the current node
+    String traversal;   //string to hold CST traversal
+
 
     //AST constructor -- creates an AST and initializes all variables
     public AST(){
         this.root = null;
         this.current = null;
+        traversal = "";
     }
 
     //outputs the processes completed within the AST
@@ -61,6 +64,35 @@ public class AST {
         else{
             // error logging
             ASTLog("ERROR! There was an error when trying to move up the tree...");
+        }
+    }
+
+    //outputs the current programs CST if it parsed successfully
+    public void outputAST(){
+        expand(root, 0);
+        System.out.print("\n");
+        ASTLog("\n" + traversal);
+    }
+
+    public void expand(Node node, int depth){
+        //space nodes out based off of the current depth
+        for(int i = 0; i < depth; i++){
+            traversal += "-";
+        }
+
+        //if this node is a leaf node output the name
+        if(node.children.size() == 0){
+            traversal += "[" + node.name + "]";
+            traversal += "\n";
+        }
+        else{
+            //this node is not a leaf node
+            traversal += "<" + node.name + "> \n";
+
+            //recursion!!! -- call the next child and increment the depth
+            for(int j = 0; j < node.children.size(); j++){
+                expand(node.children.get(j), depth + 1);
+            }
         }
     }
     

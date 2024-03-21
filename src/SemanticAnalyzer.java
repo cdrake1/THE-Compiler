@@ -44,21 +44,24 @@ public class SemanticAnalyzer {
 
         //call the block function to begin semantic analysis
         semanticBlock();
+        ast.outputAST();
     }
 
     //parse block -- semantic
     private void semanticBlock(){
+        SemanticAnalyzerLog("block");
+
         ast.addNodeAST("root", "Block"); //is this a root or branch node?
         tokenStreamIndex++;
         currentToken = getCurrentToken();
         semanticStatementList();
         tokenStreamIndex++;
         currentToken = getCurrentToken();
-        ast.moveUpAST(); //move up the tree
     }
 
     //parse statement list -- semantic
     private void semanticStatementList(){
+        SemanticAnalyzerLog("statementlist");
         switch (currentToken.tokenType) {
             case "PRINT":
             case "ID":
@@ -76,11 +79,11 @@ public class SemanticAnalyzer {
                 //epsilon case
                 break;
         }
-        ast.moveUpAST();
     }
 
     //parse statement -- semantic
     private void semanticStatement(){
+        SemanticAnalyzerLog("statement");
         //check token type to determine what function to call
         switch (currentToken.tokenType) {
             case "PRINT":
@@ -106,14 +109,13 @@ public class SemanticAnalyzer {
             default:
                 //throw error?
         }
-        ast.moveUpAST();
     }
 
     //parse print statement -- semantic
     private void semanticPrintStatement(){
+        SemanticAnalyzerLog("print");
         ast.addNodeAST("branch", "Print statement");
-        tokenStreamIndex++;
-        tokenStreamIndex++;
+        tokenStreamIndex += 2;
         currentToken = getCurrentToken();
         semanticExpr();
         tokenStreamIndex++;
@@ -123,8 +125,12 @@ public class SemanticAnalyzer {
 
     //parse assignment statement -- semantic
     private void semanticAssignmentStatement(){
+        SemanticAnalyzerLog("assignment");
         ast.addNodeAST("branch", "Assignment statement");
-        parseID();
+        ast.addNodeAST("leaf", currentToken.lexeme);
+        tokenStreamIndex++;
+        currentToken = getCurrentToken();
+        ast.addNodeAST("leaf", currentToken.lexeme);
         tokenStreamIndex++;
         currentToken = getCurrentToken();
         semanticExpr();
@@ -133,14 +139,20 @@ public class SemanticAnalyzer {
 
     //parse var decl -- semantic
     private void semanticVarDecl(){
+        SemanticAnalyzerLog("vardecl");
         ast.addNodeAST("branch", "Variable declaration");
-        parseType();
-        parseID();
+        ast.addNodeAST("leaf", currentToken.lexeme);
+        tokenStreamIndex++;
+        currentToken = getCurrentToken();
+        ast.addNodeAST("leaf", currentToken.lexeme);
+        tokenStreamIndex++;
+        currentToken = getCurrentToken();
         ast.moveUpAST();
     }
 
     //parse while statement -- semantic
     private void semanticWhileStatement(){
+        SemanticAnalyzerLog("while");
         ast.addNodeAST("branch", "While statement");
         tokenStreamIndex++;
         currentToken = getCurrentToken();
@@ -151,6 +163,7 @@ public class SemanticAnalyzer {
 
     //parse if statement -- semantic
     private void semanticIfStatement(){
+        SemanticAnalyzerLog("if");
         ast.addNodeAST("branch", "If statement");
         tokenStreamIndex++;
         currentToken = getCurrentToken();
@@ -161,6 +174,7 @@ public class SemanticAnalyzer {
 
     //parse expression -- semantic
     private void semanticExpr(){
+        SemanticAnalyzerLog("expr");
         //check token type to determine what function to call
         switch (currentToken.tokenType) {
             case "DIGIT":
@@ -175,65 +189,78 @@ public class SemanticAnalyzer {
                 semanticBooleanExpr();
                 break;
             case "ID":
-                parseID();
+                ast.addNodeAST("leaf", currentToken.lexeme);
+                tokenStreamIndex++;
+                currentToken = getCurrentToken();
                 break;
             default:
                 //throw error?      
         }
-        ast.moveUpAST();
     }
 
     //parse int expression -- semantic
     private void semanticIntExpr(){
+        SemanticAnalyzerLog("int expr");
         //check if next token is '+'
         if(tokenStream.get(tokenStreamIndex+1).tokenType.equals("ADD")){
-            parseDigit();
-            parseIntOp();
+            ast.addNodeAST("leaf", currentToken.lexeme);
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
+            ast.addNodeAST("leaf", currentToken.lexeme);
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
             semanticExpr();
         }
         else{
-            parseDigit();
+            ast.addNodeAST("leaf", currentToken.lexeme);
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
         }
-        ast.moveUpAST();
     }
 
     //parse string expression -- semantic
     private void semanticStringExpr(){
+        SemanticAnalyzerLog("string");
         tokenStreamIndex++;
         currentToken = getCurrentToken();
-
-        parseCharList(); //do I do something differently with charlists?
-
+        semanticCharList();
         tokenStreamIndex++;
         currentToken = getCurrentToken();
-        ast.moveUpAST();
     }
 
     //parse boolean expression -- semantic
     private void semanticBooleanExpr(){
+        SemanticAnalyzerLog("bool");
         //check token type to determine what function to call
         if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
             tokenStreamIndex++;
             currentToken = getCurrentToken();
             semanticExpr();
-            parseBoolOp();
+            ast.addNodeAST("leaf", currentToken.lexeme);
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
             semanticExpr();
             tokenStreamIndex++;
             currentToken = getCurrentToken();
         }
         else{
-            parseBoolVal();
+            ast.addNodeAST("leaf", currentToken.lexeme);
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
         }
-        ast.moveUpAST();
     }
 
-    //DO I NEED THE FUNCTIONS BELOW?? -------------------------------
-
-
-    //parse expr -- semantic
-    private void semanticID(){}
-    //parse expr -- semantic
-    private void semanticCharList(){}
-    //parse expr -- semantic
-    private void semanticType(){}
+     //parse char list -- semantic
+    private void semanticCharList(){
+        SemanticAnalyzerLog("charlist");
+        StringBuilder charlist = new StringBuilder();
+        charlist.append("\"");
+        while(!currentToken.lexeme.equals("\"")){
+            charlist.append(currentToken.lexeme);
+            tokenStreamIndex++;
+            currentToken = getCurrentToken();
+        }
+        charlist.append("\"");
+        ast.addNodeAST("leaf", charlist.toString());
+    }
 }

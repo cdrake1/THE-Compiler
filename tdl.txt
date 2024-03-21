@@ -1,4 +1,6 @@
 TDL for project 3 - Semantic Analysis
 
-- create a whole new parse that only adds nodes for the essential parts. no match function manually increment index
-- what functions do I not need?
+- add comments semantic analyzer
+- add comments out semantic analyzer
+- test different code
+- remove unnecessary testing output
