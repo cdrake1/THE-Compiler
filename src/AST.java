@@ -1,6 +1,6 @@
 /*
     Abstract Syntax tree file
-    Creates ASTS to be used in Symantic Analysis
+    Creates AST's to be used in Symantic Analysis
     Created with help from Alan G. Labouseur, Michael Ardizzone, and Tim Smith
     Uses the same functions as the CST file
 */
@@ -9,7 +9,7 @@
 public class AST {
     Node root;  //pointer to the root node
     Node current;   //pointer to the current node
-    String traversal;   //string to hold CST traversal
+    String traversal;   //string to hold AST traversal
 
 
     //AST constructor -- creates an AST and initializes all variables
@@ -48,10 +48,6 @@ public class AST {
         //if the new node is not a leaf node make it the current
         if(!kind.equals("leaf")){
             current = newNode;
-        }
-        else{
-            //output that a node was added to the tree
-            ASTLog("Added [ " + label + " ] node");
         }
     }
 
