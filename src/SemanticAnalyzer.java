@@ -4,11 +4,8 @@
     Repurposes Parse functions to generate the AST
 */
 
-
 //import arraylist, list, and arrays
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 //Collin Drakes Semantic Analyzer
 public class SemanticAnalyzer {
@@ -203,6 +200,7 @@ public class SemanticAnalyzer {
             ast.addNodeAST("leaf", currentToken.lexeme);
             incrementToken();
             semanticExpr();
+            ast.moveUpAST();
         }
         else{
             ast.addNodeAST("leaf", currentToken.lexeme);
