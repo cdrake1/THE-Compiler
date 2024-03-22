@@ -2,3 +2,4 @@ TDL for project 3 - Semantic Analysis
 
 - test different code
 - are == != + branches?
+- AST has correct variables but not in the correct order -- write some type of function to fix this

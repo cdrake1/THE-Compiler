@@ -115,6 +115,7 @@ public class SemanticAnalyzer {
                 break;
             default:
                 //throw error?
+                semanticErrors++;
                 break;
         }
     }
@@ -134,7 +135,6 @@ public class SemanticAnalyzer {
         ast.addNodeAST("branch", "Assignment statement");
         ast.addNodeAST("leaf", currentToken.lexeme);
         incrementToken();
-        ast.addNodeAST("leaf", currentToken.lexeme);
         incrementToken();
         semanticExpr();
         ast.moveUpAST();
@@ -145,7 +145,7 @@ public class SemanticAnalyzer {
         ast.addNodeAST("branch", "Variable declaration");
         ast.addNodeAST("leaf", currentToken.lexeme);
         incrementToken();
-        ast.addNodeAST("leaf", currentToken.lexeme);
+        ast.addNodeAST("branch", currentToken.lexeme);  //= is branch node
         incrementToken();
         ast.moveUpAST();
     }
@@ -189,6 +189,7 @@ public class SemanticAnalyzer {
                 break;
             default:
                 //throw error?
+                semanticErrors++;
                 break;
         }
     }
@@ -197,7 +198,7 @@ public class SemanticAnalyzer {
     private void semanticIntExpr(){
         //check if next token is '+'
         if(tokenStream.get(tokenStreamIndex+1).tokenType.equals("ADD")){
-            ast.addNodeAST("leaf", currentToken.lexeme);
+            ast.addNodeAST("branch", currentToken.lexeme);
             incrementToken();
             ast.addNodeAST("leaf", currentToken.lexeme);
             incrementToken();
@@ -222,7 +223,7 @@ public class SemanticAnalyzer {
         if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
             incrementToken();
             semanticExpr();
-            ast.addNodeAST("leaf", currentToken.lexeme);
+            ast.addNodeAST("branch", currentToken.lexeme);
             incrementToken();
             semanticExpr();
             incrementToken();
