@@ -1,6 +1,4 @@
 TDL for project 3 - Semantic Analysis
 
-- add comments semantic analyzer
-- add comments out semantic analyzer
 - test different code
-- remove unnecessary testing output
+- are == != + branches?
