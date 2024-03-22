@@ -1,6 +1,6 @@
 TDL for project 3 - Semantic Analysis
 
-- are == != + branches? -- yes, also order of importance matters
-- AST has correct variables but not in the correct order -- write some type of function to fix this
-
---fix order of ast
+-- operators need to be ordered correctly
+-- add more commments to semantic analyzer
+-- test
+-- finish ast completely by monday
