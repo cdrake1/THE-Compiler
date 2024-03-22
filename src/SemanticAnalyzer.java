@@ -59,14 +59,15 @@ public class SemanticAnalyzer {
 
     //parse block -- semantic
     private void semanticBlock(){
-        ast.addNodeAST("root", "Block"); //add block as the root node of the AST
-        incrementToken(); //move to the next token within the token stream
-        semanticStatementList();    //call statement list
-        incrementToken();   //increment the index and grab the next token
+        ast.addNodeAST("root", "Block"); //add block node as root
+        incrementToken();   //match
+        semanticStatementList();    //call statementlist
+        incrementToken();   //match
     }
 
     //parse statement list -- semantic
     private void semanticStatementList(){
+        //check the token type to determine what function to call
         switch (currentToken.tokenType) {
             case "PRINT":
             case "ID":
@@ -142,12 +143,12 @@ public class SemanticAnalyzer {
         ast.addNodeAST("branch", "Variable declaration");
         ast.addNodeAST("leaf", currentToken.lexeme);
         incrementToken();
-        ast.addNodeAST("branch", currentToken.lexeme);  //= is branch node
+        ast.addNodeAST("leaf", currentToken.lexeme);
         incrementToken();
         ast.moveUpAST();
     }
 
-    //parse while statement -- semantic
+    //parse While statement -- semantic
     private void semanticWhileStatement(){
         ast.addNodeAST("branch", "While statement");
         incrementToken();
@@ -195,9 +196,9 @@ public class SemanticAnalyzer {
     private void semanticIntExpr(){
         //check if next token is '+'
         if(tokenStream.get(tokenStreamIndex+1).tokenType.equals("ADD")){
-            ast.addNodeAST("branch", currentToken.lexeme);
-            incrementToken();
             ast.addNodeAST("leaf", currentToken.lexeme);
+            incrementToken();
+            ast.addNodeAST("branch", currentToken.lexeme);
             incrementToken();
             semanticExpr();
             ast.moveUpAST();
