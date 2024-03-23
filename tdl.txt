@@ -1,6 +1,5 @@
 TDL for project 3 - Semantic Analysis
 
--- operators need to be ordered correctly
--- add more commments to semantic analyzer
+-- operators need to be ordered correctly (boolean operators)
+-- add more commments to semantic analyzer***
 -- test
--- finish ast completely by monday

@@ -191,12 +191,14 @@ public class SemanticAnalyzer {
     private void semanticIntExpr(){
         //check if next token is '+'
         if(tokenStream.get(tokenStreamIndex+1).tokenType.equals("ADD")){
-            semanticDigit();
-            semanticIntOp();
-            semanticExpr();
+            semanticIntOp();    //add + op first -- as branch node
+            semanticDigit();    //add digit node as leaf
+            incrementToken();   //increment for + op
+            semanticExpr(); // call expr
+            ast.moveUpAST();    //move up because we are adding a branch node
         }
         else{
-            semanticDigit();
+            semanticDigit();    //add leaf node for digit
         }
     }
 
@@ -210,7 +212,7 @@ public class SemanticAnalyzer {
     //parse boolean expression -- semantic
     private void semanticBooleanExpr(){
         //check token type to determine what function to call
-        if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
+        if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){   // need to add some type of checking to make branch nodes correctly
             incrementToken();
             semanticExpr();
             semanticBoolOp();
@@ -266,8 +268,6 @@ public class SemanticAnalyzer {
 
     //parse add op (+) -- semantic
     private void semanticIntOp(){
-        ast.addNodeAST("branch", currentToken.lexeme);
-        incrementToken();
-        ast.moveUpAST();
+        ast.addNodeAST("branch", "+");  // add + op as branch
     }
 }
