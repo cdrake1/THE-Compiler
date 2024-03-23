@@ -63,6 +63,7 @@ public class SemanticAnalyzer {
         incrementToken();   //match
         semanticStatementList();    //statementlist
         incrementToken();   //match
+        ast.moveUpAST();
     }
 
     //parse statement list -- semantic
@@ -215,10 +216,12 @@ public class SemanticAnalyzer {
         //check token type to determine what function to call
         if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){   // need to add some type of checking to make branch nodes correctly
             incrementToken();
-            semanticExpr();
-            semanticBoolOp();
+            semanticBoolOp();   //find the bool op and add it first
             semanticExpr();
             incrementToken();
+            semanticExpr();
+            incrementToken();
+            ast.moveUpAST();    // move up because we added a branch node
         }
         else{
             semanticBoolVal();
@@ -256,9 +259,12 @@ public class SemanticAnalyzer {
 
     //parse bool operators -- semantic
     private void semanticBoolOp(){
-        ast.addNodeAST("branch", currentToken.lexeme);  //add branch for bool ops
-        incrementToken();
-        ast.moveUpAST();
+        int i = tokenStreamIndex;   //create temp index
+        //keep looking until find the bool op
+        while(!tokenStream.get(i).lexeme.equals("!=") && !tokenStream.get(i).lexeme.equals("==")){
+            i++;
+        }
+        ast.addNodeAST("branch", tokenStream.get(i).lexeme);  //add branch for bool ops
     }
 
     //parse bool values -- semantic

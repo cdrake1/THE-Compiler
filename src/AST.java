@@ -57,9 +57,15 @@ public class AST {
         if(current.parent != null){
             current = current.parent;
         }
-        else{
-            // error logging
-            ASTLog("ERROR! There was an error when trying to move up the tree...");
+        else{   //check if the current node is block and if its the root node so there are no errors thrown when trying to move up
+            if(current.name.equals("Block") && current.parent == null){
+                //do nothing
+                //epsilon
+            }
+            else{
+                // error logging
+                ASTLog("ERROR! There was an error when trying to move up the tree...");
+            }
         }
     }
 
