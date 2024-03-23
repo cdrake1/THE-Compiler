@@ -53,7 +53,7 @@ public class SemanticAnalyzer {
             ast.outputAST();    //outputs the ast after reparsing
         }
         else{
-            SemanticAnalyzerLog("Semantic Analysis Failed... Errors: " + semanticErrors);
+            SemanticAnalyzerLog("Semantic Analysis Failed... Errors: " + semanticErrors);   //output message if semantic fails
         }
     }
 
@@ -67,6 +67,7 @@ public class SemanticAnalyzer {
 
     //parse statement list -- semantic
     private void semanticStatementList(){
+        //check tokent type to determine what function to call
         switch (currentToken.tokenType) {
             case "PRINT":
             case "ID":
@@ -111,7 +112,7 @@ public class SemanticAnalyzer {
                 semanticBlock();
                 break;
             default:
-                //throw error?
+                SemanticAnalyzerLog("Incorrect token found...");    //update this error message later
                 semanticErrors++;
                 break;
         }
@@ -119,47 +120,47 @@ public class SemanticAnalyzer {
 
     //parse print statement -- semantic
     private void semanticPrintStatement(){
-        ast.addNodeAST("branch", "Print statement");
+        ast.addNodeAST("branch", "Print statement");    //add branch node
+        incrementToken();   //2 match function calls -- increment token index
         incrementToken();
-        incrementToken();
-        semanticExpr();
-        incrementToken();
-        ast.moveUpAST();
+        semanticExpr(); //call expr
+        incrementToken();   //match
+        ast.moveUpAST();    //move up because we created a branch node
     }
 
     //parse assignment statement -- semantic
     private void semanticAssignmentStatement(){
-        ast.addNodeAST("branch", "Assignment statement");
-        semanticID();
+        ast.addNodeAST("branch", "Assignment statement");   //add a branch node
+        semanticID();   //add a leaf node
         incrementToken();
         semanticExpr();
-        ast.moveUpAST();
+        ast.moveUpAST();    //move up branch node
     }
 
     //parse variable declaration -- semantic
     private void semanticVarDecl(){
-        ast.addNodeAST("branch", "Variable declaration");
-        semanticType();
+        ast.addNodeAST("branch", "Variable declaration");   //add a branch node
+        semanticType(); //add 2 leaf nodes -- type and id
         semanticID();
-        ast.moveUpAST();
+        ast.moveUpAST();    //move up branch node
     }
 
     //parse while statement -- semantic
     private void semanticWhileStatement(){
-        ast.addNodeAST("branch", "While statement");
+        ast.addNodeAST("branch", "While statement");    //add a branch node
         incrementToken();
         semanticBooleanExpr();
         semanticBlock();
-        ast.moveUpAST();
+        ast.moveUpAST();    //move up branch node
     }
 
     //parse if statement -- semantic
     private void semanticIfStatement(){
-        ast.addNodeAST("branch", "If statement");
+        ast.addNodeAST("branch", "If statement");   //add a branch node
         incrementToken();
         semanticBooleanExpr();
         semanticBlock();
-        ast.moveUpAST();
+        ast.moveUpAST();    //move up branch node
     }
 
     //parse expression -- semantic
@@ -181,7 +182,7 @@ public class SemanticAnalyzer {
                 semanticID();
                 break;
             default:
-                //throw error??
+                SemanticAnalyzerLog("Incorrect token found...");    //update this error message later
                 semanticErrors++;
                 break;
         }
@@ -205,7 +206,7 @@ public class SemanticAnalyzer {
     //parse string expression -- semantic
     private void semanticStringExpr(){
         incrementToken();
-        semanticCharList();
+        semanticCharList(); //call charlist to create the string token
         incrementToken();
     }
 
@@ -237,32 +238,32 @@ public class SemanticAnalyzer {
 
     //parse ID -- semantic
     private void semanticID(){
-        ast.addNodeAST("leaf", currentToken.lexeme);
+        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
         incrementToken();
     }
 
     //parse types: int, string, bool -- semantic
     private void semanticType(){
-        ast.addNodeAST("leaf", currentToken.lexeme);
+        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
         incrementToken();
     }
 
     //parse digits 0-9 -- semantic
     private void semanticDigit(){
-        ast.addNodeAST("leaf", currentToken.lexeme);
+        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
         incrementToken();
     }
 
     //parse bool operators -- semantic
     private void semanticBoolOp(){
-        ast.addNodeAST("branch", currentToken.lexeme);
+        ast.addNodeAST("branch", currentToken.lexeme);  //add branch for bool ops
         incrementToken();
         ast.moveUpAST();
     }
 
     //parse bool values -- semantic
     private void semanticBoolVal(){
-        ast.addNodeAST("leaf", currentToken.lexeme);
+        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
         incrementToken();
     }
 
