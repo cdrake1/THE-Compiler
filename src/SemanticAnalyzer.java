@@ -214,7 +214,7 @@ public class SemanticAnalyzer {
     //parse boolean expression -- semantic
     private void semanticBooleanExpr(){
         //check token type to determine what function to call
-        if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){   // need to add some type of checking to make branch nodes correctly
+        if(currentToken.tokenType.equals("OPENING_PARENTHESIS")){
             incrementToken();
             semanticBoolOp();   //find the bool op and add it first
             semanticExpr();

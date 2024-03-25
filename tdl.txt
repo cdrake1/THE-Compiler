@@ -1,4 +1,4 @@
 TDL for project 3 - Semantic Analysis
 
--- add more commments to semantic analyzer
--- test
+-- start symbol table
+-- space after ast output fix
