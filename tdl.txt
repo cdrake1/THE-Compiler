@@ -2,3 +2,5 @@ TDL for project 3 - Semantic Analysis
 
 -- start symbol table
 -- space after ast output fix
+
+---figure out if symbol table implementation is good. node class, table class, and symbol class?
