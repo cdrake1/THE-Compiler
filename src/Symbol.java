@@ -11,17 +11,17 @@ public class Symbol{
     boolean isINIT; //is this symbol initialized?
     boolean isUsed; //is this symbol used?
     int scope;  //what is the symbols scope?
-
-    //---need these?
-    int line;   //what line is the symbol located within the source code?
-    int position;   //the symbols position within the source code
+    String line;   //what line is the symbol located within the source code?
+    String position;   //the symbols position within the source code
 
     //Symbol constructor -- creates a symbol and initializes its variables
-    public Symbol(String name, String type, int scope){
+    public Symbol(String name, String type, int scope, String line, String position){
         this.name = name;
         this.type = type;
         this.isINIT = false;
         this.isUsed = false;
         this.scope = scope;
+        this.line = line;
+        this.position = position;
     }
 }

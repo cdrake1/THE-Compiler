@@ -4,13 +4,18 @@
     To be used in Symantic Analysis
 */
 
+//tree of hashtables?-------------
+
 //Collin Drakes Symbol Table
 public class SymbolTable {
-
-    //tree of hashmaps?
+    SymbolTableNode root;  //pointer to the root node
+    SymbolTableNode current;   //pointer to the current node
 
     //Symbol Table constructor -- initializes variables
-    public SymbolTable(){}   
+    public SymbolTable(){
+        this.root = null;
+        this.current = null;
+    }   
 
     //opens a new scope within the symbol table
     private void openScope(){}
