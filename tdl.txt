@@ -1,4 +1,5 @@
 TDL for project 3 - Semantic Analysis
 
--- start symbol table functions build out
+-- fix depth first in order traversal
+-- build out symbol table functions
 -- space after ast output fix

@@ -15,6 +15,7 @@ public class SemanticAnalyzer {
     int semanticErrors; //counts the number of parse errors
     int programCounter; //counts programs
     AST ast;    //creates an abstract syntax tree
+    SymbolTable symbolTable;    //creates a symbol table
 
     //Semantic Analysis constructor -- initializes all variables
     public SemanticAnalyzer(ArrayList<Token> programTokenStream, int programCounter){
@@ -24,6 +25,7 @@ public class SemanticAnalyzer {
         this.semanticErrors = 0;
         this.programCounter = programCounter;
         ast = new AST();
+        symbolTable = new SymbolTable();
     }
 
     //outputs the results of Semantic Analysis. Also outputs errors...
@@ -51,6 +53,7 @@ public class SemanticAnalyzer {
         if(semanticErrors == 0){
             SemanticAnalyzerLog("Semantic Analysis Complete... Errors: " + semanticErrors);
             ast.outputAST();    //outputs the ast after reparsing
+            symbolTable.inOrder(ast.root);  //test output of depth first in order traversal
         }
         else{
             SemanticAnalyzerLog("Semantic Analysis Failed... Errors: " + semanticErrors);   //output message if semantic fails
