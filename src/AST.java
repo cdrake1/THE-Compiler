@@ -16,7 +16,7 @@ public class AST {
     public AST(){
         this.root = null;
         this.current = null;
-        traversal = "";
+        this.traversal = "";
     }
 
     //outputs the processes completed within the AST

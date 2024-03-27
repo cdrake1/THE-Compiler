@@ -54,6 +54,7 @@ public class SemanticAnalyzer {
             SemanticAnalyzerLog("Semantic Analysis Complete... Errors: " + semanticErrors);
             ast.outputAST();    //outputs the ast after reparsing
             symbolTable.inOrder(ast.root);  //test output of depth first in order traversal
+            symbolTable.testScopes();
         }
         else{
             SemanticAnalyzerLog("Semantic Analysis Failed... Errors: " + semanticErrors);   //output message if semantic fails
