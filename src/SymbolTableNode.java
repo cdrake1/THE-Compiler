@@ -9,7 +9,7 @@ import java.util.Hashtable;
 
 //The symbol table node class!
 public class SymbolTableNode {
-    int scope;
+    int scope;  //the scope within the program
     SymbolTableNode parent; //pointer to parent node
     Hashtable<String, Symbol> symbols;    //hashtable of symbols
     ArrayList<SymbolTableNode> children;   //list of pointers to child nodes

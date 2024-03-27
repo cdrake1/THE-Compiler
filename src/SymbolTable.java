@@ -26,18 +26,44 @@ public class SymbolTable {
 
     //function for depth first in order traversal of AST
     public void inOrder(Node node){
+        //if null return 
         if(node == null){
             return;
         }
-        //recursively call with child node on the left -- if it exists
-        if(!node.children.isEmpty()){
-            inOrder(node.children.get(0));
-        }
-        //output the value of each node
+
+        //output node
         System.out.println(node.name + "\n");
-        //recursively call with child node on the right -- if it exists
-        if(node.children.size() > 1){
-            inOrder(node.children.get(1));
+        
+        //iterate through children and call inOrder
+        for(int i = 0; i < node.children.size(); i++){
+            inOrder(node.children.get(i));
+        }
+    }
+
+    //adds a node to the symbol table
+    public void addNodeSymbolTable(int scope, String kind){
+
+        //scope - where is it located within the program
+        //kind - what kind of node is it root, branch, leaf?
+
+        //create a new node to be added to the symbol table
+        SymbolTableNode newNode = new SymbolTableNode(scope);
+
+        //check if the tree has a root node
+        if(root == null){
+            //update root node to new node
+            root = newNode;
+            newNode.parent = null;
+        }
+        else{
+            //if there is already a root then add the newnode to child array
+            newNode.parent = current;
+            current.children.add(newNode);
+        }
+
+        //if the new node is not a leaf node make it the current
+        if(!kind.equals("leaf")){
+            current = newNode;
         }
     }
 
