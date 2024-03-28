@@ -33,9 +33,32 @@ public class SymbolTable {
             return;
         }
 
-        //output node
-        if(node.name.equals("Block")){
-            openScope();
+        //switch case for each node-------
+        switch (node.name) {
+            case "Block":
+                //open scope
+                openScope();
+                break;
+            case "Variable declaration":
+
+                //hard code look ahead?? ickyyy
+            
+                break;
+            case "Assignment statement":
+                
+                break;
+            case "Print statement":
+                
+                break;
+            case "While statement":
+                
+                break;
+            case "If statement":
+
+                break;
+        
+            default:
+                break;
         }
         
         //iterate through children and call inOrder
@@ -65,15 +88,8 @@ public class SymbolTable {
             current.children.add(newNode);
         }
 
+        //move current to new node
         current = newNode;
-
-        /*
-        what do with this??
-        //if the new node is not a leaf node make it the current
-        if(!kind.equals("leaf")){
-            current = newNode;
-        }
-        */
     }
 
     //opens a new scope within the symbol table
@@ -88,13 +104,24 @@ public class SymbolTable {
     }
 
     //closes the most recently opened scope
-    private void closeScope(){}
+    private void closeScope(){
+        // if block node and not root move current scope to parent
+        if(current.scope != 0){
+            current = current.parent;
+            currentScope--;
+        }
+    }
 
     //adds a symbol to the symbol table
-    private void addSymbol(){}
+    private void addSymbol(String id, String type){
+        Symbol newSymbol = new Symbol(id, type, currentScope);
+        current.symbols.put(newSymbol.name, newSymbol);
+    }
 
-    //looks up a symbol within the symbol table
-    private void lookupSymbol(){}
+    //looks up a symbol within the symbol table and returns it
+    private Symbol lookupSymbol(String id){
+        return current.symbols.get(id);
+    }
 
 
     //-------------------------------------------------------------
