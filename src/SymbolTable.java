@@ -36,43 +36,38 @@ public class SymbolTable {
         //switch case for each node-------
         switch (node.name) {
             case "Block":
-                //open scope
                 openScope();
+                //figure out when to close scope
                 break;
             case "Variable declaration":
-
-                //hard code look ahead?? ickyyy
-            
+                STVarDecl(node);
                 break;
             case "Assignment statement":
-                
+                STAssignmentStatement();
                 break;
             case "Print statement":
-                
+                STPrintStatement();
                 break;
             case "While statement":
+                STWhileStatement();
                 
                 break;
             case "If statement":
-
+                STIfStatement();
                 break;
-        
             default:
+                //throw error?
                 break;
         }
-        
-        //iterate through children and call inOrder
-        for(int i = 0; i < node.children.size(); i++){
-            inOrder(node.children.get(i));
+
+        //iterate through all children recursively
+        for(Node child : node.children){
+            inOrder(child);
         }
     }
 
     //adds a node to the symbol table
     public void addNodeSymbolTable(int scope){
-
-        //scope - where is it located within the program
-        //kind - what kind of node is it root, branch, leaf?
-
         //create a new node to be added to the symbol table
         SymbolTableNode newNode = new SymbolTableNode(scope);
 
@@ -87,7 +82,6 @@ public class SymbolTable {
             newNode.parent = current;
             current.children.add(newNode);
         }
-
         //move current to new node
         current = newNode;
     }
@@ -105,12 +99,37 @@ public class SymbolTable {
 
     //closes the most recently opened scope
     private void closeScope(){
-        // if block node and not root move current scope to parent
+        //if the current scope is not the root node then move the pointer to its parent
         if(current.scope != 0){
             current = current.parent;
             currentScope--;
         }
     }
+
+    //add symbol to the current nodes hash table
+    private void STVarDecl(Node currentNode){
+        String varID = currentNode.children.get(0).name;
+        String varType = currentNode.children.get(1).name;
+        addSymbol(varID, varType);
+    }
+
+    //lookup the symbol and check types
+    private void STAssignmentStatement(Node currentNode){
+        Symbol temp = lookupSymbol();
+        if(){
+
+        }
+
+    }
+
+    //lookup symbol to check scope
+    private void STPrintStatement(){}
+    private void STWhileStatement(){}
+    private void STIfStatement(){}
+    private void STBoolOP(){}
+    private void STIntOP(){}
+    private void checkUsed(){}
+    private void checkINIT(){}
 
     //adds a symbol to the symbol table
     private void addSymbol(String id, String type){
