@@ -1,15 +1,8 @@
 TDL for project 3 - Semantic Analysis
 
--- fix depth first in order traversal
 -- build out symbol table functions
 -- space after ast output fix
 
 
--- var decl add symbol
--- assign lookup symbol
--- assign check types if 2 symbols
--- print lookup symbol
--- is equal lookup symbol
--- is equal check types
 
 -- restructure trees to intake a token instead of just a string?-- only if time

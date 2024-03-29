@@ -43,10 +43,10 @@ public class SymbolTable {
                 STVarDecl(node);
                 break;
             case "Assignment statement":
-                STAssignmentStatement();
+                STAssignmentStatement(node);
                 break;
             case "Print statement":
-                STPrintStatement();
+                STPrintStatement(node);
                 break;
             case "While statement":
                 STWhileStatement();
@@ -115,15 +115,18 @@ public class SymbolTable {
 
     //lookup the symbol and check types
     private void STAssignmentStatement(Node currentNode){
-        Symbol temp = lookupSymbol();
-        if(){
-
-        }
-
+        Symbol temp = lookupSymbol(currentNode.children.get(0).name);
+        //eval expression
+        temp.isINIT = true;
     }
 
     //lookup symbol to check scope
-    private void STPrintStatement(){}
+    private void STPrintStatement(Node currentNode){
+        Symbol temp = lookupSymbol(currentNode.children.get(0).name);
+        //check scope??
+    }
+
+
     private void STWhileStatement(){}
     private void STIfStatement(){}
     private void STBoolOP(){}
@@ -140,6 +143,7 @@ public class SymbolTable {
     //looks up a symbol within the symbol table and returns it
     private Symbol lookupSymbol(String id){
         return current.symbols.get(id);
+        //have to put code to check all scopes
     }
 
 
