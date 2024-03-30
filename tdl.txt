@@ -4,5 +4,8 @@ TDL for project 3 - Semantic Analysis
 -- space after ast output fix
 
 
+-- remove quotes from semantic analyzer?
+-- make intop recursive just incase its 1+1+1+1 etc?
+
 
 -- restructure trees to intake a token instead of just a string?-- only if time
