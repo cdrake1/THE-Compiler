@@ -236,12 +236,10 @@ public class SemanticAnalyzer {
     private void semanticCharList(){
         //use a stringbuilder to iterate through a charlist and create 1 string variable
         StringBuilder charlist = new StringBuilder();
-        charlist.append("\"");
         while(!currentToken.lexeme.equals("\"")){
             charlist.append(currentToken.lexeme);
             incrementToken();
         }
-        charlist.append("\"");
         ast.addNodeAST("leaf", charlist.toString());
     }
 

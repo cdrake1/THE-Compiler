@@ -91,38 +91,77 @@ public class SymbolTable {
 
     //add symbol to the current nodes hash table
     private void STVarDecl(Node currentNode){
-        String varID = currentNode.children.get(0).name;
-        String varType = currentNode.children.get(1).name;
+        String varType = currentNode.children.get(0).name;
+        String varID = currentNode.children.get(1).name;
         addSymbol(varID, varType);
     }
 
     //lookup the symbol and check types
     private void STAssignmentStatement(Node currentNode){
-        Symbol temp = lookupSymbol(currentNode.children.get(0).name);
-        if(temp == null){
-            //throw error
+        Symbol firstChild = lookupSymbol(currentNode.children.get(0).name);
+        Node secondChild = currentNode.children.get(1);
+        if(firstChild == null){
+            symbolTableLog("ERROR! VARIABLE NOT FOUND: " + currentNode.children.get(0).name);
             STErrors++;
             return;
         }
         else{
-            switch (temp.type) {
+            switch (firstChild.type) {
                 case "int":
-                    //if to check what 2nd child node is ( digit, + or id)
+                    if(currentNode.children.get(1).name.equals("+")){
+                        STIntOP(currentNode.children.get(1));
+                    }
+                    else if(!currentNode.children.get(1).name.matches("[0-9]")){
+                        
+                    }
+                    else if(currentNode.children.get(1).name.matches("[a-z]")){
+                        if(!lookupSymbol(secondChild.name).type.equals("int")){
+                            //throw an error
+                        }
+                    }
                     break;
                 case "string":
-                    // just check 2nd child node for " or chars "
+                    if(secondChild.name.length() > 1 && secondChild.name.matches("[a-z]{2,}")){
+                        //charlist
+                    }
+                    else if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){
+                        if(!lookupSymbol(secondChild.name).type.equals("int")){
+                            //throw an error
+                        }
+                    }
+                    else{
+                        //throw error
+                    }
                     break;
                 case "boolean":
                     //if to check what 2nd child node is (boolval and expr)
+                    if(!secondChild.name.matches("(true|false)")){
+                        symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                        STErrors++;
+                    }
+                    else if(secondChild.name.matches("(==|!=)")){
+                        STBoolOP(secondChild);
+                    }
+                    else if(secondChild.name.matches("[a-z]")){
+                        Symbol boolId = lookupSymbol(secondChild.name);
+                        if(boolId == null){
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
+                            STErrors++;
+                        }
+                        else{
+                            if(!boolId.type.equals("boolean")){
+                                symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                                STErrors++;
+                            }
+                        }
+                    }
                     break;
                 default:
                     //throw error
                     break;
             }
-            //switch case for symbol type?
-            //eval expression
         }
-        temp.isINIT = true;
+        firstChild.isINIT = true;
     }
 
     //lookup symbol to check scope
@@ -138,7 +177,7 @@ public class SymbolTable {
 
     private void STWhileStatement(){}
     private void STIfStatement(){}
-    private void STBoolOP(){}
+    private void STBoolOP(Node nextNode){}
     private void STIntOP(Node nextNode){
         //recursive to?? -- a = 1+1+1+1 etc
     }
