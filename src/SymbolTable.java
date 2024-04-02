@@ -51,11 +51,10 @@ public class SymbolTable {
                 STPrintStatement(node);
                 break;
             case "While statement":
-                STWhileStatement();
-                
+                STWhileStatement(node);
                 break;
             case "If statement":
-                STIfStatement();
+                STIfStatement(node);
                 break;
             default:
                 //throw error?
@@ -98,66 +97,115 @@ public class SymbolTable {
 
     //lookup the symbol and check types
     private void STAssignmentStatement(Node currentNode){
-        Symbol firstChild = lookupSymbol(currentNode.children.get(0).name);
-        Node secondChild = currentNode.children.get(1);
+        Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //grab the left child nodes symbol
+        Node secondChild = currentNode.children.get(1); //grab the right child node
+
+        //check if the first child symbol was created
         if(firstChild == null){
-            symbolTableLog("ERROR! VARIABLE NOT FOUND: " + currentNode.children.get(0).name);
+            //throw error because this variable doesnt exist
+            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + currentNode.children.get(0).name);
             STErrors++;
             return;
         }
         else{
+            //variable was declared so check type
             switch (firstChild.type) {
+                //type int
                 case "int":
-                    if(currentNode.children.get(1).name.equals("+")){
+                    if(secondChild.name.equals("+")){   //right child is +
                         STIntOP(currentNode.children.get(1));
                     }
-                    else if(!currentNode.children.get(1).name.matches("[0-9]")){
-                        
-                    }
-                    else if(currentNode.children.get(1).name.matches("[a-z]")){
-                        if(!lookupSymbol(secondChild.name).type.equals("int")){
-                            //throw an error
+                    else if(secondChild.name.matches("[a-z]")){ //right child is another variable/id
+                        Symbol temp = lookupSymbol(secondChild.name);
+                        if(temp == null){   //does this variable exist?
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
+                            STErrors++;
+                            return;
+                        }
+                        else{   //if the variable exists check its type
+                            if(!temp.type.equals("int")){
+                                symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                                STErrors++;
+                                return;
+                            }
                         }
                     }
-                    break;
-                case "string":
-                    if(secondChild.name.length() > 1 && secondChild.name.matches("[a-z]{2,}")){
-                        //charlist
-                    }
-                    else if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){
-                        if(!lookupSymbol(secondChild.name).type.equals("int")){
-                            //throw an error
-                        }
-                    }
-                    else{
-                        //throw error
-                    }
-                    break;
-                case "boolean":
-                    //if to check what 2nd child node is (boolval and expr)
-                    if(!secondChild.name.matches("(true|false)")){
+                    else if(!secondChild.name.matches("[0-9]")){    //check if second child is not a digit -- is this useless?
                         symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
                         STErrors++;
+                        return;
                     }
-                    else if(secondChild.name.matches("(==|!=)")){
+                    else{   //throw other error if the right child doesnt match any of these
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
+                        STErrors++;
+                        return;
+                    }
+                    break;
+
+                //type string
+                case "string":
+                    if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){    //second child is id/variable
+                        Symbol temp = lookupSymbol(secondChild.name);
+                        if(temp == null){   //scope checking
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
+                            STErrors++;
+                            return;
+                        }
+                        else{   //type checking
+                            if(!temp.type.equals("string")){
+                                symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                                STErrors++;
+                                return;
+                            }
+                        }
+                    }
+                    else if(secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+")){
+                        //charlist
+                        // do nothing
+                    }
+                    else if(secondChild.name.matches("[0-9]")){ //if its a digit throw type mismatch -- is this useless?
+                        symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                        STErrors++;
+                        return;
+                    }
+                    else{   //throw other error
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
+                        STErrors++;
+                        return;
+                    }
+                    break;
+                
+                //type boolean
+                case "boolean":
+                    if(secondChild.name.matches("(==|!=)")){    //right child is a boolop
                         STBoolOP(secondChild);
                     }
-                    else if(secondChild.name.matches("[a-z]")){
+                    else if(secondChild.name.matches("[a-z]")){ //its an id/variable
                         Symbol boolId = lookupSymbol(secondChild.name);
-                        if(boolId == null){
+                        if(boolId == null){ //check scope
                             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
                             STErrors++;
                         }
-                        else{
+                        else{   //check type
                             if(!boolId.type.equals("boolean")){
                                 symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
                                 STErrors++;
                             }
                         }
                     }
+                    else if(secondChild.name.matches("(true|false)")){  //boolval
+                        //boolval
+                        //do nothing
+                    }
+                    else{   //throw other error
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
+                        STErrors++;
+                        return;
+                    }
                     break;
                 default:
-                    //throw error
+                        symbolTableLog("ERROR! INVALID ASSIGNMENT STATEMENT");
+                        STErrors++;
                     break;
             }
         }
@@ -166,32 +214,60 @@ public class SymbolTable {
 
     //lookup symbol to check scope
     private void STPrintStatement(Node currentNode){
+        //grab the child node
         Symbol temp = lookupSymbol(currentNode.children.get(0).name);
-        if(temp == null){
-            //throw error
+        if(temp == null){   //scope check and throw error if it doesnt exist
+            symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + currentNode.children.get(0).name);
             STErrors++;
             return;
         }
     }
 
+    private void STWhileStatement(Node whileNode){
+        Node booleanExpr = whileNode.children.get(0);
+        Node block = whileNode.children.get(1);
 
-    private void STWhileStatement(){}
-    private void STIfStatement(){}
-    private void STBoolOP(Node nextNode){}
-    private void STIntOP(Node nextNode){
-        //recursive to?? -- a = 1+1+1+1 etc
+        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+            STBoolOP(booleanExpr);
+        }
+        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
+            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            STErrors++;
+        }
+
+        openScope();
+        inOrder(block);
+        closeScope();
     }
 
-    //looks up a symbol to check if it was ever used
-    private boolean checkUsed(){
-        //lookup symbol and check if used
-        //return true or false
+    private void STIfStatement(Node ifNode){
+        Node booleanExpr = ifNode.children.get(0);
+        Node block = ifNode.children.get(1);
+
+        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+            STBoolOP(booleanExpr);
+        }
+        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
+            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            STErrors++;
+        }
+
+        openScope();
+        inOrder(block);
+        closeScope();
     }
 
-    //looks up a symbol to check if it was ever initialized
-    private boolean checkINIT(){
-        //lookup symbol and check if init
-        //return true or false
+
+    private void STBoolOP(Node boolopNode){
+        Node leftNode = boolopNode.children.get(0);
+        Node rightNode = boolopNode.children.get(1);
+        //check types
+    }
+    private void STIntOP(Node intopNode){
+        Node leftNode = intopNode.children.get(0);  //always a digit
+
+        Node rightNode = intopNode.children.get(1); //digit, +, ID
+
     }
 
     //adds a symbol to the symbol table
