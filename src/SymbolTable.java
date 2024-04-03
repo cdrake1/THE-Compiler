@@ -4,21 +4,21 @@
     To be used in Symantic Analysis
 */
 
-//tree of hashtables?-------------
-
 //Collin Drakes Symbol Table
 public class SymbolTable {
     SymbolTableNode root;  //pointer to the root node
     SymbolTableNode current;   //pointer to the current node
     int currentScope;   //scope pointer
+    int outputScope;    //pointer for output function
     String traversal;   //string to hold symbol table traversal
-    int STErrors;
+    int STErrors;   //counts total errors
 
     //Symbol Table constructor -- initializes variables
     public SymbolTable(){
         this.root = null;
         this.current = null;
         this.currentScope = 0;
+        this.outputScope = 0;
         this.STErrors = 0;
         this.traversal = "";
     }   
@@ -39,7 +39,6 @@ public class SymbolTable {
         switch (node.name) {
             case "Block":
                 openScope();
-                //figure out when to close scope
                 break;
             case "Variable declaration":
                 STVarDecl(node);
@@ -48,17 +47,16 @@ public class SymbolTable {
                 STAssignmentStatement(node);
                 break;
             case "Print statement":
-                STPrintStatement(node);
+                //STPrintStatement(node);
                 break;
             case "While statement":
-                STWhileStatement(node);
+                //STWhileStatement(node);
                 break;
             case "If statement":
-                STIfStatement(node);
+                //STIfStatement(node);
                 break;
             default:
-                //throw error?
-                STErrors++;
+                //do nothing
                 break;
         }
 
@@ -66,21 +64,25 @@ public class SymbolTable {
         for(Node child : node.children){
             inOrder(child);
         }
+        System.out.println(node.name);
     }
 
     //opens a new scope within the symbol table
     private void openScope(){
-       if(root == null){
+        System.out.println("openscope");
+        //if there is no root then create 1. Otherwise increment the pointer and create a childnode
+        if(root == null){
             addNodeSymbolTable(currentScope);
-       }
-       else{
+        }
+        else{
             currentScope++;
             addNodeSymbolTable(currentScope);
-       }
+        }
     }
 
     //closes the most recently opened scope
     private void closeScope(){
+        System.out.println("clpse scope");
         //if the current scope is not the root node then move the pointer to its parent
         if(current.scope != 0 && current.parent != null){
             current = current.parent;
@@ -90,6 +92,7 @@ public class SymbolTable {
 
     //add symbol to the current nodes hash table
     private void STVarDecl(Node currentNode){
+        System.out.println("var decl");
         String varType = currentNode.children.get(0).name;
         String varID = currentNode.children.get(1).name;
         addSymbol(varID, varType);
@@ -97,6 +100,7 @@ public class SymbolTable {
 
     //lookup the symbol and check types
     private void STAssignmentStatement(Node currentNode){
+        System.out.println("assignment statement");
         Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //grab the left child nodes symbol
         Node secondChild = currentNode.children.get(1); //grab the right child node
 
@@ -108,14 +112,14 @@ public class SymbolTable {
             return;
         }
         else{
-            //variable was declared so check type
+            //variable was declared so check its type
             switch (firstChild.type) {
                 //type int
                 case "int":
                     if(secondChild.name.equals("+")){   //right child is +
-                        STIntOP(currentNode.children.get(1));
+                        //STIntOP(currentNode.children.get(1));
                     }
-                    else if(secondChild.name.matches("[a-z]")){ //right child is another variable/id
+                    else if(secondChild.name.matches("[a-z]")){ //right child is a variable/id
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //does this variable exist?
                             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
@@ -130,7 +134,7 @@ public class SymbolTable {
                             }
                         }
                     }
-                    else if(!secondChild.name.matches("[0-9]")){    //check if second child is not a digit -- is this useless?
+                    else if(!secondChild.name.matches("[0-9]")){    //check if second child is not a digit
                         symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
                         STErrors++;
                         return;
@@ -144,7 +148,7 @@ public class SymbolTable {
 
                 //type string
                 case "string":
-                    if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){    //second child is id/variable
+                    if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){    //second child is an id/variable
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //scope checking
                             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
@@ -178,7 +182,7 @@ public class SymbolTable {
                 //type boolean
                 case "boolean":
                     if(secondChild.name.matches("(==|!=)")){    //right child is a boolop
-                        STBoolOP(secondChild);
+                        //STBoolOP(secondChild);
                     }
                     else if(secondChild.name.matches("[a-z]")){ //its an id/variable
                         Symbol boolId = lookupSymbol(secondChild.name);
@@ -212,68 +216,15 @@ public class SymbolTable {
         firstChild.isINIT = true;
     }
 
-    //lookup symbol to check scope
-    private void STPrintStatement(Node currentNode){
-        //grab the child node
-        Symbol temp = lookupSymbol(currentNode.children.get(0).name);
-        if(temp == null){   //scope check and throw error if it doesnt exist
-            symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + currentNode.children.get(0).name);
-            STErrors++;
-            return;
-        }
-    }
-
-    private void STWhileStatement(Node whileNode){
-        Node booleanExpr = whileNode.children.get(0);
-        Node block = whileNode.children.get(1);
-
-        if (booleanExpr.name.matches("(==|!=)")){  //boolop
-            STBoolOP(booleanExpr);
-        }
-        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
-            STErrors++;
-        }
-
-        openScope();
-        inOrder(block);
-        closeScope();
-    }
-
-    private void STIfStatement(Node ifNode){
-        Node booleanExpr = ifNode.children.get(0);
-        Node block = ifNode.children.get(1);
-
-        if (booleanExpr.name.matches("(==|!=)")){  //boolop
-            STBoolOP(booleanExpr);
-        }
-        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
-            STErrors++;
-        }
-
-        openScope();
-        inOrder(block);
-        closeScope();
-    }
-
-
-    private void STBoolOP(Node boolopNode){
-        Node leftNode = boolopNode.children.get(0);
-        Node rightNode = boolopNode.children.get(1);
-        //check types
-    }
-    private void STIntOP(Node intopNode){
-        Node leftNode = intopNode.children.get(0);  //always a digit
-
-        Node rightNode = intopNode.children.get(1); //digit, +, ID
-
-    }
-
     //adds a symbol to the symbol table
     private void addSymbol(String id, String type){
-        Symbol newSymbol = new Symbol(id, type, currentScope);
-        current.symbols.put(newSymbol.name, newSymbol);
+        if(current.symbols.contains(id)){
+            return;
+        }
+        else{
+            Symbol newSymbol = new Symbol(id, type, currentScope);
+            current.symbols.put(newSymbol.name, newSymbol);
+        }
     }
 
     //looks up a symbol within each ST/scope and returns it
@@ -283,10 +234,15 @@ public class SymbolTable {
         int tempPointer = currentScope;
         while(tempPointer != -1 && temp == null){
             temp = tempNode.symbols.get(id);
-            tempPointer--;
-            tempNode = tempNode.parent;
+            if(temp != null){
+                return temp;
+            }
+            else{
+                tempPointer--;
+                tempNode = tempNode.parent;
+            }
         }
-        return temp;
+        return null;
     }
 
     //adds a node to the symbol table
@@ -310,7 +266,9 @@ public class SymbolTable {
     }
 
 
-    //-------------------------------------------------------------
+    //--------------------Symbol Table Output Functions-----------------------------------------
+
+    //----------outputs the symbol table as a tree--------------
     public void testScopes(){
         expand(root, 0);
         System.out.print("\n");
@@ -336,6 +294,23 @@ public class SymbolTable {
             for(int j = 0; j < node.children.size(); j++){
                 expand(node.children.get(j), depth + 1);
             }
+        }
+    }
+
+    //----------outputs the symbol table as a table--------------
+    public void printSymbolTable(){
+        symbolTableLog("--------------------------------------");
+        symbolTableLog("Name\tType\tScope\tisINIT\tisUsed");
+        symbolTableLog("--------------------------------------");
+        STexpand(root);
+    }
+
+    public void STexpand(SymbolTableNode node){
+        for(Symbol symbol : node.symbols.values()){
+            symbolTableLog(symbol.name + "\t" + symbol.type + "\t" + symbol.scope + "\t" + symbol.isINIT + "\t" + symbol.isUsed);
+        }
+        for(SymbolTableNode child : node.children){
+            STexpand(child);
         }
     }
 }

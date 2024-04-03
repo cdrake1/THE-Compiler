@@ -1,11 +1,8 @@
 TDL for project 3 - Semantic Analysis
 
--- build out symbol table functions
--- space after ast output fix
 
+-- default case for ast in order traversal. Throw error? what to do? If I throw error it throws error for int and id nodes
 
--- remove quotes from semantic analyzer?
--- make intop recursive just incase its 1+1+1+1 etc?
 
 
 -- restructure trees to intake a token instead of just a string?-- only if time

@@ -1,0 +1,88 @@
+//lookup symbol to check scope
+    private void STPrintStatement(Node currentNode){
+        //grab the child node
+        Symbol temp = lookupSymbol(currentNode.children.get(0).name);
+        if(temp == null){   //scope check and throw error if it doesnt exist
+            symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + currentNode.children.get(0).name);
+            STErrors++;
+            return;
+        }
+    }
+
+    private void STWhileStatement(Node whileNode){
+        Node booleanExpr = whileNode.children.get(0);
+        Node block = whileNode.children.get(1);
+
+        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+            STBoolOP(booleanExpr);
+        }
+        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
+            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            STErrors++;
+        }
+
+        openScope();
+        inOrder(block);
+        closeScope();
+    }
+
+    private void STIfStatement(Node ifNode){
+        Node booleanExpr = ifNode.children.get(0);
+        Node block = ifNode.children.get(1);
+
+        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+            STBoolOP(booleanExpr);
+        }
+        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
+            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            STErrors++;
+        }
+
+        openScope();
+        inOrder(block);
+        closeScope();
+    }
+
+
+    private void STBoolOP(Node boolopNode){
+        Node leftNode = boolopNode.children.get(0); //expr
+        Node rightNode = boolopNode.children.get(1);    //expr
+    }
+
+
+    private void STIntOP(Node intopNode){
+        Node leftNode = intopNode.children.get(0);  //always a digit
+        Node rightNode = intopNode.children.get(1); //digit, +, ID
+
+        if(!leftNode.name.matches("[0-9]")){
+            symbolTableLog("ERROR! INVALID INT EXPRESSION: " + leftNode.name);
+            STErrors++;
+            return;
+        }
+
+        if(rightNode.name.equals("+")){
+            STIntOP(rightNode);
+        }
+        else{
+            if(rightNode.name.matches("[a-z]")){
+                Symbol symbol = lookupSymbol(rightNode.name);
+                if (symbol == null){
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + rightNode.name);
+                    STErrors++;
+                    return;
+                } 
+                else{
+                    if(!symbol.type.equals("int")){
+                        symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+                        STErrors++;
+                        return;
+                    }
+                }
+            }
+            else if(!rightNode.name.matches("[0-9]")){
+                symbolTableLog("ERROR! INVALID INT EXPRESSION: " + leftNode.name);
+                STErrors++;
+                return;
+            }
+        }
+    }

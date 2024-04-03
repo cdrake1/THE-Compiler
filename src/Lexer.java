@@ -22,8 +22,8 @@ public class Lexer {
     boolean inComment;  //are we in in a comment?
     boolean endOfProgram;   //determines if $ is used
     int programCounter; //determines what program we are on
-    int warningCount;   //counts total errors
-    int errorCount; //counts total warnings
+    int warningCount;   //counts total warnings
+    int errorCount; //counts total errors
     boolean multiLineQuoteError;    //flag to check if multi line quote/string error was thrown
 
     //creates a lexer and initializes everything. We are prepared to start lexing!
