@@ -6,3 +6,8 @@ TDL for project 3 - Semantic Analysis
 
 
 -- restructure trees to intake a token instead of just a string?-- only if time
+
+-------------------------------------------------------------------------------------------
+DPS [1 possible issue] -- default switch case in dps symbol table — do I add error or no? — if I do how do I fix error throwing for other ndoes such as int, ids, etc?
+assignment [2 errors] -- assignment statement true and false within strings / booleans in quotes again but for boolean
+print [0 errors]

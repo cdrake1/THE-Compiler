@@ -47,7 +47,7 @@ public class SymbolTable {
                 STAssignmentStatement(node);
                 break;
             case "Print statement":
-                //STPrintStatement(node);
+                STPrintStatement(node);
                 break;
             case "While statement":
                 //STWhileStatement(node);
@@ -64,7 +64,6 @@ public class SymbolTable {
         for(Node child : node.children){
             inOrder(child);
         }
-        System.out.println(node.name);
     }
 
     //opens a new scope within the symbol table
@@ -134,13 +133,13 @@ public class SymbolTable {
                             }
                         }
                     }
-                    else if(!secondChild.name.matches("[0-9]")){    //check if second child is not a digit
+                    else if((secondChild.name.matches("(true|false)")) || (secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+"))){    //check if second child is not a digit
                         symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
                         STErrors++;
                         return;
                     }
-                    else{   //throw other error if the right child doesnt match any of these
-                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
+                    else if(!secondChild.name.matches("[0-9]")){
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: " + secondChild.name);
                         STErrors++;
                         return;
                     }
@@ -163,16 +162,12 @@ public class SymbolTable {
                             }
                         }
                     }
-                    else if(secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+")){
-                        //charlist
-                        // do nothing
-                    }
-                    else if(secondChild.name.matches("[0-9]")){ //if its a digit throw type mismatch -- is this useless?
+                    else if(secondChild.name.matches("[0-9]") || secondChild.name.matches("(true|false)")){ //if its a digit throw type mismatch -- is this useless?
                         symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
                         STErrors++;
                         return;
                     }
-                    else{   //throw other error
+                    else if(!(secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+"))){
                         symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
                         STErrors++;
                         return;
@@ -189,19 +184,22 @@ public class SymbolTable {
                         if(boolId == null){ //check scope
                             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
                             STErrors++;
+                            return;
                         }
                         else{   //check type
                             if(!boolId.type.equals("boolean")){
                                 symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
                                 STErrors++;
+                                return;
                             }
                         }
                     }
-                    else if(secondChild.name.matches("(true|false)")){  //boolval
-                        //boolval
-                        //do nothing
+                    else if(secondChild.name.matches("[0-9]") || ((secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+") && !secondChild.name.matches("(true|false)")))){
+                        symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                        STErrors++;
+                        return;
                     }
-                    else{   //throw other error
+                    else if(!secondChild.name.matches("(true|false)")){  //boolval
                         symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
                         STErrors++;
                         return;
@@ -214,6 +212,23 @@ public class SymbolTable {
             }
         }
         firstChild.isINIT = true;
+    }
+
+    //lookup symbol to check scope
+    private void STPrintStatement(Node currentNode){
+        //grab the child node
+        Node child = currentNode.children.get(0);
+        Symbol temp = lookupSymbol(child.name);
+        if(temp == null){   //scope check and throw error if it doesnt exist
+            symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + child.name);
+            STErrors++;
+            return;
+        }
+        else if(!temp.isINIT){
+            symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: " + child.name);
+            STErrors++;
+            return;
+        }
     }
 
     //adds a symbol to the symbol table

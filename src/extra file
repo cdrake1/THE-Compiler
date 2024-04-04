@@ -1,13 +1,4 @@
-//lookup symbol to check scope
-    private void STPrintStatement(Node currentNode){
-        //grab the child node
-        Symbol temp = lookupSymbol(currentNode.children.get(0).name);
-        if(temp == null){   //scope check and throw error if it doesnt exist
-            symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + currentNode.children.get(0).name);
-            STErrors++;
-            return;
-        }
-    }
+
 
     private void STWhileStatement(Node whileNode){
         Node booleanExpr = whileNode.children.get(0);
