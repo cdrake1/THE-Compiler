@@ -11,8 +11,8 @@ public class SymbolTable {
     int currentScope;   //scope pointer
     int scopeCount; //counter for what scope we are on
     int outputScope;    //pointer for output function
-    String traversal;   //string to hold symbol table traversal
     int STErrors;   //counts total errors
+    String traversal;   //string to hold symbol table traversal
 
     //Symbol Table constructor -- initializes variables
     public SymbolTable(){
@@ -124,7 +124,7 @@ public class SymbolTable {
                 //type int
                 case "int":
                     if(secondChild.name.equals("+")){   //right child is +
-                        //STIntOP(currentNode.children.get(1));
+                        STIntOP(currentNode.children.get(1));
                     }
                     else if(secondChild.name.matches("[a-z]")){ //right child is a variable/id
                         Symbol temp = lookupSymbol(secondChild.name);
@@ -268,7 +268,57 @@ public class SymbolTable {
         }
     }
 
-    //adds a symbol to the symbol table
+    //ST -- Int Op -- lookup symbol to check scope
+    private void STIntOP(Node intopNode){
+        System.out.println("int op");
+        Node leftNode = intopNode.children.get(0);  //always a digit
+        Node rightNode = intopNode.children.get(1); //digit, +, ID
+
+        if(!leftNode.name.matches("[0-9]")){
+            symbolTableLog("ERROR! INVALID INT EXPRESSION: " + leftNode.name);
+            STErrors++;
+            return;
+        }
+
+        if(rightNode.name.equals("+")){
+            STIntOP(rightNode);
+        }
+        else{
+            if(rightNode.name.matches("[a-z]")){
+                Symbol symbol = lookupSymbol(rightNode.name);
+                if (symbol == null){
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + rightNode.name);
+                    STErrors++;
+                    return;
+                } 
+                else{
+                    if(!symbol.type.equals("int")){
+                        symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+                        STErrors++;
+                        return;
+                    }
+                }
+            }
+            else if((rightNode.name.matches("(true|false)")) || (rightNode.name.length() >= 2 && rightNode.name.matches("[a-z]+"))){    //check if second child is not a digit
+                symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+                STErrors++;
+                return;
+            }
+            else if(!rightNode.name.matches("[0-9]")){
+                symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: " + rightNode.name);
+                STErrors++;
+                return;
+            }
+        }
+    }
+
+    //ST -- Bool Op -- adds a symbol to the symbol table
+    private void STBoolOP(Node boolopNode){
+        Node leftNode = boolopNode.children.get(0); //expr
+        Node rightNode = boolopNode.children.get(1);    //expr
+    }
+
+    //ST -- Add Symbol -- adds a symbol to the symbol table
     private void addSymbol(String id, String type){
         if(current.symbols.contains(id)){
             return;
@@ -279,7 +329,7 @@ public class SymbolTable {
         }
     }
 
-    //looks up a symbol within each ST/scope and returns it
+    //ST -- Lookup Symbol -- looks up a symbol within each ST/scope and returns it
     private Symbol lookupSymbol(String id){
         Symbol temp = null;
         SymbolTableNode tempNode = current;
@@ -297,7 +347,7 @@ public class SymbolTable {
         return null;
     }
 
-    //adds a node to the symbol table
+    //ST -- add node -- adds a node to the symbol table
     public void addNodeSymbolTable(int scope){
         //create a new node to be added to the symbol table
         SymbolTableNode newNode = new SymbolTableNode(scope);
@@ -321,12 +371,14 @@ public class SymbolTable {
     //--------------------------------Symbol Table Output Functions-----------------------------------------
 
     //----------outputs the symbol table as a tree--------------
+    //ST -- test scopes
     public void testScopes(){
         expand(root, 0);
         System.out.print("\n");
         symbolTableLog("\n" + traversal);
     }
 
+    //ST -- expand
     public void expand(SymbolTableNode node, int depth){
         //space nodes out based off of the current depth
         for(int i = 0; i < depth; i++){
@@ -350,13 +402,17 @@ public class SymbolTable {
     }
 
     //----------outputs the symbol table as a table--------------
+    //ST -- print ST
     public void printSymbolTable(){
+        //basic output structure
         symbolTableLog("--------------------------------------");
         symbolTableLog("Name\tType\tScope\tisINIT\tisUsed");
         symbolTableLog("--------------------------------------");
+        //call expand
         STexpand(root);
     }
 
+    //ST -- expand v2
     public void STexpand(SymbolTableNode node){
         for(Symbol symbol : node.symbols.values()){
             symbolTableLog(symbol.name + "\t" + symbol.type + "\t" + symbol.scope + "\t" + symbol.isINIT + "\t" + symbol.isUsed);

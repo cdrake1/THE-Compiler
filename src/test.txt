@@ -3,9 +3,11 @@
 	/* Int Declaration */
 	int a
 	int b
+	string g
+	g = "true"
 	while (a != 3) {
 		b = 0
-		a = 1+a
+		a = 1+"hello"
 		{
 			int c
 			c = 5
