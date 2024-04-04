@@ -246,7 +246,7 @@ public class SymbolTable {
         Node booleanExpr = whileNode.children.get(0);
 
         if (booleanExpr.name.matches("(==|!=)")){  //boolop
-            //STBoolOP(booleanExpr);
+            STBoolOP(booleanExpr);
         }
         else if (!booleanExpr.name.matches("(true|false)")){   //boolval
             symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
@@ -260,7 +260,7 @@ public class SymbolTable {
         Node booleanExpr = ifNode.children.get(0);
 
         if (booleanExpr.name.matches("(==|!=)")){  //boolop
-            //STBoolOP(booleanExpr);
+            STBoolOP(booleanExpr);
         }
         else if (!booleanExpr.name.matches("(true|false)")){   //boolval
             symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
@@ -314,8 +314,86 @@ public class SymbolTable {
 
     //ST -- Bool Op -- adds a symbol to the symbol table
     private void STBoolOP(Node boolopNode){
+        System.out.println("bool op");
         Node leftNode = boolopNode.children.get(0); //expr
         Node rightNode = boolopNode.children.get(1);    //expr
+
+        String leftNodeType = "";
+        String rightNodeType = "";
+
+        if(leftNode.name.equals("+")){
+            STIntOP(leftNode);
+        }
+        else if(leftNode.name.matches("(==|!=)")){
+            STBoolOP(leftNode);
+        }
+        else{
+            if(leftNode.name.matches("[a-z]")){
+                Symbol symbol = lookupSymbol(leftNode.name);
+                if (symbol == null){
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + leftNode.name);
+                    STErrors++;
+                    return;
+                } 
+                else{
+                    leftNodeType = symbol.type;
+                }
+            }
+            else if(leftNode.name.matches("[0-9]")){
+                leftNodeType = "int";
+            }
+            else if (leftNode.name.matches("(true|false)")){
+                leftNodeType = "boolean";
+            }
+            else if((leftNode.name.length() >= 2 && leftNode.name.matches("[a-z]+"))){
+                leftNodeType = "string";
+            }
+            else{
+                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: " + leftNode.name);
+                STErrors++;
+                return;
+            }
+        }
+
+        if(rightNode.name.equals("+")){
+            STIntOP(rightNode);
+        }
+        else if(rightNode.name.matches("(==|!=)")){
+            STBoolOP(rightNode);
+        }
+        else{
+            if(rightNode.name.matches("[a-z]")){
+                Symbol symbol = lookupSymbol(rightNode.name);
+                if (symbol == null){
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + rightNode.name);
+                    STErrors++;
+                    return;
+                } 
+                else{
+                    rightNodeType = symbol.type;
+                }
+            }
+            else if(rightNode.name.matches("[0-9]")){
+                rightNodeType = "int";
+            }
+            else if (rightNode.name.matches("(true|false)")){
+                rightNodeType = "boolean";
+            }
+            else if((rightNode.name.length() >= 2 && rightNode.name.matches("[a-z]+"))){
+                rightNodeType = "string";
+            }
+            else{
+                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: " + rightNode.name);
+                STErrors++;
+                return;
+            }
+        }
+
+        if(!leftNodeType.equals(rightNodeType)){
+            symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+            STErrors++;
+            return;
+        }
     }
 
     //ST -- Add Symbol -- adds a symbol to the symbol table

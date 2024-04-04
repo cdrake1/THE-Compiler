@@ -9,4 +9,4 @@ print [0 errors]
 while [0 for now] -- test more
 if [0 for now] -- test more
 intop [0 errors for now] -- test more
-boolop [] -- not implemented currently
+boolop [1 errors] -- implemented, but not tested
