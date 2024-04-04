@@ -11,3 +11,7 @@ TDL for project 3 - Semantic Analysis
 DPS [1 possible issue] -- default switch case in dps symbol table — do I add error or no? — if I do how do I fix error throwing for other ndoes such as int, ids, etc?
 assignment [2 errors] -- assignment statement true and false within strings / booleans in quotes again but for boolean
 print [0 errors]
+while [0 for now] -- test more
+if [0 for now] -- test more
+intop [] -- not implemented currently
+boolop [] -- not implemented currently

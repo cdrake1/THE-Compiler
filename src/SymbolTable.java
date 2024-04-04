@@ -9,6 +9,7 @@ public class SymbolTable {
     SymbolTableNode root;  //pointer to the root node
     SymbolTableNode current;   //pointer to the current node
     int currentScope;   //scope pointer
+    int scopeCount; //counter for what scope we are on
     int outputScope;    //pointer for output function
     String traversal;   //string to hold symbol table traversal
     int STErrors;   //counts total errors
@@ -18,6 +19,7 @@ public class SymbolTable {
         this.root = null;
         this.current = null;
         this.currentScope = 0;
+        this.scopeCount = 0;
         this.outputScope = 0;
         this.STErrors = 0;
         this.traversal = "";
@@ -50,10 +52,10 @@ public class SymbolTable {
                 STPrintStatement(node);
                 break;
             case "While statement":
-                //STWhileStatement(node);
+                STWhileStatement(node);
                 break;
             case "If statement":
-                //STIfStatement(node);
+                STIfStatement(node);
                 break;
             default:
                 //do nothing
@@ -64,22 +66,28 @@ public class SymbolTable {
         for(Node child : node.children){
             inOrder(child);
         }
+
+        //close scope after processing block
+        if(node.name.equals("Block")) {
+            closeScope();
+        }
     }
 
-    //opens a new scope within the symbol table
+    //ST -- open scope -- opens a new scope within the symbol table
     private void openScope(){
         System.out.println("openscope");
         //if there is no root then create 1. Otherwise increment the pointer and create a childnode
         if(root == null){
-            addNodeSymbolTable(currentScope);
+            addNodeSymbolTable(scopeCount);
         }
         else{
-            currentScope++;
-            addNodeSymbolTable(currentScope);
+            scopeCount++;
+            currentScope = scopeCount;
+            addNodeSymbolTable(scopeCount);
         }
     }
 
-    //closes the most recently opened scope
+    //ST -- close scope --closes the most recently opened scope
     private void closeScope(){
         System.out.println("clpse scope");
         //if the current scope is not the root node then move the pointer to its parent
@@ -89,7 +97,7 @@ public class SymbolTable {
         }
     }
 
-    //add symbol to the current nodes hash table
+    //ST -- var decl -- add symbol to the current nodes hash table
     private void STVarDecl(Node currentNode){
         System.out.println("var decl");
         String varType = currentNode.children.get(0).name;
@@ -97,7 +105,7 @@ public class SymbolTable {
         addSymbol(varID, varType);
     }
 
-    //lookup the symbol and check types
+    //ST -- assignment statement -- lookup the symbol and check types
     private void STAssignmentStatement(Node currentNode){
         System.out.println("assignment statement");
         Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //grab the left child nodes symbol
@@ -214,8 +222,9 @@ public class SymbolTable {
         firstChild.isINIT = true;
     }
 
-    //lookup symbol to check scope
+    //ST -- print statement -- lookup symbol to check scope
     private void STPrintStatement(Node currentNode){
+        System.out.println("print statement");
         //grab the child node
         Node child = currentNode.children.get(0);
         Symbol temp = lookupSymbol(child.name);
@@ -228,6 +237,34 @@ public class SymbolTable {
             symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: " + child.name);
             STErrors++;
             return;
+        }
+    }
+
+    //ST -- while statement -- lookup symbol to check scope
+    private void STWhileStatement(Node whileNode){
+        System.out.println("while statement");
+        Node booleanExpr = whileNode.children.get(0);
+
+        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+            //STBoolOP(booleanExpr);
+        }
+        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
+            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            STErrors++;
+        }
+    }
+
+    //ST -- if statement -- lookup symbol to check scope
+    private void STIfStatement(Node ifNode){
+        System.out.println("if statement");
+        Node booleanExpr = ifNode.children.get(0);
+
+        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+            //STBoolOP(booleanExpr);
+        }
+        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
+            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            STErrors++;
         }
     }
 
@@ -281,7 +318,7 @@ public class SymbolTable {
     }
 
 
-    //--------------------Symbol Table Output Functions-----------------------------------------
+    //--------------------------------Symbol Table Output Functions-----------------------------------------
 
     //----------outputs the symbol table as a tree--------------
     public void testScopes(){

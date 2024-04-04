@@ -1,39 +1,5 @@
 
 
-    private void STWhileStatement(Node whileNode){
-        Node booleanExpr = whileNode.children.get(0);
-        Node block = whileNode.children.get(1);
-
-        if (booleanExpr.name.matches("(==|!=)")){  //boolop
-            STBoolOP(booleanExpr);
-        }
-        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
-            STErrors++;
-        }
-
-        openScope();
-        inOrder(block);
-        closeScope();
-    }
-
-    private void STIfStatement(Node ifNode){
-        Node booleanExpr = ifNode.children.get(0);
-        Node block = ifNode.children.get(1);
-
-        if (booleanExpr.name.matches("(==|!=)")){  //boolop
-            STBoolOP(booleanExpr);
-        }
-        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
-            STErrors++;
-        }
-
-        openScope();
-        inOrder(block);
-        closeScope();
-    }
-
 
     private void STBoolOP(Node boolopNode){
         Node leftNode = boolopNode.children.get(0); //expr

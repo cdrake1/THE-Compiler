@@ -1,12 +1,27 @@
 /*Long Test Case - Everything Except Boolean Declaration */
 {
-  /* Int Declaration */
-  boolean a
-  string b
-  string f
-  a = true
-  b = "hello"
-  print(c)
-  print(f)
+	/* Int Declaration */
+	int a
+	int b
+	while (a != 3) {
+		b = 0
+		a = 1+a
+		{
+			int c
+			c = 5
+			{
+				int z
+			}
+		}
+	}
+	int f
+	f = 7
+	if (a == 1) {
+		int x
+		print(b)
+	} 
+	{
+		int w
+	}
 }
 $
