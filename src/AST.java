@@ -2,7 +2,7 @@
     Abstract Syntax tree file
     Creates AST's to be used in Symantic Analysis
     Created with help from Alan G. Labouseur, Michael Ardizzone, and Tim Smith
-    Uses the same functions as the CST file
+    Uses the same functions as the CST file except it uses specific AST nodes
 */
 
 //The AST class!

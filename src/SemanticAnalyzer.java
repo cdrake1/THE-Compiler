@@ -198,7 +198,7 @@ public class SemanticAnalyzer {
     private void semanticIntExpr(){
         //check if next token is '+'
         if(tokenStream.get(tokenStreamIndex+1).tokenType.equals("ADD")){
-            semanticIntOp();    //add + op first -- as branch node
+            semanticIntOp(tokenStream.get(tokenStreamIndex+1));    //add + op first -- as branch node
             semanticDigit();    //add digit node as leaf
             incrementToken();   //increment for + op
             semanticExpr(); // call expr
@@ -282,7 +282,7 @@ public class SemanticAnalyzer {
     }
 
     //parse add op (+) -- semantic
-    private void semanticIntOp(){
-        ast.addNodeAST("branch", "+", null);  // add + op as branch
+    private void semanticIntOp(Token token){
+        ast.addNodeAST("branch", "+", token);  // add + op as branch
     }
 }

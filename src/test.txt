@@ -1,27 +1,6 @@
 /*Long Test Case - Everything Except Boolean Declaration */
 {
-	/* Int Declaration */
 	int a
-	int b
-	while (a != 3) {
-		b = 0
-		a = 1+a
-		{
-			int c
-			c = 5
-			{
-				int z
-			}
-		}
-	}
-	int f
-	f = 7
-	if (a == 1) {
-		int x
-		print(b)
-	} 
-	{
-		int w
-	}
+	a = b
 }
 $
