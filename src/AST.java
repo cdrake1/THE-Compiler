@@ -7,8 +7,8 @@
 
 //The AST class!
 public class AST {
-    Node root;  //pointer to the root node
-    Node current;   //pointer to the current node
+    ASTNode root;  //pointer to the root node
+    ASTNode current;   //pointer to the current node
     String traversal;   //string to hold AST traversal
 
 
@@ -25,13 +25,13 @@ public class AST {
     }
 
     //adds a node to the AST
-    public void addNodeAST(String kind, String label){
+    public void addNodeAST(String kind, String label, Token token){
 
         //kind - what kind of node is it?
         //label - what is the parse function?
 
         //create a new node to be added to the AST
-        Node newNode = new Node(label);
+        ASTNode newNode = new ASTNode(label, token);
 
         //check if the tree has a root node
         if(root == null){
@@ -76,7 +76,7 @@ public class AST {
         ASTLog("\n" + traversal);
     }
 
-    public void expand(Node node, int depth){
+    public void expand(ASTNode node, int depth){
         //space nodes out based off of the current depth
         for(int i = 0; i < depth; i++){
             traversal += "-";

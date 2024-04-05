@@ -11,13 +11,15 @@ public class Symbol{
     boolean isINIT; //is this symbol initialized?
     boolean isUsed; //is this symbol used?
     int scope;  //what is the symbols scope?
+    String line;
     
     //Symbol constructor -- creates a symbol and initializes its variables
-    public Symbol(String name, String type, int scope){
+    public Symbol(String name, String type, int scope, String line){
         this.name = name;
         this.type = type;
         this.isINIT = false;
         this.isUsed = false;
         this.scope = scope;
+        this.line = line;
     }
 }

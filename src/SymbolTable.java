@@ -31,7 +31,7 @@ public class SymbolTable {
     }
 
     //function for depth first in order traversal of AST
-    public void inOrder(Node node){
+    public void inOrder(ASTNode node){
         //if null return 
         if(node == null){
             return;
@@ -63,7 +63,7 @@ public class SymbolTable {
         }
 
         //iterate through all children recursively
-        for(Node child : node.children){
+        for(ASTNode child : node.children){
             inOrder(child);
         }
 
@@ -98,18 +98,19 @@ public class SymbolTable {
     }
 
     //ST -- var decl -- add symbol to the current nodes hash table
-    private void STVarDecl(Node currentNode){
+    private void STVarDecl(ASTNode currentNode){
         System.out.println("var decl");
         String varType = currentNode.children.get(0).name;
         String varID = currentNode.children.get(1).name;
-        addSymbol(varID, varType);
+        String line = currentNode.children.get(0).token.line;
+        addSymbol(varID, varType, line);
     }
 
     //ST -- assignment statement -- lookup the symbol and check types
-    private void STAssignmentStatement(Node currentNode){
+    private void STAssignmentStatement(ASTNode currentNode){
         System.out.println("assignment statement");
         Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //grab the left child nodes symbol
-        Node secondChild = currentNode.children.get(1); //grab the right child node
+        ASTNode secondChild = currentNode.children.get(1); //grab the right child node
 
         //check if the first child symbol was created
         if(firstChild == null){
@@ -223,10 +224,10 @@ public class SymbolTable {
     }
 
     //ST -- print statement -- lookup symbol to check scope
-    private void STPrintStatement(Node currentNode){
+    private void STPrintStatement(ASTNode currentNode){
         System.out.println("print statement");
         //grab the child node
-        Node child = currentNode.children.get(0);
+        ASTNode child = currentNode.children.get(0);
         Symbol temp = lookupSymbol(child.name);
         if(temp == null){   //scope check and throw error if it doesnt exist
             symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + child.name);
@@ -241,9 +242,9 @@ public class SymbolTable {
     }
 
     //ST -- while statement -- lookup symbol to check scope
-    private void STWhileStatement(Node whileNode){
+    private void STWhileStatement(ASTNode whileNode){
         System.out.println("while statement");
-        Node booleanExpr = whileNode.children.get(0);
+        ASTNode booleanExpr = whileNode.children.get(0);
 
         if (booleanExpr.name.matches("(==|!=)")){  //boolop
             STBoolOP(booleanExpr);
@@ -255,9 +256,9 @@ public class SymbolTable {
     }
 
     //ST -- if statement -- lookup symbol to check scope
-    private void STIfStatement(Node ifNode){
+    private void STIfStatement(ASTNode ifNode){
         System.out.println("if statement");
-        Node booleanExpr = ifNode.children.get(0);
+        ASTNode booleanExpr = ifNode.children.get(0);
 
         if (booleanExpr.name.matches("(==|!=)")){  //boolop
             STBoolOP(booleanExpr);
@@ -269,10 +270,10 @@ public class SymbolTable {
     }
 
     //ST -- Int Op -- lookup symbol to check scope
-    private void STIntOP(Node intopNode){
+    private void STIntOP(ASTNode intopNode){
         System.out.println("int op");
-        Node leftNode = intopNode.children.get(0);  //always a digit
-        Node rightNode = intopNode.children.get(1); //digit, +, ID
+        ASTNode leftNode = intopNode.children.get(0);  //always a digit
+        ASTNode rightNode = intopNode.children.get(1); //digit, +, ID
 
         if(!leftNode.name.matches("[0-9]")){
             symbolTableLog("ERROR! INVALID INT EXPRESSION: " + leftNode.name);
@@ -313,10 +314,10 @@ public class SymbolTable {
     }
 
     //ST -- Bool Op -- adds a symbol to the symbol table
-    private void STBoolOP(Node boolopNode){
+    private void STBoolOP(ASTNode boolopNode){
         System.out.println("bool op");
-        Node leftNode = boolopNode.children.get(0); //expr
-        Node rightNode = boolopNode.children.get(1);    //expr
+        ASTNode leftNode = boolopNode.children.get(0); //expr
+        ASTNode rightNode = boolopNode.children.get(1);    //expr
 
         String leftNodeType = "";
         String rightNodeType = "";
@@ -397,12 +398,12 @@ public class SymbolTable {
     }
 
     //ST -- Add Symbol -- adds a symbol to the symbol table
-    private void addSymbol(String id, String type){
+    private void addSymbol(String id, String type, String line){
         if(current.symbols.contains(id)){
             return;
         }
         else{
-            Symbol newSymbol = new Symbol(id, type, currentScope);
+            Symbol newSymbol = new Symbol(id, type, currentScope, line);
             current.symbols.put(newSymbol.name, newSymbol);
         }
     }
@@ -483,9 +484,9 @@ public class SymbolTable {
     //ST -- print ST
     public void printSymbolTable(){
         //basic output structure
-        symbolTableLog("--------------------------------------");
-        symbolTableLog("Name\tType\tScope\tisINIT\tisUsed");
-        symbolTableLog("--------------------------------------");
+        symbolTableLog("------------------------------------------");
+        symbolTableLog("Name\tType\tScope\tisINIT\tisUsed\tLine");
+        symbolTableLog("------------------------------------------");
         //call expand
         STexpand(root);
     }
@@ -493,7 +494,7 @@ public class SymbolTable {
     //ST -- expand v2
     public void STexpand(SymbolTableNode node){
         for(Symbol symbol : node.symbols.values()){
-            symbolTableLog(symbol.name + "\t" + symbol.type + "\t" + symbol.scope + "\t" + symbol.isINIT + "\t" + symbol.isUsed);
+            symbolTableLog(symbol.name + "\t" + symbol.type + "\t" + symbol.scope + "\t" + symbol.isINIT + "\t" + symbol.isUsed + "\t" + symbol.line);
         }
         for(SymbolTableNode child : node.children){
             STexpand(child);

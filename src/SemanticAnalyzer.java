@@ -64,7 +64,7 @@ public class SemanticAnalyzer {
 
     //parse block -- semantic
     private void semanticBlock(){
-        ast.addNodeAST("root", "Block");    //add block as root node
+        ast.addNodeAST("root", "Block", null);    //add block as root node
         incrementToken();   //match
         semanticStatementList();    //statementlist
         incrementToken();   //match
@@ -126,7 +126,7 @@ public class SemanticAnalyzer {
 
     //parse print statement -- semantic
     private void semanticPrintStatement(){
-        ast.addNodeAST("branch", "Print statement");    //add branch node
+        ast.addNodeAST("branch", "Print statement", null);    //add branch node
         incrementToken();   //2 match function calls -- increment token index
         incrementToken();
         semanticExpr(); //call expr
@@ -136,7 +136,7 @@ public class SemanticAnalyzer {
 
     //parse assignment statement -- semantic
     private void semanticAssignmentStatement(){
-        ast.addNodeAST("branch", "Assignment statement");   //add a branch node
+        ast.addNodeAST("branch", "Assignment statement", null);   //add a branch node
         semanticID();   //add a leaf node
         incrementToken();
         semanticExpr();
@@ -145,7 +145,7 @@ public class SemanticAnalyzer {
 
     //parse variable declaration -- semantic
     private void semanticVarDecl(){
-        ast.addNodeAST("branch", "Variable declaration");   //add a branch node
+        ast.addNodeAST("branch", "Variable declaration", null);   //add a branch node
         semanticType(); //add 2 leaf nodes -- type and id
         semanticID();
         ast.moveUpAST();    //move up branch node
@@ -153,7 +153,7 @@ public class SemanticAnalyzer {
 
     //parse while statement -- semantic
     private void semanticWhileStatement(){
-        ast.addNodeAST("branch", "While statement");    //add a branch node
+        ast.addNodeAST("branch", "While statement", null);    //add a branch node
         incrementToken();
         semanticBooleanExpr();
         semanticBlock();
@@ -162,7 +162,7 @@ public class SemanticAnalyzer {
 
     //parse if statement -- semantic
     private void semanticIfStatement(){
-        ast.addNodeAST("branch", "If statement");   //add a branch node
+        ast.addNodeAST("branch", "If statement", null);   //add a branch node
         incrementToken();
         semanticBooleanExpr();
         semanticBlock();
@@ -237,28 +237,31 @@ public class SemanticAnalyzer {
     private void semanticCharList(){
         //use a stringbuilder to iterate through a charlist and create 1 string variable
         StringBuilder charlist = new StringBuilder();
+        charlist.append("\"");
         while(!currentToken.lexeme.equals("\"")){
             charlist.append(currentToken.lexeme);
             incrementToken();
         }
-        ast.addNodeAST("leaf", charlist.toString());
+        charlist.append("\"");
+        Token newToken = new Token("String Literal", charlist.toString(), currentToken.line, currentToken.position);
+        ast.addNodeAST("leaf", charlist.toString(), newToken);
     }
 
     //parse ID -- semantic
     private void semanticID(){
-        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
+        ast.addNodeAST("leaf", currentToken.lexeme, currentToken);    //add leaf
         incrementToken();
     }
 
     //parse types: int, string, bool -- semantic
     private void semanticType(){
-        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
+        ast.addNodeAST("leaf", currentToken.lexeme, currentToken);    //add leaf
         incrementToken();
     }
 
     //parse digits 0-9 -- semantic
     private void semanticDigit(){
-        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
+        ast.addNodeAST("leaf", currentToken.lexeme, currentToken);    //add leaf
         incrementToken();
     }
 
@@ -269,17 +272,17 @@ public class SemanticAnalyzer {
         while(!tokenStream.get(i).lexeme.equals("!=") && !tokenStream.get(i).lexeme.equals("==")){
             i++;
         }
-        ast.addNodeAST("branch", tokenStream.get(i).lexeme);  //add branch for bool ops
+        ast.addNodeAST("branch", tokenStream.get(i).lexeme, tokenStream.get(i));  //add branch for bool ops
     }
 
     //parse bool values -- semantic
     private void semanticBoolVal(){
-        ast.addNodeAST("leaf", currentToken.lexeme);    //add leaf
+        ast.addNodeAST("leaf", currentToken.lexeme, currentToken);    //add leaf
         incrementToken();
     }
 
     //parse add op (+) -- semantic
     private void semanticIntOp(){
-        ast.addNodeAST("branch", "+");  // add + op as branch
+        ast.addNodeAST("branch", "+", null);  // add + op as branch
     }
 }
