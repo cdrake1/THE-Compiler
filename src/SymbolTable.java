@@ -229,17 +229,18 @@ public class SymbolTable {
         System.out.println("print statement");
         //grab the child node
         ASTNode child = currentNode.children.get(0);
+        String lineNumber = child.token.line;
         System.out.println(child.name);
 
         if(child.name.matches("[a-z]")){
             Symbol temp = lookupSymbol(child.name);
             if(temp == null){   //scope check and throw error if it doesnt exist
-                symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + child.name);
+                symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: [" + child.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
             else if(!temp.isINIT){
-                symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: " + child.name);
+                symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: [" + child.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -417,10 +418,15 @@ public class SymbolTable {
 
     //ST -- Lookup Symbol -- looks up a symbol within each ST/scope and returns it
     private Symbol lookupSymbol(String id){
+        if(current == null){
+            return null;
+        }
+
         Symbol temp = null;
         SymbolTableNode tempNode = current;
         int tempPointer = currentScope;
-        while(tempPointer != -1 && temp == null){
+        
+        while(tempPointer != -1 && temp == null && tempNode != null){
             temp = tempNode.symbols.get(id);
             if(temp != null){
                 return temp;
@@ -488,6 +494,19 @@ public class SymbolTable {
     }
 
     //----------outputs the symbol table as a table--------------
+
+    //ST evaluates the success of semantic analysis scope and type checking
+    public void STEvaluate(){
+        if(STErrors > 0){
+            symbolTableLog("Symbol Table Generation Failed... Errors: " + STErrors);
+        }
+        else{
+            symbolTableLog("Symbol Table Generated Successfully... Errors: " + STErrors);
+            testScopes();   //outputs symbol table tree
+            printSymbolTable(); //outputs the symbol table
+        }
+    }
+    
     //ST -- print ST
     public void printSymbolTable(){
         //basic output structure
