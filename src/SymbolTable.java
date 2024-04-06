@@ -391,6 +391,7 @@ public class SymbolTable {
         //call intop
         if(leftNode.name.equals("+")){
             STIntOP(leftNode);
+            leftNodeType = "int";
         }
         //call itself recursively
         else if(leftNode.name.matches("(==|!=)")){
@@ -433,6 +434,7 @@ public class SymbolTable {
         //check if its an int op
         if(rightNode.name.equals("+")){
             STIntOP(rightNode);
+            rightNodeType = "int";
         }
         //call itself recursively
         else if(rightNode.name.matches("(==|!=)")){
@@ -476,6 +478,7 @@ public class SymbolTable {
 
         //check if the types match...if they dont throw an error
         if(!leftNodeType.equals(rightNodeType)){
+            System.out.println(leftNodeType + rightNodeType);
             symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
             STErrors++;
             return null;

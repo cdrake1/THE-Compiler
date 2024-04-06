@@ -1,14 +1,7 @@
-/**This should break on a but allow b to go through**/
 {
-int b
-int a
 boolean d
-boolean c
-c = true
-boolean f
-f = false
-{
-    string b
-	d  = (c == (f == c))
+d  = (true == (true == false))
+if ((2+2==4)!=("hi"=="hello")){
+    print("correct")
 }
 }$
