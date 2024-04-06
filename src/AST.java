@@ -29,6 +29,7 @@ public class AST {
 
         //kind - what kind of node is it?
         //label - what is the parse function?
+        //token -- the token associated with the node
 
         //create a new node to be added to the AST
         ASTNode newNode = new ASTNode(label, token);

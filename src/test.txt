@@ -1,6 +1,21 @@
-/*Long Test Case - Everything Except Boolean Declaration */
-{
-	int a
-	a = b
-}
-$
+/* Here's a bunch of while loops, should create a AST...
+  whether it's valid or not is a different story... */
+  {
+    while true {
+      while true {
+            print("hello world")
+      }
+          while true {
+            print("hello world")
+              
+              while (1 != 3) {
+              print("hello world")
+              }
+      }
+          
+          while (1 != 3) {
+            print("hello world")
+      }
+    }
+  }
+  $

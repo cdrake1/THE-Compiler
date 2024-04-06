@@ -4,9 +4,9 @@ TDL for project 3 - Semantic Analysis
 
 -------------------------------------------------------------------------------------------
 DPS [0 errors]
-assignment [2 errors] -- assignment statement true and false within strings / booleans in quotes again but for boolean
+assignment [2 errors] -- abooleans in quotes again but for boolean
 print [0 errors]
 while [0 for now] -- test more
 if [0 for now] -- test more
 intop [0 errors for now] -- test more
-boolop [1 errors] -- implemented, but not tested
+boolop [1 errors] -- implemented, but not teste

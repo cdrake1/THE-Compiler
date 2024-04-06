@@ -109,13 +109,14 @@ public class SymbolTable {
     //ST -- assignment statement -- lookup the symbol and check types
     private void STAssignmentStatement(ASTNode currentNode){
         System.out.println("assignment statement");
-        Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //grab the left child nodes symbol
-        ASTNode secondChild = currentNode.children.get(1); //grab the right child node
+        Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //this is an id
+        ASTNode secondChild = currentNode.children.get(1); //this is an expr
+        String lineNumber =  currentNode.children.get(0).token.line;    //the line number
 
         //check if the first child symbol was created
         if(firstChild == null){
             //throw error because this variable doesnt exist
-            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + currentNode.children.get(0).name);
+            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + currentNode.children.get(0).name + "] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -130,13 +131,13 @@ public class SymbolTable {
                     else if(secondChild.name.matches("[a-z]")){ //right child is a variable/id
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //does this variable exist?
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //if the variable exists check its type
                             if(!temp.type.equals("int")){
-                                symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                                symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
                             }
@@ -148,7 +149,7 @@ public class SymbolTable {
                         return;
                     }
                     else if(!secondChild.name.matches("[0-9]")){
-                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: " + secondChild.name);
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
@@ -159,25 +160,25 @@ public class SymbolTable {
                     if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){    //second child is an id/variable
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //scope checking
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //type checking
                             if(!temp.type.equals("string")){
-                                symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                                symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
                             }
                         }
                     }
-                    else if(secondChild.name.matches("[0-9]") || secondChild.name.matches("(true|false)")){ //if its a digit throw type mismatch -- is this useless?
-                        symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                    else if(secondChild.name.matches("[0-9]") || (secondChild.name.matches("(true|false)") && !secondChild.token.tokenType.equals("String Literal"))){
+                        symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
-                    else if(!(secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+"))){
-                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
+                    else if(!secondChild.token.tokenType.equals("String Literal")){
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
@@ -186,36 +187,36 @@ public class SymbolTable {
                 //type boolean
                 case "boolean":
                     if(secondChild.name.matches("(==|!=)")){    //right child is a boolop
-                        //STBoolOP(secondChild);
+                        STBoolOP(secondChild);
                     }
                     else if(secondChild.name.matches("[a-z]")){ //its an id/variable
                         Symbol boolId = lookupSymbol(secondChild.name);
                         if(boolId == null){ //check scope
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: " + secondChild.name);
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //check type
                             if(!boolId.type.equals("boolean")){
-                                symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                                symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
                             }
                         }
                     }
-                    else if(secondChild.name.matches("[0-9]") || ((secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+") && !secondChild.name.matches("(true|false)")))){
-                        symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                    else if(secondChild.name.matches("[0-9]") || secondChild.token.tokenType.equals("String Literal")){
+                        symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
                     else if(!secondChild.name.matches("(true|false)")){  //boolval
-                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT");
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
                     break;
                 default:
-                        symbolTableLog("ERROR! INVALID ASSIGNMENT STATEMENT");
+                        symbolTableLog("ERROR! INVALID ASSIGNMENT STATEMENT ON LINE " + lineNumber);
                         STErrors++;
                     break;
             }
@@ -228,16 +229,20 @@ public class SymbolTable {
         System.out.println("print statement");
         //grab the child node
         ASTNode child = currentNode.children.get(0);
-        Symbol temp = lookupSymbol(child.name);
-        if(temp == null){   //scope check and throw error if it doesnt exist
-            symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + child.name);
-            STErrors++;
-            return;
-        }
-        else if(!temp.isINIT){
-            symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: " + child.name);
-            STErrors++;
-            return;
+        System.out.println(child.name);
+
+        if(child.name.matches("[a-z]")){
+            Symbol temp = lookupSymbol(child.name);
+            if(temp == null){   //scope check and throw error if it doesnt exist
+                symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: " + child.name);
+                STErrors++;
+                return;
+            }
+            else if(!temp.isINIT){
+                symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: " + child.name);
+                STErrors++;
+                return;
+            }
         }
     }
 
@@ -274,9 +279,10 @@ public class SymbolTable {
         System.out.println("int op");
         ASTNode leftNode = intopNode.children.get(0);  //always a digit
         ASTNode rightNode = intopNode.children.get(1); //digit, +, ID
+        String lineNumber = leftNode.token.line;
 
         if(!leftNode.name.matches("[0-9]")){
-            symbolTableLog("ERROR! INVALID INT EXPRESSION: " + leftNode.name);
+            symbolTableLog("ERROR! INVALID INT EXPRESSION: [" + leftNode.name + "] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -288,25 +294,25 @@ public class SymbolTable {
             if(rightNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(rightNode.name);
                 if (symbol == null){
-                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + rightNode.name);
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [" + rightNode.name + "] ON LINE " + lineNumber);
                     STErrors++;
                     return;
                 } 
                 else{
                     if(!symbol.type.equals("int")){
-                        symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+                        symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
                 }
             }
             else if((rightNode.name.matches("(true|false)")) || (rightNode.name.length() >= 2 && rightNode.name.matches("[a-z]+"))){    //check if second child is not a digit
-                symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+                symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
             else if(!rightNode.name.matches("[0-9]")){
-                symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: " + rightNode.name);
+                symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: [" + rightNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -318,6 +324,7 @@ public class SymbolTable {
         System.out.println("bool op");
         ASTNode leftNode = boolopNode.children.get(0); //expr
         ASTNode rightNode = boolopNode.children.get(1);    //expr
+        String lineNumber = leftNode.token.line;
 
         String leftNodeType = "";
         String rightNodeType = "";
@@ -332,7 +339,7 @@ public class SymbolTable {
             if(leftNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(leftNode.name);
                 if (symbol == null){
-                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + leftNode.name);
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [" + leftNode.name + "] ON LINE " + lineNumber);
                     STErrors++;
                     return;
                 } 
@@ -350,7 +357,7 @@ public class SymbolTable {
                 leftNodeType = "string";
             }
             else{
-                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: " + leftNode.name);
+                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: [" + leftNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -366,7 +373,7 @@ public class SymbolTable {
             if(rightNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(rightNode.name);
                 if (symbol == null){
-                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: " + rightNode.name);
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [" + rightNode.name + "] ON LINE " + lineNumber);
                     STErrors++;
                     return;
                 } 
@@ -384,14 +391,14 @@ public class SymbolTable {
                 rightNodeType = "string";
             }
             else{
-                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: " + rightNode.name);
+                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: [" + rightNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
         }
 
         if(!leftNodeType.equals(rightNodeType)){
-            symbolTableLog("ERROR! TYPE MISMATCH: " + rightNode.name);
+            symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
