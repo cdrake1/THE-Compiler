@@ -6,7 +6,7 @@
 public class Compiler {
     public static void main(String[] args) 
     {
-        //create the parts of a compiler
+        //create the Lexer
         Lexer lexer = new Lexer();
 
         //introductory output

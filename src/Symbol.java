@@ -1,7 +1,7 @@
 /*
     Symbol file
-    Creates symbols to be added to the symbol table
-    To be used during Semantic Analysis
+    Creates symbols to be added to the Symbol Table
+    Used in Semantic Analysis
 */
 
 //The symbol class!
@@ -11,7 +11,7 @@ public class Symbol{
     boolean isINIT; //is this symbol initialized?
     boolean isUsed; //is this symbol used?
     int scope;  //what is the symbols scope?
-    String line;    //the line in the source code
+    String line;    //the line in the source code where the token is located
     
     //Symbol constructor -- creates a symbol and initializes its variables
     public Symbol(String name, String type, int scope, String line){

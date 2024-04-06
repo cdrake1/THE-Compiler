@@ -1,6 +1,4 @@
 TDL for project 3 - Semantic Analysis
 
 -- test all Functions
--- fix error messages
--- comment
--- remove helpful output when done testing
+-- comments, structure, minor

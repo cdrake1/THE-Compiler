@@ -2,7 +2,6 @@
 {
   boolean d
   boolean x
-  print(z)
   d  = (true == (true == false))
   if((2+2==4)!=("hi"=="hello")){
     print(d)
