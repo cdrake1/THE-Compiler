@@ -133,6 +133,10 @@ public class SymbolTable {
                     if(secondChild.name.equals("+")){   //right child is +
                         STIntOP(currentNode.children.get(1));
                     }
+                    //error for boolop
+                    else if(secondChild.name.matches("(==|!=)")){
+                        symbolTableLog("ERROR! EVALUATION OF: [ " + secondChild.name + " ] LEADS TO TYPE MISMATCH ON LINE " + lineNumber);
+                    }
                     else if(secondChild.name.matches("[a-z]")){ //right child is a variable/id
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //does this variable exist?
@@ -185,6 +189,10 @@ public class SymbolTable {
                                 temp.isUsed = true; //mark used
                             }
                         }
+                    }
+                    //error for boolop
+                    else if(secondChild.name.matches("(==|!=)")){
+                        symbolTableLog("ERROR! EVALUATION OF: [ " + secondChild.name + " ] LEADS TO TYPE MISMATCH ON LINE " + lineNumber);
                     }
                     //check if it is a digit or boolean value
                     else if(secondChild.name.matches("[0-9]") || (secondChild.name.matches("(true|false)") && !secondChild.token.tokenType.equals("String Literal"))){

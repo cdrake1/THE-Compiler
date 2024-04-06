@@ -13,7 +13,7 @@
       c = "hello"
       if("hello" == "hi"){
         print(c)
-        if(1 == 2){
+        if(1 == 5){
           print(a)
         }
       }
