@@ -376,7 +376,7 @@ public class SymbolTable {
     }
 
     //ST -- Bool Op -- checks the types of both child nodes when using bool operators
-    private void STBoolOP(ASTNode boolopNode){
+    private String STBoolOP(ASTNode boolopNode){
         System.out.println("bool op");
 
         ASTNode leftNode = boolopNode.children.get(0); //expr
@@ -394,7 +394,7 @@ public class SymbolTable {
         }
         //call itself recursively
         else if(leftNode.name.matches("(==|!=)")){
-            STBoolOP(leftNode);
+            leftNodeType =  STBoolOP(leftNode);
         }
         else{   //otherwise
             //if its an ID check scope or set type
@@ -403,10 +403,11 @@ public class SymbolTable {
                 if (symbol == null){
                     symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [ " + leftNode.name + " ] ON LINE " + lineNumber);
                     STErrors++;
-                    return;
+                    return null;
                 } 
                 else{
-                    leftNodeType = symbol.type;
+                    leftNodeType = symbol.type; //set type
+                    symbol.isUsed = true;   //mark true
                 }
             }
             //if its a digit set the type to int
@@ -424,7 +425,7 @@ public class SymbolTable {
             else{   //otherwise throw an error
                 symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [ " + leftNode.name + " ] ON LINE " + lineNumber);
                 STErrors++;
-                return;
+                return null;
             }
         }
 
@@ -435,7 +436,7 @@ public class SymbolTable {
         }
         //call itself recursively
         else if(rightNode.name.matches("(==|!=)")){
-            STBoolOP(rightNode);
+            rightNodeType =  STBoolOP(rightNode);
         }
         else{   //otherwise
             //if its an ID check the scope or set type
@@ -444,10 +445,11 @@ public class SymbolTable {
                 if (symbol == null){
                     symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                     STErrors++;
-                    return;
+                    return null;
                 } 
                 else{
-                    rightNodeType = symbol.type;
+                    rightNodeType = symbol.type;    //set type
+                    symbol.isUsed = true;   //mark true
                 }
             }
             //if its a digit set the type to int
@@ -465,7 +467,7 @@ public class SymbolTable {
             else{   //otherwise throw an error
                 symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                 STErrors++;
-                return;
+                return null;
             }
         }
 
@@ -476,7 +478,10 @@ public class SymbolTable {
         if(!leftNodeType.equals(rightNodeType)){
             symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
             STErrors++;
-            return;
+            return null;
+        }
+        else{
+            return leftNodeType;
         }
     }
 
