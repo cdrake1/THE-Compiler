@@ -1,4 +1,5 @@
 TDL for project 3 - Semantic Analysis
 
--- test all Functions
--- comments, structure, minor
+-- labs
+-- write up
+-- final tests and commenting

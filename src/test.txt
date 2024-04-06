@@ -1,7 +1,5 @@
-/* Andrew B's Compiler Inifinite Loop*/
 {
   boolean d
-  boolean x
   d  = (true == (true == false))
   if((2+2==4)!=("hi"=="hello")){
     print(d)
@@ -14,10 +12,49 @@
       c = "hello"
       if("hello" == "hi"){
         print(c)
-        if(1 == 2){
+        if(1 == 5){
           print(a)
         }
       }
+    }
+  }
+}$
+{
+  boolean d
+  d = (true == (true == false))
+  print(d)
+  {
+    int a
+    int b
+    string c
+    a = 1
+    b = 5
+    c = "hello"
+    if(a == b){
+      print(a)
+      {
+        print(b)
+      }
+    }
+  }
+  {
+    int a
+    a = 7
+  }
+}$
+{
+  int a
+  int b
+  b = 1
+  a = 5 + 4 + b
+  {
+    print("i")
+    print("think")
+  }
+  if(a == b){
+    print(a)
+    while(1 == (1 == 1)){
+      print("no")
     }
   }
 }$

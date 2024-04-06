@@ -122,7 +122,7 @@ public class SymbolTable {
 
         //check if the firstchild symbol was created. If it was check its type
         if(firstChild == null){
-            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + currentNode.children.get(0).name + " ] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! ATTEMPTED TO USE UNDECLARED VARIABLE: [ " + currentNode.children.get(0).name + " ] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -139,7 +139,7 @@ public class SymbolTable {
                     else if(secondChild.name.matches("[a-z]")){
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
+                            symbolTableLog("ERROR! ATTEMPTED TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
@@ -171,7 +171,7 @@ public class SymbolTable {
                     if(secondChild.name.matches("[a-z]")){
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
+                            symbolTableLog("ERROR! ATTEMPTED TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
@@ -208,7 +208,7 @@ public class SymbolTable {
                     else if(secondChild.name.matches("[a-z]")){
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
+                            symbolTableLog("ERROR! ATTEMPTED TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
@@ -254,12 +254,12 @@ public class SymbolTable {
         if(child.name.matches("[a-z]")){
             Symbol temp = lookupSymbol(child.name);
             if(temp == null){
-                symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! ATTEMPTED TO USE UNDECLARED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
             else if(!temp.isINIT){
-                symbolTableLog("ERROR! ATTEMPT TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -332,6 +332,11 @@ public class SymbolTable {
                         STErrors++;
                         return;
                     }
+                    else if(!symbol.isINIT){
+                        symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
+                        STErrors++;
+                        return;
+                    }
                     else{
                         symbol.isUsed = true;   //mark that the variable was used
                     }
@@ -378,6 +383,11 @@ public class SymbolTable {
                     return null;
                 } 
                 else{
+                    if(!symbol.isINIT){
+                        symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
+                        STErrors++;
+                        return null;
+                    }
                     leftNodeType = symbol.type;
                     symbol.isUsed = true;   //mark that the variable was used
                 }
@@ -416,6 +426,11 @@ public class SymbolTable {
                     return null;
                 } 
                 else{
+                    if(!symbol.isINIT){
+                        symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
+                        STErrors++;
+                        return null;
+                    }
                     rightNodeType = symbol.type;
                     symbol.isUsed = true;   //mark that the variable was used
                 }
@@ -438,7 +453,7 @@ public class SymbolTable {
 
         //check if the types match...if they dont throw an error
         if(!leftNodeType.equals(rightNodeType)){
-            symbolTableLog("ERROR! TYPE MISMATCH ON LINE " + lineNumber);
+            symbolTableLog("ERROR! TYPE MISMATCH DURING EXPRESSION EVALUATION ON LINE " + lineNumber);
             STErrors++;
             return null;
         }
@@ -524,8 +539,8 @@ public class SymbolTable {
     private void STWarningOutput(SymbolTableNode node){
         //iterates through the symbols and outputs warnings
         for(Symbol symbol : node.symbols.values()){
-            if(!symbol.isUsed){
-                symbolTableLog("WARNING! VARIABLE IS DECLARED BUT NOT USED: [ " + symbol.name + " ]");
+            if(!symbol.isUsed && symbol.isINIT){
+                symbolTableLog("WARNING! VARIABLE IS DECLARED AND INITIALIZED BUT NOT USED: [ " + symbol.name + " ]");
                 STWarnings++;
             }
             if(!symbol.isINIT){
