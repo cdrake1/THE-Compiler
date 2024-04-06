@@ -12,6 +12,7 @@ public class SymbolTable {
     int scopeCount; //counter for what scope we are on
     int outputScope;    //pointer for output function
     int STErrors;   //counts total errors
+    int STWarnings; //countst total warnings
     String traversal;   //string to hold symbol table traversal
 
     //Symbol Table constructor -- initializes variables
@@ -22,6 +23,7 @@ public class SymbolTable {
         this.scopeCount = 0;
         this.outputScope = 0;
         this.STErrors = 0;
+        this.STWarnings = 0;
         this.traversal = "";
     }   
 
@@ -264,12 +266,12 @@ public class SymbolTable {
         if(child.name.matches("[a-z]")){
             Symbol temp = lookupSymbol(child.name);
             if(temp == null){   //scope check and throw error if it doesnt exist
-                symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
             else if(!temp.isINIT){
-                symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! ATTEMPT TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -461,12 +463,8 @@ public class SymbolTable {
             }
         }
 
-        System.out.println(rightNode.name + rightNodeType);
-        System.out.println(leftNode.name + leftNodeType);
-
         //check if the types match...if they dont throw an error
         if(!leftNodeType.equals(rightNodeType)){
-            System.out.println(leftNodeType + rightNodeType);
             symbolTableLog("ERROR! TYPE MISMATCH ON LINE " + lineNumber);
             STErrors++;
             return null;
@@ -540,12 +538,33 @@ public class SymbolTable {
     //evaluates the success of the symbol table
     public void STEvaluate(){
         if(STErrors > 0){
-            symbolTableLog("Symbol Table Generation Failed... Errors: " + STErrors);
+            STWarningOutput(root);
+            symbolTableLog("Symbol Table Generation Failed... Warnings: " + STWarnings + " Errors: " + STErrors);
         }
         else{
-            symbolTableLog("Symbol Table Generated Successfully... Errors: " + STErrors);
+            STWarningOutput(root);
+            symbolTableLog("Symbol Table Generated Successfully... Warnings: " + STWarnings + " Errors: " + STErrors);
             testScopes();   //outputs symbol table tree
             printSymbolTable(); //outputs the symbol table
+        }
+    }
+
+    private void STWarningOutput(SymbolTableNode node){
+        //iterates through the symbols and outputs warnings
+        for(Symbol symbol : node.symbols.values()){
+            if(!symbol.isUsed){
+                symbolTableLog("WARNING! VARIABLE IS DECLARED BUT NOT USED: [ " + symbol.name + " ]");
+                STWarnings++;
+            }
+            if(!symbol.isINIT){
+                symbolTableLog("WARNING! VARIABLE IS DECLARED BUT NOT INITIALIZED: [ " + symbol.name + " ]");
+                STWarnings++;
+            }
+        }
+        
+        //iterates through the scope tree
+        for(SymbolTableNode child : node.children){
+            STWarningOutput(child);
         }
     }
 
