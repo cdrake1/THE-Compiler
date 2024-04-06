@@ -1,6 +1,10 @@
-/*Long Test Case - Everything Except Boolean Declaration */
+/**This should break on a but allow b to go through**/
 {
-	boolean a
-	a = true
+int b
+int a
+boolean d
+{
+    string b
+	d  = (true == (true == false))
 }
-$
+}$

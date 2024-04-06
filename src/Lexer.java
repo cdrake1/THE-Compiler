@@ -239,6 +239,7 @@ public class Lexer {
                                 lexerLog("CST skipped due to Lex errors...");
                                 lexerLog("Semantic Analysis skipped due to Lex errors...");
                                 lexerLog("AST skipped due to Lex errors...");
+                                lexerLog("Symbol Table skipped due to Lex errors...");
                             }
 
                             //reset lexer and global variables. Output next program intro if there is more code

@@ -5,6 +5,9 @@
 */
 
 //Collin Drakes Symbol Table
+
+import javax.sound.sampled.Line;
+
 public class SymbolTable {
     SymbolTableNode root;  //pointer to the root node
     SymbolTableNode current;   //pointer to the current node
@@ -104,7 +107,15 @@ public class SymbolTable {
         String varType = currentNode.children.get(0).name;
         String varID = currentNode.children.get(1).name;
         String line = currentNode.children.get(0).token.line;
-        addSymbol(varID, varType, line);
+
+        //check for a redeclaration error
+        Symbol temp = lookupSymbol(varID);
+        if(temp != null && temp.scope == currentScope){
+            symbolTableLog("ERROR! VARIABLE [ " + varID + " ] ON LINE " + line + " IS ALREADY DECLARED WITHIN THIS SCOPE");
+            STErrors++;
+            return;
+        }
+        addSymbol(varID, varType, line);    //add the symbol to the current scope
     }
 
     //ST -- assignment statement -- lookup each node and check their types
@@ -118,7 +129,7 @@ public class SymbolTable {
         //check if the first child symbol was created
         if(firstChild == null){
             //throw an error because this variable doesnt exist
-            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + currentNode.children.get(0).name + "] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + currentNode.children.get(0).name + " ] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -133,13 +144,13 @@ public class SymbolTable {
                     else if(secondChild.name.matches("[a-z]")){ //right child is a variable/id
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //does this variable exist?
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //if the variable exists check its type
                             if(!temp.type.equals("int")){
-                                symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
+                                symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
                             }
@@ -147,13 +158,13 @@ public class SymbolTable {
                     }
                     //check if the second child is a different type
                     else if((secondChild.name.matches("(true|false)")) || secondChild.token.tokenType.equals("String Literal")){
-                        symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
+                        symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
                     //throw an error for anything unaccounted for
                     else if(!secondChild.name.matches("[0-9]")){
-                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: [" + secondChild.name + "] ON LINE " + lineNumber);
+                        symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
@@ -165,13 +176,13 @@ public class SymbolTable {
                     if(secondChild.name.matches("[a-z]")){
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //scope checking
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //type checking
                             if(!temp.type.equals("string")){
-                                symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
+                                symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
                             }
@@ -179,7 +190,7 @@ public class SymbolTable {
                     }
                     //check if it is a digit or boolean value
                     else if(secondChild.name.matches("[0-9]") || (secondChild.name.matches("(true|false)") && !secondChild.token.tokenType.equals("String Literal"))){
-                        symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
+                        symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
@@ -199,13 +210,13 @@ public class SymbolTable {
                     else if(secondChild.name.matches("[a-z]")){ //its an id/variable
                         Symbol boolId = lookupSymbol(secondChild.name);
                         if(boolId == null){ //check scope
-                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
+                            symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //check type
                             if(!boolId.type.equals("boolean")){
-                                symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
+                                symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
                             }
@@ -213,7 +224,7 @@ public class SymbolTable {
                     }
                     //check if it is a digit or string literal
                     else if(secondChild.name.matches("[0-9]") || secondChild.token.tokenType.equals("String Literal")){
-                        symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
+                        symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
@@ -248,12 +259,12 @@ public class SymbolTable {
         if(child.name.matches("[a-z]")){
             Symbol temp = lookupSymbol(child.name);
             if(temp == null){   //scope check and throw error if it doesnt exist
-                symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: [" + child.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ATTEMPT TO USE UNDECLARED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
             else if(!temp.isINIT){
-                symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: [" + child.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -273,7 +284,7 @@ public class SymbolTable {
         }
         //throw an error if it is not a boolval
         else if (!booleanExpr.name.matches("(true|false)")){
-            symbolTableLog("ERROR! INVALID WHILE STATEMENT: [" + booleanExpr.name + "] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! INVALID WHILE STATEMENT: [ " + booleanExpr.name + " ] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -292,7 +303,7 @@ public class SymbolTable {
         }
         //throw an error if it is not a boolval
         else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! IF STATEMENT: [" + booleanExpr.name + "] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! IF STATEMENT: [ " + booleanExpr.name + " ] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -308,7 +319,7 @@ public class SymbolTable {
 
         //if the left node is not a digit throw an error
         if(!leftNode.name.matches("[0-9]")){
-            symbolTableLog("ERROR! INVALID INT EXPRESSION: [" + leftNode.name + "] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! INVALID INT EXPRESSION: [ " + leftNode.name + " ] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
@@ -322,13 +333,13 @@ public class SymbolTable {
             if(rightNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(rightNode.name);
                 if (symbol == null){
-                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [" + rightNode.name + "] ON LINE " + lineNumber);
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                     STErrors++;
                     return;
                 } 
                 else{
                     if(!symbol.type.equals("int")){
-                        symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
+                        symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
@@ -336,13 +347,13 @@ public class SymbolTable {
             }
             //check if the right child is a different type
             else if((rightNode.name.matches("(true|false)")) || rightNode.token.tokenType.equals("String Literal")){
-                symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
             //throw an error for anything unaccounted for
             else if(!rightNode.name.matches("[0-9]")){
-                symbolTableLog("ERROR! INVALID SYNTAX DURING INTEGER OPERATION: [" + rightNode.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! INVALID SYNTAX DURING INTEGER OPERATION: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -375,7 +386,7 @@ public class SymbolTable {
             if(leftNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(leftNode.name);
                 if (symbol == null){
-                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [" + leftNode.name + "] ON LINE " + lineNumber);
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [ " + leftNode.name + " ] ON LINE " + lineNumber);
                     STErrors++;
                     return;
                 } 
@@ -396,7 +407,7 @@ public class SymbolTable {
                 leftNodeType = "string";
             }
             else{   //otherwise throw an error
-                symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [" + leftNode.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [ " + leftNode.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
@@ -416,7 +427,7 @@ public class SymbolTable {
             if(rightNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(rightNode.name);
                 if (symbol == null){
-                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [" + rightNode.name + "] ON LINE " + lineNumber);
+                    symbolTableLog("ERROR! UNDECLARED IDENTIFIER: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                     STErrors++;
                     return;
                 } 
@@ -437,15 +448,18 @@ public class SymbolTable {
                 rightNodeType = "string";
             }
             else{   //otherwise throw an error
-                symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [" + rightNode.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
         }
 
+        System.out.println(rightNode.name + rightNodeType);
+        System.out.println(leftNode.name + leftNodeType);
+
         //check if the types match...if they dont throw an error
         if(!leftNodeType.equals(rightNodeType)){
-            symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
             STErrors++;
             return;
         }

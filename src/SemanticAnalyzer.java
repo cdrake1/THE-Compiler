@@ -58,6 +58,8 @@ public class SemanticAnalyzer {
         }
         else{
             SemanticAnalyzerLog("Semantic Analysis Failed... Errors: " + semanticErrors);   //output message if semantic fails
+            SemanticAnalyzerLog("AST skipped due to Semantic Analysis errors...");
+            SemanticAnalyzerLog("Symbol Table skipped due to Semantic Analysis errors...");
         }
     }
 
