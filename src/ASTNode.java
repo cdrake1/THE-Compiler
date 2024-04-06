@@ -1,6 +1,6 @@
 /*
-    Node file
-    Creates Nodes to be used in the Semantic Analyzer
+    AST Node file
+    Creates AST Nodes to be used in the Semantic Analyzer and Symbol Table
     These nodes contain the tokens created by the lexer
 */
 

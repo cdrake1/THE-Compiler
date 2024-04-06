@@ -67,7 +67,7 @@ public class SymbolTable {
             inOrder(child);
         }
 
-        //close scope after processing block
+        //close scope after processing block nodes
         if(node.name.equals("Block")) {
             closeScope();
         }
@@ -76,7 +76,7 @@ public class SymbolTable {
     //ST -- open scope -- opens a new scope within the symbol table
     private void openScope(){
         System.out.println("openscope");
-        //if there is no root then create 1. Otherwise increment the pointer and create a childnode
+        //if there is no root then create 1. Otherwise increment the pointer and create a child node
         if(root == null){
             addNodeSymbolTable(scopeCount);
         }
@@ -97,25 +97,27 @@ public class SymbolTable {
         }
     }
 
-    //ST -- var decl -- add symbol to the current nodes hash table
+    //ST -- var decl -- add a symbol to the current nodes hash table
     private void STVarDecl(ASTNode currentNode){
         System.out.println("var decl");
+        //grab the type, id, and line. Add the symbol to the hash table
         String varType = currentNode.children.get(0).name;
         String varID = currentNode.children.get(1).name;
         String line = currentNode.children.get(0).token.line;
         addSymbol(varID, varType, line);
     }
 
-    //ST -- assignment statement -- lookup the symbol and check types
+    //ST -- assignment statement -- lookup each node and check their types
     private void STAssignmentStatement(ASTNode currentNode){
         System.out.println("assignment statement");
+
         Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //this is an id
         ASTNode secondChild = currentNode.children.get(1); //this is an expr
         String lineNumber =  currentNode.children.get(0).token.line;    //the line number
 
         //check if the first child symbol was created
         if(firstChild == null){
-            //throw error because this variable doesnt exist
+            //throw an error because this variable doesnt exist
             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + currentNode.children.get(0).name + "] ON LINE " + lineNumber);
             STErrors++;
             return;
@@ -143,11 +145,13 @@ public class SymbolTable {
                             }
                         }
                     }
-                    else if((secondChild.name.matches("(true|false)")) || (secondChild.name.length() >= 2 && secondChild.name.matches("[a-z]+"))){    //check if second child is not a digit
-                        symbolTableLog("ERROR! TYPE MISMATCH: " + secondChild.name);
+                    //check if the second child is a different type
+                    else if((secondChild.name.matches("(true|false)")) || secondChild.token.tokenType.equals("String Literal")){
+                        symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
+                    //throw an error for anything unaccounted for
                     else if(!secondChild.name.matches("[0-9]")){
                         symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
@@ -157,7 +161,8 @@ public class SymbolTable {
 
                 //type string
                 case "string":
-                    if(secondChild.name.length() == 1 && secondChild.name.matches("[a-z]")){    //second child is an id/variable
+                    //second child is an id/variable
+                    if(secondChild.name.matches("[a-z]")){
                         Symbol temp = lookupSymbol(secondChild.name);
                         if(temp == null){   //scope checking
                             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [" + secondChild.name + "] ON LINE " + lineNumber);
@@ -172,11 +177,13 @@ public class SymbolTable {
                             }
                         }
                     }
+                    //check if it is a digit or boolean value
                     else if(secondChild.name.matches("[0-9]") || (secondChild.name.matches("(true|false)") && !secondChild.token.tokenType.equals("String Literal"))){
                         symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
+                    //throw an error for anything else unaccounted for
                     else if(!secondChild.token.tokenType.equals("String Literal")){
                         symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT ON LINE " + lineNumber);
                         STErrors++;
@@ -204,34 +211,40 @@ public class SymbolTable {
                             }
                         }
                     }
+                    //check if it is a digit or string literal
                     else if(secondChild.name.matches("[0-9]") || secondChild.token.tokenType.equals("String Literal")){
                         symbolTableLog("ERROR! TYPE MISMATCH: [" + secondChild.name + "] ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
-                    else if(!secondChild.name.matches("(true|false)")){  //boolval
+                    //throw an error for anything unaccounted for
+                    else if(!secondChild.name.matches("(true|false)")){
                         symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT ON LINE " + lineNumber);
                         STErrors++;
                         return;
                     }
                     break;
                 default:
+                        //throw an error for anything unaccounted for
                         symbolTableLog("ERROR! INVALID ASSIGNMENT STATEMENT ON LINE " + lineNumber);
                         STErrors++;
-                    break;
+                        return;
             }
         }
-        firstChild.isINIT = true;
+        firstChild.isINIT = true;   //mark variable as initialied if no errors are thrown
     }
 
-    //ST -- print statement -- lookup symbol to check scope
+    //ST -- print statement -- check the scope and initialization of what is being printed
     private void STPrintStatement(ASTNode currentNode){
         System.out.println("print statement");
-        //grab the child node
+
+        //grab the child node and line number
         ASTNode child = currentNode.children.get(0);
         String lineNumber = child.token.line;
+
         System.out.println(child.name);
 
+        //if its an id check the scope and if its initialized
         if(child.name.matches("[a-z]")){
             Symbol temp = lookupSymbol(child.name);
             if(temp == null){   //scope check and throw error if it doesnt exist
@@ -247,51 +260,65 @@ public class SymbolTable {
         }
     }
 
-    //ST -- while statement -- lookup symbol to check scope
+    //ST -- while statement -- call boolop or throw an error
     private void STWhileStatement(ASTNode whileNode){
         System.out.println("while statement");
-        ASTNode booleanExpr = whileNode.children.get(0);
 
-        if (booleanExpr.name.matches("(==|!=)")){  //boolop
+        ASTNode booleanExpr = whileNode.children.get(0);    //boolexpr
+        String lineNumber = booleanExpr.token.line; //line number
+
+        //check if this is a boolop
+        if (booleanExpr.name.matches("(==|!=)")){
             STBoolOP(booleanExpr);
         }
-        else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+        //throw an error if it is not a boolval
+        else if (!booleanExpr.name.matches("(true|false)")){
+            symbolTableLog("ERROR! INVALID WHILE STATEMENT: [" + booleanExpr.name + "] ON LINE " + lineNumber);
             STErrors++;
+            return;
         }
     }
 
-    //ST -- if statement -- lookup symbol to check scope
+    //ST -- if statement -- call boolop or throw an error
     private void STIfStatement(ASTNode ifNode){
         System.out.println("if statement");
-        ASTNode booleanExpr = ifNode.children.get(0);
 
+        ASTNode booleanExpr = ifNode.children.get(0);   //boolexpr
+        String lineNumber = booleanExpr.token.line; //line number
+
+        //check if this is a boolop
         if (booleanExpr.name.matches("(==|!=)")){  //boolop
             STBoolOP(booleanExpr);
         }
+        //throw an error if it is not a boolval
         else if (!booleanExpr.name.matches("(true|false)")){   //boolval
-            symbolTableLog("ERROR! INVALID BOOLEAN EXPRESSION: " + booleanExpr.name);
+            symbolTableLog("ERROR! IF STATEMENT: [" + booleanExpr.name + "] ON LINE " + lineNumber);
             STErrors++;
+            return;
         }
     }
 
-    //ST -- Int Op -- lookup symbol to check scope
+    //ST -- Int Op -- check the types of both child nodes when using the + operator
     private void STIntOP(ASTNode intopNode){
         System.out.println("int op");
-        ASTNode leftNode = intopNode.children.get(0);  //always a digit
-        ASTNode rightNode = intopNode.children.get(1); //digit, +, ID
-        String lineNumber = leftNode.token.line;
 
+        ASTNode leftNode = intopNode.children.get(0);  //always a digit
+        ASTNode rightNode = intopNode.children.get(1); //digit, +, or ID
+        String lineNumber = leftNode.token.line;    //the line number
+
+        //if the left node is not a digit throw an error
         if(!leftNode.name.matches("[0-9]")){
             symbolTableLog("ERROR! INVALID INT EXPRESSION: [" + leftNode.name + "] ON LINE " + lineNumber);
             STErrors++;
             return;
         }
 
+        //if its an intop recursively call itself if not...
         if(rightNode.name.equals("+")){
             STIntOP(rightNode);
         }
         else{
+            //if its an ID check the scope and type
             if(rightNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(rightNode.name);
                 if (symbol == null){
@@ -307,36 +334,44 @@ public class SymbolTable {
                     }
                 }
             }
-            else if((rightNode.name.matches("(true|false)")) || (rightNode.name.length() >= 2 && rightNode.name.matches("[a-z]+"))){    //check if second child is not a digit
+            //check if the right child is a different type
+            else if((rightNode.name.matches("(true|false)")) || rightNode.token.tokenType.equals("String Literal")){
                 symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
+            //throw an error for anything unaccounted for
             else if(!rightNode.name.matches("[0-9]")){
-                symbolTableLog("ERROR! INVALID SYNTAX IN ASSIGNMENT STATEMENT: [" + rightNode.name + "] ON LINE " + lineNumber);
+                symbolTableLog("ERROR! INVALID SYNTAX DURING INTEGER OPERATION: [" + rightNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
         }
     }
 
-    //ST -- Bool Op -- adds a symbol to the symbol table
+    //ST -- Bool Op -- checks the types of both child nodes when using bool operators
     private void STBoolOP(ASTNode boolopNode){
         System.out.println("bool op");
+
         ASTNode leftNode = boolopNode.children.get(0); //expr
         ASTNode rightNode = boolopNode.children.get(1);    //expr
-        String lineNumber = leftNode.token.line;
+        String lineNumber = leftNode.token.line;    //the line number
 
+        //used to check types
         String leftNodeType = "";
         String rightNodeType = "";
 
+        //-----left node check-----
+        //call intop
         if(leftNode.name.equals("+")){
             STIntOP(leftNode);
         }
+        //call itself recursively
         else if(leftNode.name.matches("(==|!=)")){
             STBoolOP(leftNode);
         }
-        else{
+        else{   //otherwise
+            //if its an ID check scope or set type
             if(leftNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(leftNode.name);
                 if (symbol == null){
@@ -348,29 +383,36 @@ public class SymbolTable {
                     leftNodeType = symbol.type;
                 }
             }
+            //if its a digit set the type to int
             else if(leftNode.name.matches("[0-9]")){
                 leftNodeType = "int";
             }
+            //if its a boolean set the type to boolean
             else if (leftNode.name.matches("(true|false)")){
                 leftNodeType = "boolean";
             }
-            else if((leftNode.name.length() >= 2 && leftNode.name.matches("[a-z]+"))){
+            //if its a string literal set the type to string
+            else if(leftNode.token.tokenType.equals("String Literal")){
                 leftNodeType = "string";
             }
-            else{
-                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: [" + leftNode.name + "] ON LINE " + lineNumber);
+            else{   //otherwise throw an error
+                symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [" + leftNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
         }
 
+        //-----right node check-----
+        //check if its an int op
         if(rightNode.name.equals("+")){
             STIntOP(rightNode);
         }
+        //call itself recursively
         else if(rightNode.name.matches("(==|!=)")){
             STBoolOP(rightNode);
         }
-        else{
+        else{   //otherwise
+            //if its an ID check the scope or set type
             if(rightNode.name.matches("[a-z]")){
                 Symbol symbol = lookupSymbol(rightNode.name);
                 if (symbol == null){
@@ -382,22 +424,26 @@ public class SymbolTable {
                     rightNodeType = symbol.type;
                 }
             }
+            //if its a digit set the type to int
             else if(rightNode.name.matches("[0-9]")){
                 rightNodeType = "int";
             }
+            //if its a boolean set the type to boolean
             else if (rightNode.name.matches("(true|false)")){
                 rightNodeType = "boolean";
             }
-            else if((rightNode.name.length() >= 2 && rightNode.name.matches("[a-z]+"))){
+            //if its a string literal set the type to string
+            else if(rightNode.token.tokenType.equals("String Literal")){
                 rightNodeType = "string";
             }
-            else{
-                symbolTableLog("ERROR! INVALID SYNTAX IN BOOLEAN OP STATEMENT: [" + rightNode.name + "] ON LINE " + lineNumber);
+            else{   //otherwise throw an error
+                symbolTableLog("ERROR! INVALID SYNTAX DURING BOOLEAN OPERATION: [" + rightNode.name + "] ON LINE " + lineNumber);
                 STErrors++;
                 return;
             }
         }
 
+        //check if the types match...if they dont throw an error
         if(!leftNodeType.equals(rightNodeType)){
             symbolTableLog("ERROR! TYPE MISMATCH: [" + rightNode.name + "] ON LINE " + lineNumber);
             STErrors++;
@@ -407,10 +453,11 @@ public class SymbolTable {
 
     //ST -- Add Symbol -- adds a symbol to the symbol table
     private void addSymbol(String id, String type, String line){
+        //if the symbol already exists return
         if(current.symbols.contains(id)){
             return;
         }
-        else{
+        else{   //otherwise create a symbol and add it to the current scope
             Symbol newSymbol = new Symbol(id, type, currentScope, line);
             current.symbols.put(newSymbol.name, newSymbol);
         }
@@ -418,14 +465,17 @@ public class SymbolTable {
 
     //ST -- Lookup Symbol -- looks up a symbol within each ST/scope and returns it
     private Symbol lookupSymbol(String id){
+        //check if the current node is null
         if(current == null){
             return null;
         }
 
+        //temp variables and pointers used to traverse through the tree
         Symbol temp = null;
         SymbolTableNode tempNode = current;
         int tempPointer = currentScope;
         
+        //continuously iterate until you find it or return null
         while(tempPointer != -1 && temp == null && tempNode != null){
             temp = tempNode.symbols.get(id);
             if(temp != null){
@@ -462,7 +512,20 @@ public class SymbolTable {
 
     //--------------------------------Symbol Table Output Functions-----------------------------------------
 
+    //evaluates the success of the symbol table
+    public void STEvaluate(){
+        if(STErrors > 0){
+            symbolTableLog("Symbol Table Generation Failed... Errors: " + STErrors);
+        }
+        else{
+            symbolTableLog("Symbol Table Generated Successfully... Errors: " + STErrors);
+            testScopes();   //outputs symbol table tree
+            printSymbolTable(); //outputs the symbol table
+        }
+    }
+
     //----------outputs the symbol table as a tree--------------
+
     //ST -- test scopes
     public void testScopes(){
         expand(root, 0);
@@ -494,18 +557,6 @@ public class SymbolTable {
     }
 
     //----------outputs the symbol table as a table--------------
-
-    //ST evaluates the success of semantic analysis scope and type checking
-    public void STEvaluate(){
-        if(STErrors > 0){
-            symbolTableLog("Symbol Table Generation Failed... Errors: " + STErrors);
-        }
-        else{
-            symbolTableLog("Symbol Table Generated Successfully... Errors: " + STErrors);
-            testScopes();   //outputs symbol table tree
-            printSymbolTable(); //outputs the symbol table
-        }
-    }
     
     //ST -- print ST
     public void printSymbolTable(){
@@ -519,9 +570,12 @@ public class SymbolTable {
 
     //ST -- expand v2
     public void STexpand(SymbolTableNode node){
+        //iterates through the symbols
         for(Symbol symbol : node.symbols.values()){
             symbolTableLog(symbol.name + "\t" + symbol.type + "\t" + symbol.scope + "\t" + symbol.isINIT + "\t" + symbol.isUsed + "\t" + symbol.line);
         }
+        
+        //iterates through the scope tree
         for(SymbolTableNode child : node.children){
             STexpand(child);
         }
