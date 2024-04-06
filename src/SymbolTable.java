@@ -154,6 +154,9 @@ public class SymbolTable {
                                 STErrors++;
                                 return;
                             }
+                            else{
+                                temp.isUsed = true; //mark true
+                            }
                         }
                     }
                     //check if the second child is a different type
@@ -186,6 +189,9 @@ public class SymbolTable {
                                 STErrors++;
                                 return;
                             }
+                            else{
+                                temp.isUsed = true; //mark used
+                            }
                         }
                     }
                     //check if it is a digit or boolean value
@@ -208,17 +214,20 @@ public class SymbolTable {
                         STBoolOP(secondChild);
                     }
                     else if(secondChild.name.matches("[a-z]")){ //its an id/variable
-                        Symbol boolId = lookupSymbol(secondChild.name);
-                        if(boolId == null){ //check scope
+                        Symbol temp = lookupSymbol(secondChild.name);
+                        if(temp == null){ //check scope
                             symbolTableLog("ERROR! ATTEMPT TO USE UNDECLARED VARIABLE: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                             STErrors++;
                             return;
                         }
                         else{   //check type
-                            if(!boolId.type.equals("boolean")){
+                            if(!temp.type.equals("boolean")){
                                 symbolTableLog("ERROR! TYPE MISMATCH: [ " + secondChild.name + " ] ON LINE " + lineNumber);
                                 STErrors++;
                                 return;
+                            }
+                            else{
+                                temp.isUsed = true;   //mark used
                             }
                         }
                     }
@@ -267,6 +276,9 @@ public class SymbolTable {
                 symbolTableLog("ATTEMPT TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
                 STErrors++;
                 return;
+            }
+            else{
+                temp.isUsed = true; //mark that the variable was used
             }
         }
     }
@@ -342,6 +354,9 @@ public class SymbolTable {
                         symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
                         STErrors++;
                         return;
+                    }
+                    else{
+                        symbol.isUsed = true;   //mark used
                     }
                 }
             }

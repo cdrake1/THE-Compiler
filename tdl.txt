@@ -1,9 +1,13 @@
 TDL for project 3 - Semantic Analysis
 
--- update symbol table is used
 -- test all Functions
 -- fix error messages
 -- comment
 -- organize functions
 -- remove helpful output when done testing
 -- restructure if needed
+
+
+---------------------------------------------
+
+- fix boolop and add isused
