@@ -5,9 +5,6 @@
 */
 
 //Collin Drakes Symbol Table
-
-import javax.sound.sampled.Line;
-
 public class SymbolTable {
     SymbolTableNode root;  //pointer to the root node
     SymbolTableNode current;   //pointer to the current node
@@ -78,7 +75,6 @@ public class SymbolTable {
 
     //ST -- open scope -- opens a new scope within the symbol table
     private void openScope(){
-        System.out.println("openscope");
         //if there is no root then create 1. Otherwise increment the pointer and create a child node
         if(root == null){
             addNodeSymbolTable(scopeCount);
@@ -92,7 +88,6 @@ public class SymbolTable {
 
     //ST -- close scope --closes the most recently opened scope
     private void closeScope(){
-        System.out.println("clpse scope");
         //if the current scope is not the root node then move the pointer to its parent
         if(current.scope != 0 && current.parent != null){
             current = current.parent;
@@ -102,7 +97,6 @@ public class SymbolTable {
 
     //ST -- var decl -- add a symbol to the current nodes hash table
     private void STVarDecl(ASTNode currentNode){
-        System.out.println("var decl");
         //grab the type, id, and line. Add the symbol to the hash table
         String varType = currentNode.children.get(0).name;
         String varID = currentNode.children.get(1).name;
@@ -120,8 +114,6 @@ public class SymbolTable {
 
     //ST -- assignment statement -- lookup each node and check their types
     private void STAssignmentStatement(ASTNode currentNode){
-        System.out.println("assignment statement");
-
         Symbol firstChild = lookupSymbol(currentNode.children.get(0).name); //this is an id
         ASTNode secondChild = currentNode.children.get(1); //this is an expr
         String lineNumber =  currentNode.children.get(0).token.line;    //the line number
@@ -256,13 +248,9 @@ public class SymbolTable {
 
     //ST -- print statement -- check the scope and initialization of what is being printed
     private void STPrintStatement(ASTNode currentNode){
-        System.out.println("print statement");
-
         //grab the child node and line number
         ASTNode child = currentNode.children.get(0);
         String lineNumber = child.token.line;
-
-        System.out.println(child.name);
 
         //if its an id check the scope and if its initialized
         if(child.name.matches("[a-z]")){
@@ -285,8 +273,6 @@ public class SymbolTable {
 
     //ST -- while statement -- call boolop or throw an error
     private void STWhileStatement(ASTNode whileNode){
-        System.out.println("while statement");
-
         ASTNode booleanExpr = whileNode.children.get(0);    //boolexpr
         String lineNumber = booleanExpr.token.line; //line number
 
@@ -304,8 +290,6 @@ public class SymbolTable {
 
     //ST -- if statement -- call boolop or throw an error
     private void STIfStatement(ASTNode ifNode){
-        System.out.println("if statement");
-
         ASTNode booleanExpr = ifNode.children.get(0);   //boolexpr
         String lineNumber = booleanExpr.token.line; //line number
 
@@ -323,8 +307,6 @@ public class SymbolTable {
 
     //ST -- Int Op -- check the types of both child nodes when using the + operator
     private void STIntOP(ASTNode intopNode){
-        System.out.println("int op");
-
         ASTNode leftNode = intopNode.children.get(0);  //always a digit
         ASTNode rightNode = intopNode.children.get(1); //digit, +, or ID
         String lineNumber = leftNode.token.line;    //the line number
@@ -377,8 +359,6 @@ public class SymbolTable {
 
     //ST -- Bool Op -- checks the types of both child nodes when using bool operators
     private String STBoolOP(ASTNode boolopNode){
-        System.out.println("bool op");
-
         ASTNode leftNode = boolopNode.children.get(0); //expr
         ASTNode rightNode = boolopNode.children.get(1);    //expr
         String lineNumber = leftNode.token.line;    //the line number
@@ -479,12 +459,12 @@ public class SymbolTable {
         //check if the types match...if they dont throw an error
         if(!leftNodeType.equals(rightNodeType)){
             System.out.println(leftNodeType + rightNodeType);
-            symbolTableLog("ERROR! TYPE MISMATCH: [ " + rightNode.name + " ] ON LINE " + lineNumber);
+            symbolTableLog("ERROR! TYPE MISMATCH ON LINE " + lineNumber);
             STErrors++;
             return null;
         }
         else{
-            return leftNodeType;
+            return "boolean";
         }
     }
 

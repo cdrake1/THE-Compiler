@@ -3,6 +3,4 @@ TDL for project 3 - Semantic Analysis
 -- test all Functions
 -- fix error messages
 -- comment
--- organize functions
 -- remove helpful output when done testing
--- restructure if needed
