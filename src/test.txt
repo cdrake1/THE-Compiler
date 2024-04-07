@@ -58,3 +58,18 @@
     }
   }
 }$
+{
+  int x
+  string y
+  boolean z
+  {
+    x = 7
+    y = "mr villain"
+    while(y != "hello"){
+      z = false
+      print(z)
+    }
+    string z
+    z = "its my day off"
+  }
+}$
