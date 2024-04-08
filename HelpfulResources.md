@@ -32,8 +32,12 @@ Each reference will be listed below along with where it was used and how it help
 - Parser understanding and build out:  [labouseur.com](https://www.labouseur.com/courses/compilers/parse.pdf)
 - Test cases and output checking: [Labouseur.com and Gabriel Arnell](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
 - Try catch: [w3schools](https://www.w3schools.com/java/java_try_catch.asp)
-- Tßhrowing exceptions: [rollbar.com](https://rollbar.com/guides/java/how-to-throw-exceptions-in-java/)
+- Throwing exceptions: [rollbar.com](https://rollbar.com/guides/java/how-to-throw-exceptions-in-java/)
 
 ## Semantic Analysis Resources
 
-- one: []()
+- Helped me when attempting to output my symbol table: [stackoverflow](https://stackoverflow.com/questions/20213022/get-all-the-values-from-a-hash-table)
+- Assisted with learning about hashtables and their implementation: [geeks4geeks](https://www.geeksforgeeks.org/hashtable-in-java/)
+- The semantic analysis slides: [labouseur.com](https://www.labouseur.com/courses/compilers/semantic-analysis.pdf)
+- Test cases and output checking: [Arnell Compiler](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
+- Output and scope checking: [Nightingale Compiler](https://alexbadia1.github.io/AxiOS-Compiler/#/)
