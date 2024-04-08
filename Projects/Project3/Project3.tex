@@ -1,0 +1,402 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT 432
+% Spring 2024
+% Project 3
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm,xfrac} % Math packages
+\usepackage{sectsty} % Allows customizing section commands
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{parskip}
+\usepackage{lastpage}
+\usepackage{listings}
+\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+\lstset{
+    language=Java
+}
+
+\allsectionsfont{\normalfont\scshape} % Make all section titles in default font and small caps.
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{page \thepage\ of \pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs.
+
+\binoppenalty=3000
+\relpenalty=3000
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 432 - Spring 2024 - Dr. Labouseur} \\[10pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Project Three  \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Collin Drake \\ \normalsize Collin.Drake1@Marist.edu}
+
+\date{\normalsize\today} 	% Today's date.
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   start LAB FIVE
+%----------------------------------------------------------------------------------------
+\section*{Lab 5}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 9.2}
+Show the AST you would use for this construct. Revise the semantic analysis, reachability, and throws visitors for if statements to handle the signtest.
+
+signtest ( exp ) \{ \newline
+neg: stmts \newline
+zero: stmts \newline
+pos: stmts \newline
+\}
+
+\begin{center}
+        \includegraphics[width=15cm]{Blank diagram.png}
+\end{center}
+
+
+
+
+%----------------------------------------------------------------------------------------
+%   end LAB FIVE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+
+%----------------------------------------------------------------------------------------
+%   start LAB SIX
+%----------------------------------------------------------------------------------------
+\section*{Lab 6}
+
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 8.1}
+The two data structures most commonly used to implement symbol tables in production compilers are binary search trees and hash tables. What are the advantages and disadvantages of using each of these data structures for symbol tables? \newline
+
+In terms of using either of these data structures for the implementation of a symbol table, they both have their advantages and disadvantages. Binary search trees are straightforward to implement because they are well-known and they also make it simple to manage and handle scope-related operations. However, some downsides to binary search trees are that they have very slow lookup times and are difficult to keep balanced. On the other hand, hash tables have fast and consistent lookup times, but depending on the type of collision handling you choose this can increase the complexity and decrease its available size.
+
+
+
+%----------------------------------------------------------------------------------------
+%   end LAB SIX
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   start LAB SEVEN
+%----------------------------------------------------------------------------------------
+\section*{Lab 7}
+
+\subsection*{Alan Exercises:}
+Describe in	detail what is happening in the diagram below. \newline
+
+In regards to the diagram below, a compiler's semantic analyzer is determining if the variable 'b' is a valid variable that exists within the program's scope 1b. After checking the current scope for the variable 'b' and not finding it, the semantic analyzer will proceed to check the parent scope until it either finds the variable 'b' or determines that this was an undeclared variable and throws an error. In this case, the semantic analyzer was able to find the variable 'b' within the parent scope 0, therefore, validating the print statement. \newline
+
+\begin{center}
+        \includegraphics[width=10cm]{Screenshot 2024-04-07 at 6.47.20 PM.png}
+\end{center}
+
+
+
+%----------------------------------------------------------------------------------------
+%   end LAB SEVEN
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   start PROJECT DETAIL
+%----------------------------------------------------------------------------------------
+\section*{Project 3}
+
+\subsection*{Semantic Analysis}
+In the Compilation process, Semantic Analysis is the third step. In this step, we accept the Concrete Syntax Tree produced by the Parser and produce an Abstract Syntax Tree, containing only the "good stuff" from the CST. Later we traverse the newly created AST and use it to construct a Symbol Table. While we produce these representations we are focused on the meaning of the source code and enforcing the scope and type of variables.
+
+To test my Semantic Analyzer I used the test cases below:
+
+
+\subsubsection*{Test Case 1}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        {
+          boolean d
+          d  = (true == (true == false))
+          if((2+2==4)!=("hi"=="hello")){
+            print(d)
+          }
+          {
+            int a
+            a = 1 + 5
+            {
+              string c
+              c = "hello"
+              if("hello" == "hi"){
+                print(c)
+                if(1 == 5){
+                  print(a)
+                }
+              }
+            }
+          }
+        }$
+    \end{lstlisting}
+
+\subsubsection*{Test Case 2}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        {
+          boolean d
+          d = (true == (true == false))
+          print(d)
+          {
+            int a
+            int b
+            string c
+            a = 1
+            b = 5
+            c = "hello"
+            if(a == b){
+              print(a)
+              {
+                print(b)
+              }
+            }
+          }
+          {
+            int a
+            a = 7
+          }
+        }$
+    \end{lstlisting}
+
+\subsubsection*{Test Case 3}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        {
+          int a
+          int b
+          b = 1
+          a = 5 + 4 + b
+          {
+            print("i")
+            print("think")
+          }
+          if(a == b){
+            print(a)
+            while(1 == (1 == 1)){
+              print("no")
+            }
+          }
+        }$
+    \end{lstlisting}
+
+\subsubsection*{Test Case 4}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        {
+          int x
+          string y
+          boolean z
+          {
+            x = 7
+            y = "mr villain"
+            while(y != "hello"){
+              z = false
+              print(z)
+            }
+            string z
+            z = "its my day off"
+          }
+        }$
+    \end{lstlisting}
+
+
+%----------------------------------------------------------------------------------------
+%   end PROJECT THREE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   Appendix
+%----------------------------------------------------------------------------------------
+
+\section{Appendix}
+
+\subsubsection*{Symbol.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*
+            Symbol file
+            Creates symbols to be added to the Symbol Table
+            Used in Semantic Analysis
+        */
+        
+        //The symbol class!
+        public class Symbol{
+            String name;    //the name of the symbol
+            String type;    //the symbols type
+            boolean isINIT; //is this symbol initialized?
+            boolean isUsed; //is this symbol used?
+            int scope;  //what is the symbols scope?
+            String line;    //the line in the source code where the token is located
+            
+            //Symbol constructor -- creates a symbol and initializes its variables
+            public Symbol(String name, String type, int scope, String line){
+                this.name = name;
+                this.type = type;
+                this.isINIT = false;
+                this.isUsed = false;
+                this.scope = scope;
+                this.line = line;
+            }
+        }
+    \end{lstlisting}
+    
+\subsubsection*{SymbolTableNode.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*
+            Symbol table node file
+            Creates nodes for the symbol table
+        */
+        
+        //import arraylist and hashtable
+        import java.util.ArrayList;
+        import java.util.Hashtable;
+        
+        //The symbol table node class!
+        public class SymbolTableNode {
+            int scope;  //the scope within the program
+            SymbolTableNode parent; //pointer to parent node
+            Hashtable<String, Symbol> symbols;    //hashtable of symbols
+            ArrayList<SymbolTableNode> children;   //list of pointers to child nodes
+        
+            //Symbol table node constructor -- initializes all variables
+            public SymbolTableNode(int scope){
+                this.scope = scope;
+                this.parent = null;
+                this.symbols = new Hashtable<>();
+                this.children = new ArrayList<>();
+            }
+        }
+    \end{lstlisting}
+
+\pagebreak
+
+\subsubsection*{ASTNode.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+        /*
+            AST Node file
+            Creates AST Nodes to be used in the Semantic Analyzer and Symbol Table
+            These nodes contain the tokens created by the lexer
+        */
+        
+        //import arraylist
+        import java.util.ArrayList;
+        
+        //The AST Node class!
+        public class ASTNode {
+            String name;    //the name of the node
+            Token token;    //if the node contains a token...
+            ASTNode parent;    //pointer to the nodes parent
+            ArrayList<ASTNode> children;   //list of pointers to child nodes
+        
+            //AST Node constructor -- creates a node and initializes its variables
+            public ASTNode(String label, Token token){
+                this.name = label;
+                this.token = token;
+                this.parent = null;
+                this.children = new ArrayList<>();
+            }   
+        }
+    \end{lstlisting}
+
+
+%----------------------------------------------------------------------------------------
+%   Links of References
+%----------------------------------------------------------------------------------------
+\pagebreak
+
+\section*{References}
+
+\subsection*{Links}
+Below are the resources I have used to create simple, readable, and beautiful code.
+
+\begin{itemize}
+    \item Helped me when attempting to output my symbol table: \href{https://stackoverflow.com/questions/20213022/get-all-the-values-from-a-hash-table}{stackoverflow}
+    \item Assisted with learning about hashtables and their implementation: \href{https://www.geeksforgeeks.org/hashtable-in-java/}{geeksforgeeks}
+    \item The semantic analysis slides: \href{https://www.labouseur.com/courses/compilers/semantic-analysis.pdf}{labouseur.com}
+    \item Test cases and output checking: \href{https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html}{Arnell Compiler}
+    \item Output and scope checking: \href{https://alexbadia1.github.io/AxiOS-Compiler/#/}{Nightingale Compiler}
+    
+    
+\end{itemize}
+
+\pagebreak
+%----------------------------------------------------------------------------------------
+%   APA REFERENCES
+%----------------------------------------------------------------------------------------
+% The following two commands are all you need in the initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+%\bibliography{lab1} 
+% You must have a proper ".bib" file and remember to run:
+% latex bibtex latex latex
+% to resolve all references.
+
+
+
+\end{document}

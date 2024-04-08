@@ -1,5 +1,3 @@
 TDL for project 3 - Semantic Analysis
 
--- labs
--- write up
--- final tests and commenting
+--done!

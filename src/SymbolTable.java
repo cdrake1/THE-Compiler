@@ -258,12 +258,11 @@ public class SymbolTable {
                 STErrors++;
                 return;
             }
-            else if(!temp.isINIT){
-                symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
-                STErrors++;
-                return;
-            }
             else{
+                if(!temp.isINIT){
+                    symbolTableLog("WARNING! USE OF UNINITIALIZED VARIABLE: [ " + child.name + " ] ON LINE " + lineNumber);
+                    STWarnings++;
+                }
                 temp.isUsed = true; //mark that the variable was used
             }
         }
@@ -332,12 +331,11 @@ public class SymbolTable {
                         STErrors++;
                         return;
                     }
-                    else if(!symbol.isINIT){
-                        symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
-                        STErrors++;
-                        return;
-                    }
                     else{
+                        if(!symbol.isINIT){
+                            symbolTableLog("WARNING! USE OF UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
+                            STWarnings++;
+                        }
                         symbol.isUsed = true;   //mark that the variable was used
                     }
                 }
@@ -384,9 +382,8 @@ public class SymbolTable {
                 } 
                 else{
                     if(!symbol.isINIT){
-                        symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
-                        STErrors++;
-                        return null;
+                        symbolTableLog("WARNING! USE OF UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
+                        STWarnings++;
                     }
                     leftNodeType = symbol.type;
                     symbol.isUsed = true;   //mark that the variable was used
@@ -427,9 +424,8 @@ public class SymbolTable {
                 } 
                 else{
                     if(!symbol.isINIT){
-                        symbolTableLog("ERROR! ATTEMPTED TO USE UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
-                        STErrors++;
-                        return null;
+                        symbolTableLog("WARNING! USE OF UNINITIALIZED VARIABLE: [ " + symbol.name + " ] ON LINE " + lineNumber);
+                        STWarnings++;
                     }
                     rightNodeType = symbol.type;
                     symbol.isUsed = true;   //mark that the variable was used
