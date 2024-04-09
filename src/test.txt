@@ -1,3 +1,5 @@
 {
-  {{{{{{{{{{{{int a print(a)}}}}}}}}}}}}
+  string a
+  a = "its not my day off but i love pandas"
+  print(a)
 }$

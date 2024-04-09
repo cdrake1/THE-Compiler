@@ -33,6 +33,12 @@ public class SemanticAnalyzer {
         System.out.println("SEMANTIC ANALYZER - " + output);
     }
 
+    //creates the code generator and passes it the ast and symbol table.
+    private void callCodeGen(){
+        CodeGenerator codeGen = new CodeGenerator(ast, symbolTable, programCounter);
+        codeGen.startCodeGen();
+    }
+
     //returns the current token in the token stream
     public Token getCurrentToken(){
         return tokenStream.get(tokenStreamIndex);
@@ -55,11 +61,13 @@ public class SemanticAnalyzer {
             ast.outputAST();    //outputs the ast after reparsing
             symbolTable.inOrder(ast.root);  //starts scope and type checking (symbol table)
             symbolTable.STEvaluate();   //evaluates the results of the symbol table
+            callCodeGen();  //start code gen if semantic analysis was successfull
         }
         else{
             SemanticAnalyzerLog("Semantic Analysis Failed... Errors: " + semanticErrors);   //output message if semantic fails
             SemanticAnalyzerLog("AST skipped due to Semantic Analysis errors...");
             SemanticAnalyzerLog("Symbol Table skipped due to Semantic Analysis errors...");
+            SemanticAnalyzerLog("Code Generation skipped due to Semantic Analysis errors...");
         }
     }
 

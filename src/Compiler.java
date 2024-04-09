@@ -25,7 +25,8 @@ public class Compiler {
             */
             compilerLog("Powering on the LEXER...");
             compilerLog("Powering on the PARSER...");
-            compilerLog("Powering on the SEMANTIC ANALYZER...\n");
+            compilerLog("Powering on the SEMANTIC ANALYZER...");
+            compilerLog("Powering on the CODE GENERATOR...\n");
             lexer.readInput(textFile);
             lexer.scanner();
         }

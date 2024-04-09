@@ -371,6 +371,8 @@ public class Parser{
                 cst.CSTLog("Skipped due to Parse errors...");
                 parserLog("Semantic Analysis skipped due to Parse errors...");
                 parserLog("AST skipped due to Parse errors...");
+                parserLog("Symbol Table skipped due to Parse errors...");
+                parserLog("Code Generation skipped due to Parse errors...");
             }
 
             //if match passes consume and increment index
