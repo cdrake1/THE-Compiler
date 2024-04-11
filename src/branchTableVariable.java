@@ -5,8 +5,8 @@
 
 //The branch table variable class!
 public class branchTableVariable {
-    String temp;
-    String distance;
+    String temp;    //jump to variable
+    String distance;    //how many bytes to jump
 
     //Static table variable constructor -- initializes all variables
     public branchTableVariable(String temp, String distance){

@@ -1,3 +1,4 @@
 TDL for project 4 - Code Generation
 
---Start!
+-- build out code gen
+-- fix table variable classes and comments

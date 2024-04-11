@@ -8,16 +8,16 @@
 import java.util.Hashtable;
 
 public class CodeGenerator {
-    String[] memory;
-    Hashtable<String, staticTableVariable> varTable;
-    Hashtable<String, branchTableVariable> stringTable;
-    int heapPointer;
-    int codePointer;
-    int stackPointer;
-    int programCounter;
-    int codeGenErrors;
-    AST ast;
-    SymbolTable symbolTable;
+    String[] memory;    //stores the code, stack, heap
+    Hashtable<String, staticTableVariable> varTable;    //the variable table
+    Hashtable<String, branchTableVariable> stringTable; //the branch table
+    int heapPointer;    //pointer to where the heap starts
+    int codePointer;    //pointer to where the code starts
+    int stackPointer;   //pointer to where the stack starts
+    int programCounter; //what program are we on?
+    int codeGenErrors;  //counts how many errors have occurred
+    AST ast;    //ast from semantic analysis
+    SymbolTable symbolTable;    //symbol table from semantic analysis
 
     //Code Generator constructor -- initializes variables
     public CodeGenerator(AST ast, SymbolTable ST, int programCounter){
@@ -51,6 +51,7 @@ public class CodeGenerator {
         }
     }
 
+    //initializes all of memory (code, stack, and heap) to 00
     private void initMemory(){
         for(int i = 0; i < memory.length; i++){
             memory[i] = "00";
