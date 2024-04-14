@@ -8,9 +8,11 @@
 import java.util.Hashtable;
 
 public class CodeGenerator {
-    String[] memory;    //stores the code, stack, heap
+    String[] opCodes;    //stores the code, stack, heap
     Hashtable<String, staticTableVariable> varTable;    //the variable table
     Hashtable<String, branchTableVariable> stringTable; //the branch table
+    int currentIndex;   //keeps track of the current index of the opCodes array
+    int tempCounter;    //keeps track of temp number for variable table
     int heapPointer;    //pointer to where the heap starts
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts
@@ -21,12 +23,13 @@ public class CodeGenerator {
 
     //Code Generator constructor -- initializes variables
     public CodeGenerator(AST ast, SymbolTable ST, int programCounter){
-        memory = new String[256];
-        varTable = new Hashtable<>();
-        stringTable = new Hashtable<>();
-        heapPointer = 0;
-        codePointer = 0;
-        stackPointer = 0;
+        this.opCodes = new String[256];
+        this.varTable = new Hashtable<>();
+        this.stringTable = new Hashtable<>();
+        this.currentIndex = 0;
+        this.heapPointer = 0;
+        this.codePointer = 0;
+        this.stackPointer = 0;
         this.programCounter = programCounter;
         this.codeGenErrors = 0;
         this.ast = ast;
@@ -40,7 +43,7 @@ public class CodeGenerator {
 
     //starts the code generation process
     public void startCodeGen(){
-        initMemory();
+        initArray();   //init all index of the opCodes array to 00
         inOrder(ast.root);
 
         if(codeGenErrors == 0){
@@ -52,9 +55,9 @@ public class CodeGenerator {
     }
 
     //initializes all of memory (code, stack, and heap) to 00
-    private void initMemory(){
-        for(int i = 0; i < memory.length; i++){
-            memory[i] = "00";
+    private void initArray(){
+        for(int i = 0; i < opCodes.length; i++){
+            opCodes[i] = "00";
         }
     }
 
@@ -68,16 +71,22 @@ public class CodeGenerator {
         //check the name of the tokens to determine which function to call
         switch (node.name) {
             case "Block":
+                //do nothing? or remove
                 break;
             case "Variable declaration":
+                codeGenVarDecl(node);
                 break;
             case "Assignment statement":
+                codeGenAssignmentStatement(node);
                 break;
             case "Print statement":
+                codeGenPrintStatement(node);
                 break;
             case "While statement":
+                codeGenWhileStatement(node);
                 break;
             case "If statement":
+                codeGenIfStatement(node);
                 break;
             default:
                 //do nothing
@@ -89,18 +98,35 @@ public class CodeGenerator {
             inOrder(child);
         }
 
-        System.out.println(node.name);
+        System.out.println(node.name);  //test to output nodes
     }
 
-    private void genvarDecl(){
+    private void codeGenVarDecl(ASTNode currentNode){
+        ASTNode typeNode = currentNode.children.get(0);
+        ASTNode idNode = currentNode.children.get(1);
+
+        addOpCode("A9");
+        addOpCode("00");
+        addOpCode("8D");
+        if(typeNode.name.equals("string")){
+
+        }
+        //add variable to vartable check if string for pointer?
+       
+    }
+
+    private void codeGenAssignmentStatement(ASTNode currentNode){
         //A9
         //8D
     }
 
-    private void genAssignmentStatement(){
-        //A9
-        //8D
-    }
+    private void codeGenPrintStatement(ASTNode currentNode){}
+    private void codeGenWhileStatement(ASTNode currentNode){}
+    private void codeGenIfStatement(ASTNode currentNode){}
 
-    private void genPrintStatement(){}
+    //adds opcodes to the array and increments the index
+    private void addOpCode(String opCode){
+        opCodes[currentIndex] = opCode;
+        currentIndex++;
+    }
 }
