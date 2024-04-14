@@ -3,21 +3,21 @@
     Creates a 6502 op codes
 */
 
-//Collin Drakes Code Generator
-
 import java.util.Hashtable;
 
+//Collin Drakes Code Generator
 public class CodeGenerator {
     String[] opCodes;    //stores the code, stack, heap
     Hashtable<String, staticTableVariable> varTable;    //the variable table
-    Hashtable<String, branchTableVariable> stringTable; //the branch table
+    Hashtable<String, String> stringTable; //the string table -- keeps track of strings in the heap
+    Hashtable<String, branchTableVariable> branchTable; //the branch table
     int currentIndex;   //keeps track of the current index of the opCodes array
     int tempCounter;    //keeps track of temp number for variable table "T0XX"
     int currentScope;   //keeps track of what scope we are in
 
-    int heapPointer;    //pointer to where the heap starts
     int codePointer;    //pointer to where the code starts
-    int stackPointer;   //pointer to where the stack starts
+    int stackPointer;   //pointer to where the stack starts -- directly after code
+    int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
     int staticTableOffset;  //the offset of the variables in the static table (var table)
 
     int programCounter; //what program are we on?
@@ -29,15 +29,15 @@ public class CodeGenerator {
     public CodeGenerator(AST ast, SymbolTable ST, int programCounter){
         this.opCodes = new String[256];
         this.varTable = new Hashtable<>();
-        this.stringTable = new Hashtable<>();
+        this.branchTable = new Hashtable<>();
         this.currentIndex = 0;
         this.tempCounter = 0;
         this.currentScope = 0;
 
 
-        this.heapPointer = 0;
         this.codePointer = 0;
         this.stackPointer = 0;
+        this.heapPointer = 0;
         this.staticTableOffset = 0;
 
         this.programCounter = programCounter;
@@ -57,7 +57,10 @@ public class CodeGenerator {
         inOrder(ast.root);
 
         if(codeGenErrors == 0){
-            codeGeneratorLog("Code Generation Complete... Errors: " + codeGenErrors);
+            codeGeneratorLog("Code Generation Complete... Errors: " + codeGenErrors + "\n");
+            for(int i = 0; i < opCodes.length; i++){
+                System.out.print(" " + opCodes[i]);
+            }
         }
         else{
             codeGeneratorLog("Code Generation Failed... Errors: " + codeGenErrors);
@@ -124,25 +127,47 @@ public class CodeGenerator {
         addOpCode("00");
         addOpCode("8D");
         if(typeNode.name.equals("string")){
-            //add pointer??
-            staticTableVariable temp = new staticTableVariable("T" + Integer.toString(tempCounter), idNode.name, currentScope, staticTableOffset);
-            tempCounter++;
-            staticTableOffset++;
-            varTable.put(null, temp);
+            //add pointer to heap??
+            //unsure how to do this
         }
         else{
-            //address is the spots after the code
             staticTableVariable temp = new staticTableVariable("T" + Integer.toString(tempCounter), idNode.name, currentScope, staticTableOffset);
             tempCounter++;
             staticTableOffset++;
-            varTable.put(null, temp);
+            varTable.put("T" + Integer.toString(tempCounter), temp);
         }
         addOpCode("00");
     }
 
+    //produces the op codes for assignment statements
     private void codeGenAssignmentStatement(ASTNode currentNode){
-        //A9
-        //8D
+        ASTNode idNode = currentNode.children.get(0);
+        ASTNode exprNode = currentNode.children.get(1);
+        
+        switch (exprNode.token.tokenType) {
+            case "ID":
+                break;
+            case "DIGIT":
+                addOpCode("A9");
+                //something
+                addOpCode("8D");
+                //temp address
+                break;
+            case "ADD":
+                break;
+            case "String Literal":
+                break;
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                break;
+            case "BOOL_TRUE":
+                break;
+            case "BOOL_FALSE":
+                break;
+        
+            default:
+                break;
+        }
     }
 
     private void codeGenPrintStatement(ASTNode currentNode){}
