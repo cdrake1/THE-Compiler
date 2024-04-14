@@ -1,4 +1,4 @@
 TDL for project 4 - Code Generation
 
--- build out code gen
--- fix table variable classes and comments
+-- key for var table?
+-- pointer for strings?

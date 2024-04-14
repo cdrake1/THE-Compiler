@@ -12,10 +12,14 @@ public class CodeGenerator {
     Hashtable<String, staticTableVariable> varTable;    //the variable table
     Hashtable<String, branchTableVariable> stringTable; //the branch table
     int currentIndex;   //keeps track of the current index of the opCodes array
-    int tempCounter;    //keeps track of temp number for variable table
+    int tempCounter;    //keeps track of temp number for variable table "T0XX"
+    int currentScope;   //keeps track of what scope we are in
+
     int heapPointer;    //pointer to where the heap starts
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts
+    int staticTableOffset;  //the offset of the variables in the static table (var table)
+
     int programCounter; //what program are we on?
     int codeGenErrors;  //counts how many errors have occurred
     AST ast;    //ast from semantic analysis
@@ -27,9 +31,15 @@ public class CodeGenerator {
         this.varTable = new Hashtable<>();
         this.stringTable = new Hashtable<>();
         this.currentIndex = 0;
+        this.tempCounter = 0;
+        this.currentScope = 0;
+
+
         this.heapPointer = 0;
         this.codePointer = 0;
         this.stackPointer = 0;
+        this.staticTableOffset = 0;
+
         this.programCounter = programCounter;
         this.codeGenErrors = 0;
         this.ast = ast;
@@ -71,7 +81,7 @@ public class CodeGenerator {
         //check the name of the tokens to determine which function to call
         switch (node.name) {
             case "Block":
-                //do nothing? or remove
+                currentScope++; //increment scope
                 break;
             case "Variable declaration":
                 codeGenVarDecl(node);
@@ -98,9 +108,14 @@ public class CodeGenerator {
             inOrder(child);
         }
 
+        //close scope after processing block nodes
+        if(node.name.equals("Block")) {
+            currentScope--;
+        }
         System.out.println(node.name);  //test to output nodes
     }
 
+    //produces the op codes for variable declarations
     private void codeGenVarDecl(ASTNode currentNode){
         ASTNode typeNode = currentNode.children.get(0);
         ASTNode idNode = currentNode.children.get(1);
@@ -109,10 +124,20 @@ public class CodeGenerator {
         addOpCode("00");
         addOpCode("8D");
         if(typeNode.name.equals("string")){
-
+            //add pointer??
+            staticTableVariable temp = new staticTableVariable("T" + Integer.toString(tempCounter), idNode.name, currentScope, staticTableOffset);
+            tempCounter++;
+            staticTableOffset++;
+            varTable.put(null, temp);
         }
-        //add variable to vartable check if string for pointer?
-       
+        else{
+            //address is the spots after the code
+            staticTableVariable temp = new staticTableVariable("T" + Integer.toString(tempCounter), idNode.name, currentScope, staticTableOffset);
+            tempCounter++;
+            staticTableOffset++;
+            varTable.put(null, temp);
+        }
+        addOpCode("00");
     }
 
     private void codeGenAssignmentStatement(ASTNode currentNode){
@@ -126,7 +151,13 @@ public class CodeGenerator {
 
     //adds opcodes to the array and increments the index
     private void addOpCode(String opCode){
-        opCodes[currentIndex] = opCode;
-        currentIndex++;
+        if(currentIndex > opCodes.length){
+            codeGeneratorLog("ERROR! INVALID MEMORY LOCATION... INDEX EVALUATES AS GREATER THAN THE MEMORY LENGHT");
+            codeGenErrors++;
+        }
+        else{
+            opCodes[currentIndex] = opCode;
+            currentIndex++;
+        }
     }
 }

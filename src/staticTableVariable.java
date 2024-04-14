@@ -7,12 +7,14 @@
 public class staticTableVariable {
     String temp;    //store the accumulator in a temp location
     String var; //what variable is this?
-    String address; //unsure?
+    int scope;   //keeps track of the scope the variable is located
+    int offset; //number of offset following code section of the array (location of variable stored)
 
     //Static table variable constructor -- initializes all variables
-    public staticTableVariable(String temp, String var, String address){
+    public staticTableVariable(String temp, String var, int scope, int address){
         this.temp = temp;
         this.var = var;
-        this.address = address;
+        this.scope = scope;
+        this.offset = address;
     }
 }
