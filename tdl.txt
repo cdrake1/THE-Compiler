@@ -7,3 +7,9 @@ TDL for project 4 - Code Generation
 --still confused with strings
 
 --just work on assign and decl now
+
+
+
+-other things-
+
+--sort symbol table output
