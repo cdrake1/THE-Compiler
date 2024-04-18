@@ -3,12 +3,13 @@
     Creates a 6502 op codes
 */
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 //Collin Drakes Code Generator
 public class CodeGenerator {
     String[] memory;    //stores the code, stack, heap
-    Hashtable<staticTableKey, staticTableVariable> staticTable;    //the variable table
+    Hashtable<String, staticTableVariable> staticTable;    //the variable table
     Hashtable<String, branchTableVariable> branchTable; //the branch table
     int currentIndex;   //keeps track of the current index of the opCodes array
     int tempCounter;    //keeps track of temp number for variable table "T0XX"
@@ -55,7 +56,8 @@ public class CodeGenerator {
     //starts the code generation process
     public void startCodeGen(){
         initMemory();   //init all index of the opCodes array to 00
-        inOrder(ast.root);
+        inOrder(ast.root);      //create the op codes and populate memory
+        backPatch();    //fill out the stack
 
         if(codeGenErrors == 0){
             codeGeneratorLog("Code Generation Complete... Errors: " + codeGenErrors + "\n");
@@ -164,7 +166,7 @@ public class CodeGenerator {
 
             //add the variable to the static variable table
             System.out.println(idNode.name +" " + currentScope);
-            staticTableKey tempKey = new staticTableKey(idNode.name, currentScope);
+            String tempKey = idNode.name + Integer.toString(currentScope);
             staticTableVariable tempVar = new staticTableVariable(tempAddress, idNode.name, currentScope, staticTableOffset);
             tempCounter++;
             staticTableOffset++;
@@ -175,48 +177,100 @@ public class CodeGenerator {
 
     //produces the op codes for assignment statements
     private void codeGenAssignmentStatement(ASTNode currentNode){
-        ASTNode idNode = currentNode.children.get(0);
-        ASTNode exprNode = currentNode.children.get(1);
+        ASTNode idNode = currentNode.children.get(0);   //left node
+        ASTNode exprNode = currentNode.children.get(1); //right node
 
-        System.out.println(idNode.name + " name scope " + currentScope);
-
-        //get the variables temp address
-        System.out.println(idNode.name +" " + currentScope);
-        staticTableKey tempKey = new staticTableKey(idNode.name, currentScope);
+        //get the ID variables temp address (left node)
+        String tempKey = idNode.name + Integer.toString(currentScope);
         staticTableVariable tempVar = staticTable.get(tempKey);
-        if(tempVar == null){
-            System.out.println("Its null why?");
-        }
         
+        //check the token type of the expression node (right node)
         switch (exprNode.token.tokenType) {
             case "ID":
-                addOpCode("A9");
+                addOpCode("AD");
+                
+                //get the expr variables temp address (right node)
+                String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
+                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+
+                //add the temp address
+                addOpCode(tempVarExpr.tempAddress);
+                addOpCode("00");
                 break;
             case "DIGIT":
+                //add digit
                 addOpCode("A9");
                 addOpCode("0" + exprNode.name);
                 break;
             case "ADD":
                 break;
             case "String Literal":
+                //add string to heap and address pointer (first location of string address in heap) to static table
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
                 break;
             case "BOOL_TRUE":
+                addOpCode("A9");
+                addOpCode("74");
                 break;
             case "BOOL_FALSE":
+                addOpCode("A9");
+                addOpCode("66");
                 break;
         
             default:
                 break;
         }
         addOpCode("8D");
-        //addOpCode(leftNodetempAddress);    //temp
+        addOpCode(tempVar.tempAddress);    //temp right
         addOpCode("00");
     }
 
-    private void codeGenPrintStatement(ASTNode currentNode){}
+    private void codeGenPrintStatement(ASTNode currentNode){
+        ASTNode exprNode = currentNode.children.get(0); //expr node
+
+        //check the token type of the expression node
+        switch (exprNode.token.tokenType) {
+            case "ID":
+                //grab the temp address for the expr node
+                String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
+                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+
+                //load the Y register from memory
+                addOpCode("AC");
+                addOpCode(tempVarExpr.tempAddress);
+                addOpCode("00");
+                break;
+            case "DIGIT":
+                //load constant
+                addOpCode("A0");
+                addOpCode("0" + exprNode.name);
+                break;
+            case "ADD":
+                break;
+            case "String Literal":
+                //add string to heap and address pointer (first location of string address in heap) to static table
+                break;
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                break;
+            case "BOOL_TRUE":
+                addOpCode("A0");
+                addOpCode("74");
+                break;
+            case "BOOL_FALSE":
+                addOpCode("A0");
+                addOpCode("66");
+                break;
+        
+            default:
+                break;
+        }
+        addOpCode("A2");
+        addOpCode("01");
+        addOpCode("FF");  
+    }
     private void codeGenWhileStatement(ASTNode currentNode){}
     private void codeGenIfStatement(ASTNode currentNode){}
 
@@ -230,5 +284,12 @@ public class CodeGenerator {
             memory[currentIndex] = opCode;
             currentIndex++;
         }
+    }
+
+    //goes through and ...
+    private void backPatch(){
+        //replace all temp address with actual addresses
+        //actual addresses directly after code FF 00
+        //stack pointer?
     }
 }

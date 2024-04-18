@@ -18,15 +18,3 @@ public class staticTableVariable {
         this.offset = offset;
     }
 }
-
-//The static table key object class!
-class staticTableKey{
-    String ID;  //the variable name
-    int scope;  //the scope its in
-
-    //static table key constructor
-    public staticTableKey(String id, int scope){
-        this.ID = id;
-        this.scope = scope;
-    }
-}

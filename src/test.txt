@@ -1,5 +1,10 @@
 {
   int a
   a = 3
+  int b
+  b = a
+  boolean c
+  c = false
+  print(c)
 }
 $
