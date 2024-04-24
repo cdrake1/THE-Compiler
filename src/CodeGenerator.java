@@ -3,7 +3,6 @@
     Creates a 6502 op codes
 */
 
-import java.util.HashMap;
 import java.util.Hashtable;
 
 //Collin Drakes Code Generator
@@ -20,6 +19,8 @@ public class CodeGenerator {
     int stackPointer;   //pointer to where the stack starts -- directly after code
     int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
     int staticTableOffset;  //the offset of the variables in the static table (var table)
+    String boolTrueAddress;
+    String boolFalseAddress;
 
     int programCounter; //what program are we on?
     int codeGenErrors;  //counts how many errors have occurred
@@ -39,8 +40,10 @@ public class CodeGenerator {
 
         this.codePointer = 0;
         this.stackPointer = 0;
-        this.heapPointer = 0;
+        this.heapPointer = 255;
         this.staticTableOffset = 0;
+        boolTrueAddress = Integer.toHexString(250);
+        boolFalseAddress = Integer.toHexString(244);
 
         this.programCounter = programCounter;
         this.codeGenErrors = 0;
@@ -57,6 +60,7 @@ public class CodeGenerator {
     public void startCodeGen(){
         initMemory();   //init all index of the opCodes array to 00
         inOrder(ast.root);      //create the op codes and populate memory
+        //jump before backpatch??
         backPatch();    //fill out the stack
 
         if(codeGenErrors == 0){
@@ -165,7 +169,7 @@ public class CodeGenerator {
             addOpCode(tempAddress);
 
             //add the variable to the static variable table
-            System.out.println(idNode.name +" " + currentScope);
+            System.out.println(idNode.name + "" + currentScope);
             String tempKey = idNode.name + Integer.toString(currentScope);
             staticTableVariable tempVar = new staticTableVariable(tempAddress, idNode.name, currentScope, staticTableOffset);
             tempCounter++;
@@ -212,11 +216,11 @@ public class CodeGenerator {
                 break;
             case "BOOL_TRUE":
                 addOpCode("A9");
-                addOpCode("74");
+                addOpCode(boolTrueAddress);
                 break;
             case "BOOL_FALSE":
                 addOpCode("A9");
-                addOpCode("66");
+                addOpCode(boolFalseAddress);
                 break;
         
             default:
@@ -257,11 +261,11 @@ public class CodeGenerator {
                 break;
             case "BOOL_TRUE":
                 addOpCode("A0");
-                addOpCode("74");
+                addOpCode(boolTrueAddress);
                 break;
             case "BOOL_FALSE":
                 addOpCode("A0");
-                addOpCode("66");
+                addOpCode(boolFalseAddress);
                 break;
         
             default:
@@ -288,8 +292,30 @@ public class CodeGenerator {
 
     //goes through and ...
     private void backPatch(){
-        //replace all temp address with actual addresses
-        //actual addresses directly after code FF 00
-        //stack pointer?
+        stackPointer = currentIndex+1;  //set stack pointer to position directly after code
+        currentIndex++;
+
+        //check if the stack and heap collide
+        if(stackPointer >= heapPointer){
+            codeGeneratorLog("ERROR! STACK OVERFLOW...THE STACK AND HEAP COLLIDED");
+            codeGenErrors++;
+        }
+        else{
+            //iterate through all of the static table variables
+            for(String key : staticTable.keySet()){
+                staticTableVariable temp = staticTable.get(key);
+                String currentKeysTempAddress = temp.tempAddress;
+
+                //iterate through memory (code section)
+                for(int i = 0; i < memory.length; i++){
+                    if(memory[i].equals(currentKeysTempAddress)){
+                        //replace in static table??
+                        memory[i] = Integer.toHexString(stackPointer);
+                    }
+                }
+                stackPointer++;
+                currentIndex++;
+            }
+        }
     }
 }
