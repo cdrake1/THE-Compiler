@@ -18,7 +18,7 @@ public class CodeGenerator {
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts -- directly after code
     int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
-    int staticTableOffset;  //the offset of the variables in the static table (var table)
+    int staticTableOffset;  //the offset of the variables in the static table (var table) -- do I need this??
     String boolTrueAddress;
     String boolFalseAddress;
 
@@ -40,7 +40,7 @@ public class CodeGenerator {
 
         this.codePointer = 0;
         this.stackPointer = 0;
-        this.heapPointer = 255;
+        this.heapPointer = 243;
         this.staticTableOffset = 0;
         boolTrueAddress = Integer.toHexString(250);
         boolFalseAddress = Integer.toHexString(244);
@@ -153,29 +153,23 @@ public class CodeGenerator {
 
     //produces the op codes for variable declarations
     private void codeGenVarDecl(ASTNode currentNode){
-        ASTNode typeNode = currentNode.children.get(0);
         ASTNode idNode = currentNode.children.get(1);
 
         addOpCode("A9");
         addOpCode("00");
         addOpCode("8D");
-        if(typeNode.name.equals("string")){
-            //add pointer to heap??
-            //unsure how to do this
-        }
-        else{
-            //add the temp address to the memory
-            String tempAddress = "T" + Integer.toString(tempCounter);
-            addOpCode(tempAddress);
+        
+        //add the temp address to the memory
+        String tempAddress = "T" + Integer.toString(tempCounter);
+        addOpCode(tempAddress);
 
-            //add the variable to the static variable table
-            System.out.println(idNode.name + "" + currentScope);
-            String tempKey = idNode.name + Integer.toString(currentScope);
-            staticTableVariable tempVar = new staticTableVariable(tempAddress, idNode.name, currentScope, staticTableOffset);
-            tempCounter++;
-            staticTableOffset++;
-            staticTable.put(tempKey, tempVar);
-        }
+        //add the variable to the static variable table
+        System.out.println(idNode.name + "" + currentScope);
+        String tempKey = idNode.name + Integer.toString(currentScope);
+        staticTableVariable tempVar = new staticTableVariable(tempAddress, idNode.name, currentScope, staticTableOffset);
+        tempCounter++;
+        staticTableOffset++;
+        staticTable.put(tempKey, tempVar);
         addOpCode("00");
     }
 
@@ -207,9 +201,24 @@ public class CodeGenerator {
                 addOpCode("0" + exprNode.name);
                 break;
             case "ADD":
+                codeGenIntOp(exprNode);
                 break;
             case "String Literal":
-                //add string to heap and address pointer (first location of string address in heap) to static table
+                addOpCode("A9");
+                //add to heap
+                String stringLiteral = exprNode.token.lexeme.substring(1, exprNode.token.lexeme.length() - 1);
+                int heapSpot = heapPointer - stringLiteral.length();
+                int tempSpot = heapSpot;
+                for(int i = 0; i < stringLiteral.length() + 1; i++){
+                    if(i == stringLiteral.length()){
+                        memory[tempSpot] = "00";
+                    }
+                    else{
+                        memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i));
+                        tempSpot++;
+                    }
+                }
+                addOpCode(Integer.toHexString(heapSpot));
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
@@ -226,8 +235,9 @@ public class CodeGenerator {
             default:
                 break;
         }
+        //store the left node in memory
         addOpCode("8D");
-        addOpCode(tempVar.tempAddress);    //temp right
+        addOpCode(tempVar.tempAddress);
         addOpCode("00");
     }
 
@@ -237,19 +247,8 @@ public class CodeGenerator {
         //check the token type of the expression node
         switch (exprNode.token.tokenType) {
             case "ID":
-                //grab the temp address for the expr node
-                String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
-                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
-
-                //load the Y register from memory
-                addOpCode("AC");
-                addOpCode(tempVarExpr.tempAddress);
-                addOpCode("00");
                 break;
             case "DIGIT":
-                //load constant
-                addOpCode("A0");
-                addOpCode("0" + exprNode.name);
                 break;
             case "ADD":
                 break;
@@ -260,21 +259,23 @@ public class CodeGenerator {
             case "INEQUALITY_OP":
                 break;
             case "BOOL_TRUE":
-                addOpCode("A0");
-                addOpCode(boolTrueAddress);
                 break;
             case "BOOL_FALSE":
-                addOpCode("A0");
-                addOpCode(boolFalseAddress);
                 break;
         
             default:
                 break;
         }
-        addOpCode("A2");
-        addOpCode("01");
-        addOpCode("FF");  
     }
+
+
+    private void codeGenIntOp(ASTNode intOpNode){
+        ASTNode leftNode = intOpNode.children.get(0);  //always a digit
+        ASTNode rightNode = intOpNode.children.get(1); //digit, +, or ID
+
+    }
+
+
     private void codeGenWhileStatement(ASTNode currentNode){}
     private void codeGenIfStatement(ASTNode currentNode){}
 
@@ -290,7 +291,7 @@ public class CodeGenerator {
         }
     }
 
-    //goes through and ...
+    //goes through and backpatch temp address with new addresses...
     private void backPatch(){
         stackPointer = currentIndex+1;  //set stack pointer to position directly after code
         currentIndex++;

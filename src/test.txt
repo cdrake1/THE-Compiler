@@ -1,10 +1,14 @@
 {
   int a
-  a = 3
-  int b
-  b = a
-  boolean c
-  c = false
-  print(c)
-}
-$
+  a = 1
+  {
+    int a
+    a = 2
+    print(a)
+  }
+  string b
+  b = "alan"
+  if (a == 1) {
+    print(b)
+  }
+}$
