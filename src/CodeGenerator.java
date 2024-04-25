@@ -214,7 +214,7 @@ public class CodeGenerator {
                         memory[tempSpot] = "00";
                     }
                     else{
-                        memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i));
+                        memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
                         tempSpot++;
                     }
                 }
@@ -243,6 +243,65 @@ public class CodeGenerator {
 
     private void codeGenPrintStatement(ASTNode currentNode){
         ASTNode exprNode = currentNode.children.get(0); //expr node
+
+        switch (exprNode.token.tokenType) {
+            case "ID":
+                addOpCode("AC");
+                
+                //get the variables temp address
+                String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
+                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+
+                addOpCode(tempVarExpr.tempAddress);
+                addOpCode("00");
+                break;
+            case "DIGIT":
+                addOpCode("A0");
+                addOpCode("0" + exprNode.name);
+                break;
+            case "String Literal":
+                addOpCode("A0");
+                //add to heap
+                String stringLiteral = exprNode.token.lexeme.substring(1, exprNode.token.lexeme.length() - 1);
+                int heapSpot = heapPointer - stringLiteral.length();
+                int tempSpot = heapSpot;
+                for(int i = 0; i < stringLiteral.length() + 1; i++){
+                    if(i == stringLiteral.length()){
+                        memory[tempSpot] = "00";
+                    }
+                    else{
+                        memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
+                        tempSpot++;
+                    }
+                }
+                addOpCode(Integer.toHexString(heapSpot));
+                addOpCode("00");
+                break;
+            case "BOOL_TRUE":
+                addOpCode("A0");
+                addOpCode(boolTrueAddress);
+                break;
+            case "BOOL_FALSE":
+                addOpCode("A0");
+                addOpCode(boolFalseAddress);
+                break;
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                break;
+            case "ADD":
+                break;
+        }
+
+        if(exprNode.token.tokenType.equals("String Literal")){
+            addOpCode("A2");
+            addOpCode("02");
+        }
+        else{
+            addOpCode("A2");
+            addOpCode("01");
+        }
+        addOpCode("FF");    //break
+        System.out.println(exprNode.token.tokenType);
     }
 
     private void codeGenIntOp(ASTNode intOpNode){
