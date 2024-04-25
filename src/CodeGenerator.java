@@ -292,7 +292,8 @@ public class CodeGenerator {
                 break;
         }
 
-        if(exprNode.token.tokenType.equals("String Literal")){
+        Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
+        if(exprNode.token.tokenType.equals("String Literal") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string"))){
             addOpCode("A2");
             addOpCode("02");
         }
@@ -301,7 +302,6 @@ public class CodeGenerator {
             addOpCode("01");
         }
         addOpCode("FF");    //break
-        System.out.println(exprNode.token.tokenType);
     }
 
     private void codeGenIntOp(ASTNode intOpNode){

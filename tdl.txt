@@ -1,3 +1,8 @@
 TDL for project 4 - Code Generation
 
---problem with string pointer -- backpatch sorta working
+-- assignment statment test all 
+    -finish intop 
+    -finish boolops
+-- all of print testing
+    - finish print intop
+    - finish boolops

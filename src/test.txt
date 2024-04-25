@@ -8,5 +8,5 @@
   }
   string b
   b = "alan"
-  print(b)
+  print("collin")
 }$

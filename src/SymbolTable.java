@@ -471,7 +471,7 @@ public class SymbolTable {
     }
 
     //Lookup Symbol -- looks up a symbol within each ST/scope and returns it
-    private Symbol lookupSymbol(String id){
+    public Symbol lookupSymbol(String id){
         //check if the current node is null to avoid errors
         if(current == null){
             return null;
