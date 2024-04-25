@@ -19,8 +19,8 @@ public class CodeGenerator {
     int stackPointer;   //pointer to where the stack starts -- directly after code
     int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
     int staticTableOffset;  //the offset of the variables in the static table (var table) -- do I need this??
-    String boolTrueAddress;
-    String boolFalseAddress;
+    String boolTrueAddress; //the starting memory address of the bool val true
+    String boolFalseAddress;    //the starting memory address of the bool val false
 
     int programCounter; //what program are we on?
     int codeGenErrors;  //counts how many errors have occurred
@@ -243,38 +243,43 @@ public class CodeGenerator {
 
     private void codeGenPrintStatement(ASTNode currentNode){
         ASTNode exprNode = currentNode.children.get(0); //expr node
-
-        //check the token type of the expression node
-        switch (exprNode.token.tokenType) {
-            case "ID":
-                break;
-            case "DIGIT":
-                break;
-            case "ADD":
-                break;
-            case "String Literal":
-                //add string to heap and address pointer (first location of string address in heap) to static table
-                break;
-            case "EQUALITY_OP":
-            case "INEQUALITY_OP":
-                break;
-            case "BOOL_TRUE":
-                break;
-            case "BOOL_FALSE":
-                break;
-        
-            default:
-                break;
-        }
     }
-
 
     private void codeGenIntOp(ASTNode intOpNode){
         ASTNode leftNode = intOpNode.children.get(0);  //always a digit
         ASTNode rightNode = intOpNode.children.get(1); //digit, +, or ID
 
-    }
+        switch (rightNode.token.tokenType) {
+            case "ID":
+                addOpCode("AD");
+                //get the right nodes temp address (right node)
+                String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
+                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
 
+                //add the temp address
+                addOpCode(tempVarExpr.tempAddress);
+                addOpCode("00");
+                break;
+            case "DIGIT":
+                addOpCode("A9");
+                addOpCode("0" + rightNode.name);
+                break;
+            case "ADD":
+                codeGenIntOp(rightNode);
+        }
+
+        addOpCode("8D");
+        //some temp address?
+
+        //lost on second part of addition
+        addOpCode("A9");
+        addOpCode("0" + leftNode.name);
+
+
+        addOpCode("6D");
+        //temo address?
+
+    }
 
     private void codeGenWhileStatement(ASTNode currentNode){}
     private void codeGenIfStatement(ASTNode currentNode){}
