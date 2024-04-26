@@ -1,19 +1,21 @@
 /*
     Code Generation file
-    Creates a 6502 op codes
+    Creates 6502 op codes
 */
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 //Collin Drakes Code Generator
 public class CodeGenerator {
-    String[] memory;    //stores the code, stack, heap
-    Hashtable<String, staticTableVariable> staticTable;    //the variable table
-    Hashtable<String, branchTableVariable> branchTable; //the branch table
+    String[] memory;    //stores the op codes. Stack and heap included
+    Hashtable<String, staticTableVariable> staticTable;    //the static variable table
+    ArrayList<staticTableVariable> staticTableOrder;    //keeps track of the order of static variables added to aid in backpatching
+    Hashtable<String, branchTableVariable> branchTable; //the branch/jump table
     int currentIndex;   //keeps track of the current index of the opCodes array
-    int tempCounter;    //keeps track of temp number for variable table "T0XX"
+    int tempCounter;    //keeps track of temp number for static variable table "T0XX"
     int currentScope;   //keeps track of what scope we are in
-    boolean rootCreated;
+    boolean rootCreated;    //assists when keeping track of scope
 
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts -- directly after code
@@ -32,6 +34,7 @@ public class CodeGenerator {
         this.memory = new String[256];
         this.staticTable = new Hashtable<>();
         this.branchTable = new Hashtable<>();
+        this.staticTableOrder = new ArrayList<>();
         this.currentIndex = 0;
         this.tempCounter = 0;
         this.currentScope = 0;
@@ -60,9 +63,10 @@ public class CodeGenerator {
     public void startCodeGen(){
         initMemory();   //init all index of the opCodes array to 00
         inOrder(ast.root);      //create the op codes and populate memory
-        //jump before backpatch??
+        //jump table goes here
         backPatch();    //fill out the stack
 
+        //code generation finished. Did errors occurr?
         if(codeGenErrors == 0){
             codeGeneratorLog("Code Generation Complete... Errors: " + codeGenErrors + "\n");
             for(int i = 0; i < memory.length; i++){
@@ -138,13 +142,12 @@ public class CodeGenerator {
         if(node.name.equals("Block")) {
             currentScope--;
         }
-        System.out.println(node.name);  //test to output nodes
     }
 
-    //increment the scope pointer
+    //function to increment the scope pointer and keep track of the scope we are on
     private void codeGenOpenScope(){
         if(rootCreated == false){
-            rootCreated = true;
+            rootCreated = true; //root flag
         }
         else{
             currentScope++; //increment scope
@@ -153,23 +156,29 @@ public class CodeGenerator {
 
     //produces the op codes for variable declarations
     private void codeGenVarDecl(ASTNode currentNode){
-        ASTNode idNode = currentNode.children.get(1);
+        ASTNode idNode = currentNode.children.get(1);   //grab the id node
 
-        addOpCode("A9");
-        addOpCode("00");
-        addOpCode("8D");
+        addOpCode("A9");    //load accumulator with constant
+        addOpCode("00");    
+        addOpCode("8D");    //store accumulator in memory
         
-        //add the temp address to the memory
+        //add the temp address to memory
         String tempAddress = "T" + Integer.toString(tempCounter);
         addOpCode(tempAddress);
 
+        System.out.println(idNode.name + "" + currentScope);    //test output
+
         //add the variable to the static variable table
-        System.out.println(idNode.name + "" + currentScope);
         String tempKey = idNode.name + Integer.toString(currentScope);
         staticTableVariable tempVar = new staticTableVariable(tempAddress, idNode.name, currentScope, staticTableOffset);
+
+        //increment counters
         tempCounter++;
         staticTableOffset++;
+
+        //add the variable to the hastable and arraylist
         staticTable.put(tempKey, tempVar);
+        staticTableOrder.add(tempVar);
         addOpCode("00");
     }
 
@@ -191,17 +200,15 @@ public class CodeGenerator {
                 String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
 
-                //add the temp address
-                addOpCode(tempVarExpr.tempAddress);
+                addOpCode(tempVarExpr.tempAddress); //add the temp address
                 addOpCode("00");
                 break;
             case "DIGIT":
-                //add digit
                 addOpCode("A9");
-                addOpCode("0" + exprNode.name);
+                addOpCode("0" + exprNode.name); //add digit
                 break;
             case "ADD":
-                codeGenIntOp(exprNode);
+                codeGenIntOp(exprNode); //call intop function
                 break;
             case "String Literal":
                 addOpCode("A9");
@@ -222,18 +229,18 @@ public class CodeGenerator {
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
-                codeGenBoolOps(exprNode);
+                codeGenBoolOps(exprNode);   //call bool op function
                 break;
             case "BOOL_TRUE":
                 addOpCode("A9");
-                addOpCode(boolTrueAddress);
+                addOpCode(boolTrueAddress); //point to location in memory (heap)
                 break;
             case "BOOL_FALSE":
                 addOpCode("A9");
-                addOpCode(boolFalseAddress);
+                addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
-        
             default:
+                //do nothing
                 break;
         }
         //store the left node in memory
@@ -242,9 +249,11 @@ public class CodeGenerator {
         addOpCode("00");
     }
 
+    //produces the op codes for print statements
     private void codeGenPrintStatement(ASTNode currentNode){
         ASTNode exprNode = currentNode.children.get(0); //expr node
 
+        //check the nodes type
         switch (exprNode.token.tokenType) {
             case "ID":
                 addOpCode("AC");
@@ -258,7 +267,7 @@ public class CodeGenerator {
                 break;
             case "DIGIT":
                 addOpCode("A0");
-                addOpCode("0" + exprNode.name);
+                addOpCode("0" + exprNode.name); //add digit
                 break;
             case "String Literal":
                 addOpCode("A0");
@@ -280,19 +289,22 @@ public class CodeGenerator {
                 break;
             case "BOOL_TRUE":
                 addOpCode("A0");
-                addOpCode(boolTrueAddress);
+                addOpCode(boolTrueAddress); //point to location in memory (heap)
                 break;
             case "BOOL_FALSE":
                 addOpCode("A0");
-                addOpCode(boolFalseAddress);
+                addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
+                //call bool op function
                 break;
             case "ADD":
+                //call int op function
                 break;
         }
 
+        //if the expr is a string then load 2 into the Y register. Otherwise load 1
         Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
         if(exprNode.token.tokenType.equals("String Literal") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string"))){
             addOpCode("A2");
@@ -305,10 +317,12 @@ public class CodeGenerator {
         addOpCode("FF");    //break
     }
 
+    //produces op codes for assignment statements int op nodes
     private void codeGenIntOp(ASTNode intOpNode){
         ASTNode leftNode = intOpNode.children.get(0);  //always a digit
         ASTNode rightNode = intOpNode.children.get(1); //digit, +, or ID
 
+        //check the right nodes type
         switch (rightNode.token.tokenType) {
             case "ID":
                 addOpCode("AD");
@@ -338,6 +352,7 @@ public class CodeGenerator {
         addOpCode("00");
     }
 
+    //produces op codes for assignment statements bool op nodes
     private void codeGenBoolOps(ASTNode boolOpNode){
         ASTNode leftNode = boolOpNode.children.get(0); //expr
         ASTNode rightNode = boolOpNode.children.get(1);    //expr
@@ -349,6 +364,7 @@ public class CodeGenerator {
 
     //adds opcodes to the array and increments the index
     private void addOpCode(String opCode){
+        //check if the index has exceeded memory just incase lol
         if(currentIndex > memory.length){
             codeGeneratorLog("ERROR! INVALID MEMORY LOCATION... INDEX EVALUATES AS GREATER THAN THE MEMORY LENGTH");
             codeGenErrors++;
@@ -359,9 +375,9 @@ public class CodeGenerator {
         }
     }
 
-    //goes through and backpatch temp address with new addresses...
+    //goes through and backpatches temp address with new addresses (stack)...
     private void backPatch(){
-        stackPointer = currentIndex+1;  //set stack pointer to position directly after code
+        stackPointer = currentIndex;  //set stack pointer to position directly after code
 
         //check if the stack and heap collide
         if(stackPointer >= heapPointer){
@@ -369,11 +385,10 @@ public class CodeGenerator {
             codeGenErrors++;
         }
         else{
-            //iterate through all of the static table variables
-            for(String key : staticTable.keySet()){
-                staticTableVariable temp = staticTable.get(key);
+            //iterate through all of the static table variables (use the arraylist as they are in order)
+            for(staticTableVariable temp : staticTableOrder){
                 String currentKeysTempAddress = temp.tempAddress;
-                System.out.println("backpatch " + key + temp.var + temp.tempAddress);
+                System.out.println("backpatch " + temp.var + temp.tempAddress);
 
                 //iterate through memory (code section)
                 for(int i = 0; i < memory.length; i++){

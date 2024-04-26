@@ -1,5 +1,7 @@
 TDL for project 4 - Code Generation
 
+finish var decl, assignment, and print this weekend completely.. Test also
+
 -- assignment statment test all 
     -finish intop 
     -finish boolops
@@ -12,3 +14,4 @@ TDL for project 4 - Code Generation
 
 -- comment Code
 -- work on bool op for assignment
+-- not adding alan -- not adding string literal id to heap. pointer non existent?
