@@ -222,6 +222,7 @@ public class CodeGenerator {
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
+                codeGenBoolOps(exprNode);
                 break;
             case "BOOL_TRUE":
                 addOpCode("A9");
@@ -328,17 +329,20 @@ public class CodeGenerator {
         }
 
         addOpCode("8D");
-        //some temp address?
-
-        //lost on second part of addition
+        addOpCode("00");    //some temp address location
+        addOpCode("00");
         addOpCode("A9");
         addOpCode("0" + leftNode.name);
-
-
         addOpCode("6D");
-        //temo address?
-
+        addOpCode("00");    //some temp address location
+        addOpCode("00");
     }
+
+    private void codeGenBoolOps(ASTNode boolOpNode){
+        ASTNode leftNode = boolOpNode.children.get(0); //expr
+        ASTNode rightNode = boolOpNode.children.get(1);    //expr
+    }
+
 
     private void codeGenWhileStatement(ASTNode currentNode){}
     private void codeGenIfStatement(ASTNode currentNode){}
@@ -358,7 +362,6 @@ public class CodeGenerator {
     //goes through and backpatch temp address with new addresses...
     private void backPatch(){
         stackPointer = currentIndex+1;  //set stack pointer to position directly after code
-        currentIndex++;
 
         //check if the stack and heap collide
         if(stackPointer >= heapPointer){
@@ -370,6 +373,7 @@ public class CodeGenerator {
             for(String key : staticTable.keySet()){
                 staticTableVariable temp = staticTable.get(key);
                 String currentKeysTempAddress = temp.tempAddress;
+                System.out.println("backpatch " + key + temp.var + temp.tempAddress);
 
                 //iterate through memory (code section)
                 for(int i = 0; i < memory.length; i++){
@@ -379,7 +383,6 @@ public class CodeGenerator {
                     }
                 }
                 stackPointer++;
-                currentIndex++;
             }
         }
     }

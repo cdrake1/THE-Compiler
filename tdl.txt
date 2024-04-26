@@ -6,3 +6,9 @@ TDL for project 4 - Code Generation
 -- all of print testing
     - finish print intop
     - finish boolops
+
+
+- TDL tonight
+
+-- comment Code
+-- work on bool op for assignment

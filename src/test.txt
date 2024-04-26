@@ -9,4 +9,6 @@
   string b
   b = "alan"
   print("collin")
+  print(a)
+  print(b)
 }$
