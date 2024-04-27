@@ -1,14 +1,11 @@
 {
-  int a
-  a = 1
-  {
-    int a
-    a = 2
-    print(a)
-  }
-  string b
-  b = "alan"
-  print("collin")
-  print(a)
-  print(b)
+print(true)
+print(false)
+print(0)
+print(7)
+print("hello")
+print(" ")
+print("world")
+print("")
+print("end")
 }$

@@ -45,8 +45,8 @@ public class CodeGenerator {
         this.stackPointer = 0;
         this.heapPointer = 244;
         this.staticTableOffset = 0;
-        boolTrueAddress = Integer.toHexString(250);
-        boolFalseAddress = Integer.toHexString(244);
+        boolTrueAddress = Integer.toHexString(250).toUpperCase();
+        boolFalseAddress = Integer.toHexString(244).toUpperCase();
 
         this.programCounter = programCounter;
         this.codeGenErrors = 0;
@@ -65,8 +65,6 @@ public class CodeGenerator {
         inOrder(ast.root);      //create the op codes and populate memory
         //jump table goes here
         backPatch();    //fill out the stack
-
-        System.out.println(currentIndex + " " + stackPointer);
 
         //code generation finished. Did errors occurr?
         if(codeGenErrors == 0){
@@ -167,8 +165,6 @@ public class CodeGenerator {
         //add the temp address to memory
         String tempAddress = "T" + Integer.toString(tempCounter);
         addOpCode(tempAddress);
-
-        System.out.println(idNode.name + "" + currentScope);    //test output
 
         //add the variable to the static variable table
         String tempKey = idNode.name + Integer.toString(currentScope);
@@ -281,7 +277,6 @@ public class CodeGenerator {
                 memory[tempSpot] = "00";
                 heapPointer = heapSpot;
                 addOpCode(Integer.toHexString(heapSpot).toUpperCase());
-                System.out.println(heapSpot + Integer.toHexString(heapSpot).toUpperCase());
                 break;
             case "BOOL_TRUE":
                 addOpCode("A0");
@@ -302,7 +297,7 @@ public class CodeGenerator {
 
         //if the expr is a string then load 2 into the Y register. Otherwise load 1
         Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
-        if(exprNode.token.tokenType.equals("String Literal") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string"))){
+        if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
             addOpCode("A2");
             addOpCode("02");
         }
