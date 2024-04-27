@@ -206,7 +206,7 @@ public class CodeGenerator {
                 addOpCode("0" + exprNode.name); //add digit
                 break;
             case "ADD":
-                codeGenAssignIntOp(exprNode); //call intop function
+                codeGenIntOp(exprNode); //call intop function
                 break;
             case "String Literal":
                 addOpCode("A9");
@@ -224,7 +224,7 @@ public class CodeGenerator {
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
-                codeGenAssignBoolOps(exprNode);   //call bool op function
+                codeGenBoolOps(exprNode);   //call bool op function
                 break;
             case "BOOL_TRUE":
                 addOpCode("A9");
@@ -287,11 +287,21 @@ public class CodeGenerator {
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "EQUALITY_OP":
+                codeGenBoolOps(exprNode); //call bool op function
+                //add more op codes with some temp address?
+                break;
             case "INEQUALITY_OP":
-                //call bool op function
+                codeGenBoolOps(exprNode); //call bool op function
+                //add more op codes with some temp address?
                 break;
             case "ADD":
-                //call int op function
+                codeGenIntOp(exprNode); //call int op function
+                addOpCode("8D");
+                addOpCode("00");    //some temp address location
+                addOpCode("00");
+                addOpCode("AC");
+                addOpCode("00");    //some temp address location
+                addOpCode("00");
                 break;
         }
 
@@ -309,7 +319,7 @@ public class CodeGenerator {
     }
 
     //produces op codes for assignment statements int op nodes
-    private void codeGenAssignIntOp(ASTNode intOpNode){
+    private void codeGenIntOp(ASTNode intOpNode){
         ASTNode leftNode = intOpNode.children.get(0);  //always a digit
         ASTNode rightNode = intOpNode.children.get(1); //digit, +, or ID
 
@@ -330,7 +340,11 @@ public class CodeGenerator {
                 addOpCode("0" + rightNode.name);
                 break;
             case "ADD":
-                codeGenAssignIntOp(rightNode);
+                codeGenIntOp(rightNode);
+                break;
+            default:
+                //do nothing
+                break;
         }
 
         addOpCode("8D");
@@ -344,9 +358,109 @@ public class CodeGenerator {
     }
 
     //produces op codes for assignment statements bool op nodes
-    private void codeGenAssignBoolOps(ASTNode boolOpNode){
+    private void codeGenBoolOps(ASTNode boolOpNode){
         ASTNode leftNode = boolOpNode.children.get(0); //expr
         ASTNode rightNode = boolOpNode.children.get(1);    //expr
+
+        //-----left node check-----
+        switch (leftNode.token.tokenType) {
+            case "ID":
+                addOpCode("AD");
+                //get the right nodes temp address (right node)
+                String tempKeyExpr = leftNode.name + Integer.toString(currentScope);
+                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+
+                //add the temp address
+                addOpCode(tempVarExpr.tempAddress);
+                addOpCode("00");
+                break;
+            case "DIGIT":
+                addOpCode("A9");
+                addOpCode("0" + leftNode.name);
+                break;
+            case "String Literal":
+                addOpCode("A0");
+                //add to heap
+                String stringLiteral = leftNode.token.lexeme.substring(1, leftNode.token.lexeme.length() - 1);
+                int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
+                int tempSpot = heapSpot;
+                for(int i = 0; i < stringLiteral.length(); i++){
+                    memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
+                    tempSpot++;
+                }
+                memory[tempSpot] = "00";
+                heapPointer = heapSpot;
+                addOpCode(Integer.toHexString(heapSpot).toUpperCase());
+                break;
+            case "BOOL_TRUE":
+                addOpCode("A0");
+                addOpCode(boolTrueAddress); //point to location in memory (heap)
+                break;
+            case "BOOL_FALSE":
+                addOpCode("A0");
+                addOpCode(boolFalseAddress);    //point to location in memory (heap)
+                break;
+            case "ADD":
+                codeGenIntOp(leftNode);
+                break;
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                codeGenBoolOps(leftNode);
+                break;
+            default:
+                //do nothing
+                break;
+        }
+
+        //-----right node check-----
+        switch (rightNode.token.tokenType) {
+            case "ID":
+                addOpCode("AD");
+                //get the right nodes temp address (right node)
+                String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
+                staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+
+                //add the temp address
+                addOpCode(tempVarExpr.tempAddress);
+                addOpCode("00");
+                break;
+            case "DIGIT":
+                addOpCode("A9");
+                addOpCode("0" + rightNode.name);
+                break;
+            case "String Literal":
+                addOpCode("A0");
+                //add to heap
+                String stringLiteral = rightNode.token.lexeme.substring(1, rightNode.token.lexeme.length() - 1);
+                int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
+                int tempSpot = heapSpot;
+                for(int i = 0; i < stringLiteral.length(); i++){
+                    memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
+                    tempSpot++;
+                }
+                memory[tempSpot] = "00";
+                heapPointer = heapSpot;
+                addOpCode(Integer.toHexString(heapSpot).toUpperCase());
+                break;
+            case "BOOL_TRUE":
+                addOpCode("A0");
+                addOpCode(boolTrueAddress); //point to location in memory (heap)
+                break;
+            case "BOOL_FALSE":
+                addOpCode("A0");
+                addOpCode(boolFalseAddress);    //point to location in memory (heap)
+                break;
+            case "ADD":
+                codeGenIntOp(rightNode);
+                break;
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                codeGenBoolOps(rightNode);
+                break;
+            default:
+                //do nothing
+                break;
+        }
     }
 
 

@@ -3,8 +3,6 @@ TDL for project 4 - Code Generation
 finish var decl, assignment, and print this weekend completely.. Test also
 
 -- assignment statment test all 
-    -finish intop 
-    -finish boolops
+    -finish boolops --confused on some parts
 -- all of print testing
-    - finish print intop
-    - finish boolops
+    - finish boolops    --also confused on some parts
