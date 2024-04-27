@@ -303,9 +303,12 @@ public class CodeGenerator {
                 addOpCode("00");    //some temp address location
                 addOpCode("00");
                 break;
+            default:
+                //do nothing
+                break;
         }
 
-        //if the expr is a string then load 2 into the Y register. Otherwise load 1
+        //if the expr is a string/boolean then load 2 into the Y register. Otherwise load 1
         Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
         if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
             addOpCode("A2");

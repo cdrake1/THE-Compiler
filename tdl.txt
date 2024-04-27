@@ -1,6 +1,6 @@
 TDL for project 4 - Code Generation
 
-finish var decl, assignment, and print this weekend completely.. Test also
+finish assignment, and print this weekend completely.. Test also
 
 -- assignment statment test all 
     -finish boolops --confused on some parts
