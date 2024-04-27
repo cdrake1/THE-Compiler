@@ -43,7 +43,7 @@ public class CodeGenerator {
 
         this.codePointer = 0;
         this.stackPointer = 0;
-        this.heapPointer = 243;
+        this.heapPointer = 244;
         this.staticTableOffset = 0;
         boolTrueAddress = Integer.toHexString(250);
         boolFalseAddress = Integer.toHexString(244);
@@ -65,6 +65,8 @@ public class CodeGenerator {
         inOrder(ast.root);      //create the op codes and populate memory
         //jump table goes here
         backPatch();    //fill out the stack
+
+        System.out.println(currentIndex + " " + stackPointer);
 
         //code generation finished. Did errors occurr?
         if(codeGenErrors == 0){
@@ -214,18 +216,15 @@ public class CodeGenerator {
                 addOpCode("A9");
                 //add to heap
                 String stringLiteral = exprNode.token.lexeme.substring(1, exprNode.token.lexeme.length() - 1);
-                int heapSpot = heapPointer - stringLiteral.length();
+                int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
                 int tempSpot = heapSpot;
-                for(int i = 0; i < stringLiteral.length() + 1; i++){
-                    if(i == stringLiteral.length()){
-                        memory[tempSpot] = "00";
-                    }
-                    else{
-                        memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
-                        tempSpot++;
-                    }
+                for(int i = 0; i < stringLiteral.length(); i++){
+                    memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
+                    tempSpot++;
                 }
-                addOpCode(Integer.toHexString(heapSpot));
+                memory[tempSpot] = "00";
+                heapPointer = heapSpot;
+                addOpCode(Integer.toHexString(heapSpot).toUpperCase());
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
@@ -273,19 +272,16 @@ public class CodeGenerator {
                 addOpCode("A0");
                 //add to heap
                 String stringLiteral = exprNode.token.lexeme.substring(1, exprNode.token.lexeme.length() - 1);
-                int heapSpot = heapPointer - stringLiteral.length();
+                int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
                 int tempSpot = heapSpot;
-                for(int i = 0; i < stringLiteral.length() + 1; i++){
-                    if(i == stringLiteral.length()){
-                        memory[tempSpot] = "00";
-                    }
-                    else{
-                        memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
-                        tempSpot++;
-                    }
+                for(int i = 0; i < stringLiteral.length(); i++){
+                    memory[tempSpot] = Integer.toHexString((int) stringLiteral.charAt(i)).toUpperCase();
+                    tempSpot++;
                 }
-                addOpCode(Integer.toHexString(heapSpot));
-                addOpCode("00");
+                memory[tempSpot] = "00";
+                heapPointer = heapSpot;
+                addOpCode(Integer.toHexString(heapSpot).toUpperCase());
+                System.out.println(heapSpot + Integer.toHexString(heapSpot).toUpperCase());
                 break;
             case "BOOL_TRUE":
                 addOpCode("A0");
@@ -377,7 +373,7 @@ public class CodeGenerator {
 
     //goes through and backpatches temp address with new addresses (stack)...
     private void backPatch(){
-        stackPointer = currentIndex;  //set stack pointer to position directly after code
+        stackPointer = currentIndex + 1;  //set stack pointer to position directly after code
 
         //check if the stack and heap collide
         if(stackPointer >= heapPointer){
@@ -394,7 +390,7 @@ public class CodeGenerator {
                 for(int i = 0; i < memory.length; i++){
                     if(memory[i].equals(currentKeysTempAddress)){
                         //replace in static table??
-                        memory[i] = Integer.toHexString(stackPointer);
+                        memory[i] = Integer.toHexString(stackPointer).toUpperCase();
                     }
                 }
                 stackPointer++;
