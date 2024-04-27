@@ -206,7 +206,7 @@ public class CodeGenerator {
                 addOpCode("0" + exprNode.name); //add digit
                 break;
             case "ADD":
-                codeGenIntOp(exprNode); //call intop function
+                codeGenAssignIntOp(exprNode); //call intop function
                 break;
             case "String Literal":
                 addOpCode("A9");
@@ -224,7 +224,7 @@ public class CodeGenerator {
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
-                codeGenBoolOps(exprNode);   //call bool op function
+                codeGenAssignBoolOps(exprNode);   //call bool op function
                 break;
             case "BOOL_TRUE":
                 addOpCode("A9");
@@ -309,7 +309,7 @@ public class CodeGenerator {
     }
 
     //produces op codes for assignment statements int op nodes
-    private void codeGenIntOp(ASTNode intOpNode){
+    private void codeGenAssignIntOp(ASTNode intOpNode){
         ASTNode leftNode = intOpNode.children.get(0);  //always a digit
         ASTNode rightNode = intOpNode.children.get(1); //digit, +, or ID
 
@@ -330,7 +330,7 @@ public class CodeGenerator {
                 addOpCode("0" + rightNode.name);
                 break;
             case "ADD":
-                codeGenIntOp(rightNode);
+                codeGenAssignIntOp(rightNode);
         }
 
         addOpCode("8D");
@@ -344,7 +344,7 @@ public class CodeGenerator {
     }
 
     //produces op codes for assignment statements bool op nodes
-    private void codeGenBoolOps(ASTNode boolOpNode){
+    private void codeGenAssignBoolOps(ASTNode boolOpNode){
         ASTNode leftNode = boolOpNode.children.get(0); //expr
         ASTNode rightNode = boolOpNode.children.get(1);    //expr
     }
@@ -379,7 +379,6 @@ public class CodeGenerator {
             //iterate through all of the static table variables (use the arraylist as they are in order)
             for(staticTableVariable temp : staticTableOrder){
                 String currentKeysTempAddress = temp.tempAddress;
-                System.out.println("backpatch " + temp.var + temp.tempAddress);
 
                 //iterate through memory (code section)
                 for(int i = 0; i < memory.length; i++){

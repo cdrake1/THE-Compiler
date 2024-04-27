@@ -1,11 +1,7 @@
 {
-print(true)
-print(false)
-print(0)
-print(7)
-print("hello")
-print(" ")
-print("world")
-print("")
-print("end")
+int a
+boolean b
+a = 2+3+4
+/*output: 9 true)*/
+print(a)
 }$
