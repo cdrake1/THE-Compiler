@@ -382,7 +382,7 @@ public class CodeGenerator {
                 addOpCode("0" + leftNode.name);
                 break;
             case "String Literal":
-                addOpCode("A0");
+                addOpCode("A9");
                 //add to heap
                 String stringLiteral = leftNode.token.lexeme.substring(1, leftNode.token.lexeme.length() - 1);
                 int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
@@ -396,11 +396,11 @@ public class CodeGenerator {
                 addOpCode(Integer.toHexString(heapSpot).toUpperCase());
                 break;
             case "BOOL_TRUE":
-                addOpCode("A0");
+                addOpCode("A9");
                 addOpCode(boolTrueAddress); //point to location in memory (heap)
                 break;
             case "BOOL_FALSE":
-                addOpCode("A0");
+                addOpCode("A9");
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "ADD":
@@ -409,6 +409,7 @@ public class CodeGenerator {
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
                 codeGenBoolOps(leftNode);
+                //temp op codes?
                 break;
             default:
                 //do nothing
@@ -432,7 +433,7 @@ public class CodeGenerator {
                 addOpCode("0" + rightNode.name);
                 break;
             case "String Literal":
-                addOpCode("A0");
+                addOpCode("A9");
                 //add to heap
                 String stringLiteral = rightNode.token.lexeme.substring(1, rightNode.token.lexeme.length() - 1);
                 int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
@@ -446,11 +447,11 @@ public class CodeGenerator {
                 addOpCode(Integer.toHexString(heapSpot).toUpperCase());
                 break;
             case "BOOL_TRUE":
-                addOpCode("A0");
+                addOpCode("A9");
                 addOpCode(boolTrueAddress); //point to location in memory (heap)
                 break;
             case "BOOL_FALSE":
-                addOpCode("A0");
+                addOpCode("A9");
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "ADD":
@@ -459,11 +460,16 @@ public class CodeGenerator {
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
                 codeGenBoolOps(rightNode);
+                //temp opcodes?
                 break;
             default:
                 //do nothing
                 break;
         }
+
+
+        //op codes for changing z flag?
+        //do we use an if statement here and add another variable for z flag
     }
 
 
