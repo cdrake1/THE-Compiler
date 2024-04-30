@@ -14,6 +14,7 @@ public class CodeGenerator {
     Hashtable<String, branchTableVariable> branchTable; //the branch/jump table
     int currentIndex;   //keeps track of the current index of the opCodes array
     int tempCounter;    //keeps track of temp number for static variable table "T0XX"
+    int tempJumpCounter;    //keeps track of temp number for branch table variables
     int currentScope;   //keeps track of what scope we are in
     boolean rootCreated;    //assists when keeping track of scope
 
@@ -365,7 +366,7 @@ public class CodeGenerator {
         ASTNode leftNode = boolOpNode.children.get(0); //expr
         ASTNode rightNode = boolOpNode.children.get(1);    //expr
 
-        //-----left node check-----
+        //-----left node check-----save to memory-----
         switch (leftNode.token.tokenType) {
             case "ID":
                 addOpCode("AD");
@@ -416,10 +417,15 @@ public class CodeGenerator {
                 break;
         }
 
-        //-----right node check-----
+        addOpCode("8D") //load into memory
+        addOpCode("00");    //some temp address location
+        addOpCode("00");
+        //op code mem address? temp address?
+
+        //-----right node check-----add to x register-----
         switch (rightNode.token.tokenType) {
             case "ID":
-                addOpCode("AD");
+                addOpCode("AE");
                 //get the right nodes temp address (right node)
                 String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
@@ -429,11 +435,11 @@ public class CodeGenerator {
                 addOpCode("00");
                 break;
             case "DIGIT":
-                addOpCode("A9");
+                addOpCode("A2");
                 addOpCode("0" + rightNode.name);
                 break;
             case "String Literal":
-                addOpCode("A9");
+                addOpCode("A2");
                 //add to heap
                 String stringLiteral = rightNode.token.lexeme.substring(1, rightNode.token.lexeme.length() - 1);
                 int heapSpot = heapPointer - stringLiteral.length() - 1;    //subtract 1 for 00
@@ -447,11 +453,11 @@ public class CodeGenerator {
                 addOpCode(Integer.toHexString(heapSpot).toUpperCase());
                 break;
             case "BOOL_TRUE":
-                addOpCode("A9");
+                addOpCode("A2");
                 addOpCode(boolTrueAddress); //point to location in memory (heap)
                 break;
             case "BOOL_FALSE":
-                addOpCode("A9");
+                addOpCode("A2");
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "ADD":
@@ -467,14 +473,45 @@ public class CodeGenerator {
                 break;
         }
 
+        addOpCode("EC");    //compare x register to byte in mem
+        addOpCode("00");    //some temp address location
+        addOpCode("00");
+        //left node temp address?
 
-        //op codes for changing z flag?
+
         //do we use an if statement here and add another variable for z flag
     }
 
-
     private void codeGenWhileStatement(ASTNode currentNode){}
-    private void codeGenIfStatement(ASTNode currentNode){}
+
+    //creates op codes for if statement nodes
+    private void codeGenIfStatement(ASTNode currentNode){
+        ASTNode boolExprNode = currentNode.children.get(0); //boolop or boolval
+
+        //-----bool expr node check-----
+        switch(boolExprNode.token.tokenType){
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                codeGenBoolOps(boolExprNode);
+                break;
+            case "BOOL_TRUE":
+                //always fall in
+                //how to set z flag for true and false?
+                break;
+            case "BOOL_FALSE":
+                //always branch
+                break;
+            default:
+                //do nothing
+                break;
+        }
+
+        addOpCode("D0");    //branch n bytes if Z flag = 0: D0
+        addOpCode("J" + tempJumpCounter)    //add jump table var
+        branchtemp branchTableVariable = new branchTableVariable("J" + tempJumpCounter, null);
+        tempJumpCounter++;
+        branchTable.put("J" + tempJumpCounter, branchtemp); //add to jump table.. jump table node (distance of jump)
+    }
 
     //adds opcodes to the array and increments the index
     private void addOpCode(String opCode){
