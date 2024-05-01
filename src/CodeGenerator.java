@@ -288,11 +288,14 @@ public class CodeGenerator {
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "EQUALITY_OP":
-                codeGenBoolOps(exprNode); //call bool op function
-                //add more op codes with some temp address?
-                break;
             case "INEQUALITY_OP":
                 codeGenBoolOps(exprNode); //call bool op function
+                addOpCode("8D");
+                addOpCode("00");    //some temp address location
+                addOpCode("00");
+                addOpCode("AC");
+                addOpCode("00");    //some temp address location
+                addOpCode("00");
                 //add more op codes with some temp address?
                 break;
             case "ADD":
@@ -311,7 +314,7 @@ public class CodeGenerator {
 
         //if the expr is a string/boolean then load 2 into the Y register. Otherwise load 1
         Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
-        if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
+        if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || exprNode.token.tokenType.equals("EQUALITY_OP") || exprNode.token.tokenType.equals("INEQUALITY_OP") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
             addOpCode("A2");
             addOpCode("02");
         }
@@ -417,10 +420,9 @@ public class CodeGenerator {
                 break;
         }
 
-        addOpCode("8D") //load into memory
+        addOpCode("8D"); //load into memory
         addOpCode("00");    //some temp address location
         addOpCode("00");
-        //op code mem address? temp address?
 
         //-----right node check-----add to x register-----
         switch (rightNode.token.tokenType) {
@@ -476,10 +478,12 @@ public class CodeGenerator {
         addOpCode("EC");    //compare x register to byte in mem
         addOpCode("00");    //some temp address location
         addOpCode("00");
-        //left node temp address?
-
-
-        //do we use an if statement here and add another variable for z flag
+        addOpCode("A9");
+        addOpCode(boolFalseAddress);    //false pointer
+        addOpCode("D0");
+        addOpCode("02");
+        addOpCode("A9");
+        addOpCode(boolTrueAddress); //true pointer
     }
 
     private void codeGenWhileStatement(ASTNode currentNode){}
@@ -495,6 +499,10 @@ public class CodeGenerator {
                 codeGenBoolOps(boolExprNode);
                 break;
             case "BOOL_TRUE":
+                addOpCode("A2");
+                addOpCode(boolTrueAddress); //point to location in memory (heap)
+                addOpCode("EC");
+                addOpCode(boolTrueAddress); //point to location in memory (heap)
                 //always fall in
                 //how to set z flag for true and false?
                 break;
@@ -507,8 +515,9 @@ public class CodeGenerator {
         }
 
         addOpCode("D0");    //branch n bytes if Z flag = 0: D0
-        addOpCode("J" + tempJumpCounter)    //add jump table var
-        branchtemp branchTableVariable = new branchTableVariable("J" + tempJumpCounter, null);
+        addOpCode("J" + tempJumpCounter);    //add jump table var
+
+        branchTableVariable branchtemp = new branchTableVariable("J" + tempJumpCounter, null);
         tempJumpCounter++;
         branchTable.put("J" + tempJumpCounter, branchtemp); //add to jump table.. jump table node (distance of jump)
     }

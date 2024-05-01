@@ -1,7 +1,10 @@
 {
 int a
+boolean b
 a = 2+3+4
-/*output: 9 true)*/
+b = (2 == 2)
 print(a)
+print(b)
 print(2+2)
+print((2 == 3))
 }$

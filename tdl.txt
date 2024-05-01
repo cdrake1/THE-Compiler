@@ -1,14 +1,5 @@
 TDL for project 4 - Code Generation
 
-finish assignment, and print this weekend completely.. Test also
-
--- assignment statment test all 
-    -finish boolops --confused on some parts
--- all of print testing
-    - finish boolops    --also confused on some parts
-
-z flag is set by OS not us. We just D0
-
 if-----
 -- how to set z flag for true and false?
 -- when to go back and set jump table variable distance?
