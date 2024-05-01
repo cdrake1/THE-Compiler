@@ -1,5 +1,10 @@
 TDL for project 4 - Code Generation
 
+test and comment
+
 if-----
 -- how to set z flag for true and false?
 -- when to go back and set jump table variable distance?
+
+while-----
+start

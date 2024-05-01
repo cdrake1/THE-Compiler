@@ -296,7 +296,6 @@ public class CodeGenerator {
                 addOpCode("AC");
                 addOpCode("00");    //some temp address location
                 addOpCode("00");
-                //add more op codes with some temp address?
                 break;
             case "ADD":
                 codeGenIntOp(exprNode); //call int op function
@@ -312,7 +311,7 @@ public class CodeGenerator {
                 break;
         }
 
-        //if the expr is a string/boolean then load 2 into the Y register. Otherwise load 1
+        //if the expr is a string/boolean/boolop then load 2 into the Y register. Otherwise load 1
         Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
         if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || exprNode.token.tokenType.equals("EQUALITY_OP") || exprNode.token.tokenType.equals("INEQUALITY_OP") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
             addOpCode("A2");
@@ -480,7 +479,7 @@ public class CodeGenerator {
         addOpCode("00");
         addOpCode("A9");
         addOpCode(boolFalseAddress);    //false pointer
-        addOpCode("D0");
+        addOpCode("D0");    //jump depending on z flag
         addOpCode("02");
         addOpCode("A9");
         addOpCode(boolTrueAddress); //true pointer
