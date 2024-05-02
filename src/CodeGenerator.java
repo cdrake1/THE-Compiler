@@ -18,6 +18,7 @@ public class CodeGenerator {
     int currentScope;   //keeps track of what scope we are in
     boolean rootCreated;    //assists when keeping track of scope
 
+    SymbolTableNode current;
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts -- directly after code
     int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
@@ -42,6 +43,7 @@ public class CodeGenerator {
         this.rootCreated = false;
 
 
+        this.current = null;
         this.codePointer = 0;
         this.stackPointer = 0;
         this.heapPointer = 244;
@@ -64,7 +66,7 @@ public class CodeGenerator {
     public void startCodeGen(){
         initMemory();   //init all index of the opCodes array to 00
         inOrder(ast.root);      //create the op codes and populate memory
-        //jump table goes here
+        backPatchBranch();  //backpatches the branch table variables within memory
         backPatch();    //fill out the stack
 
         //code generation finished. Did errors occurr?
@@ -148,6 +150,7 @@ public class CodeGenerator {
     //function to increment the scope pointer and keep track of the scope we are on
     private void codeGenOpenScope(){
         if(rootCreated == false){
+            current = symbolTable.root;
             rootCreated = true; //root flag
         }
         else{
@@ -189,6 +192,9 @@ public class CodeGenerator {
         //get the ID variables temp address (left node)
         String tempKey = idNode.name + Integer.toString(currentScope);
         staticTableVariable tempVar = staticTable.get(tempKey);
+        if(tempVar == null){
+            lookupVariable(idNode.name);
+        }
         
         //check the token type of the expression node (right node)
         switch (exprNode.token.tokenType) {
@@ -490,6 +496,7 @@ public class CodeGenerator {
     //creates op codes for if statement nodes
     private void codeGenIfStatement(ASTNode currentNode){
         ASTNode boolExprNode = currentNode.children.get(0); //boolop or boolval
+        ASTNode blockNode = currentNode.children.get(1);    //block node
 
         //-----bool expr node check-----
         switch(boolExprNode.token.tokenType){
@@ -516,9 +523,27 @@ public class CodeGenerator {
         addOpCode("D0");    //branch n bytes if Z flag = 0: D0
         addOpCode("J" + tempJumpCounter);    //add jump table var
 
-        branchTableVariable branchtemp = new branchTableVariable("J" + tempJumpCounter, null);
+        //save information for later
+        int tempindex = currentIndex;
+        String currentBranchNumber = "J" + tempJumpCounter;
+
+        //create a branch table variable and add it to the hashtable
+        branchTableVariable branchtemp = new branchTableVariable("J" + tempJumpCounter, currentIndex);
         tempJumpCounter++;
         branchTable.put("J" + tempJumpCounter, branchtemp); //add to jump table.. jump table node (distance of jump)
+
+        inOrder(blockNode); //call in order recursively
+        int jumpDistance = currentIndex - tempindex;    //calculate how far to jump
+
+        //update the branch variables distance
+        branchTableVariable branchTempTwo = branchTable.get(currentBranchNumber);
+        branchTempTwo.distance = jumpDistance;
+    }
+
+    private void lookupVariable(String idName){
+        
+        //if not found in the current scope go back until its found
+        //we need its temp address, but to figure out if its the correct variable we need to have the correct scope
     }
 
     //adds opcodes to the array and increments the index
@@ -556,6 +581,20 @@ public class CodeGenerator {
                     }
                 }
                 stackPointer++;
+            }
+        }
+    }
+
+    //backpatches branch table jumps
+    private void backPatchBranch(){
+        for(branchTableVariable branchVariable : branchTable.values()){
+            String currentBranchVariableName = branchVariable.temp;
+            String jumpDistanceHex = Integer.toHexString(branchVariable.distance);
+
+            for(int i = 0; i < memory.length; i++){
+                if(memory[i].equals(currentBranchVariableName)){
+                    memory[i] = jumpDistanceHex;
+                }
             }
         }
     }

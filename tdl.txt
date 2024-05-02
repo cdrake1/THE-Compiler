@@ -1,10 +1,11 @@
 TDL for project 4 - Code Generation
 
-test and comment
 
-if-----
--- how to set z flag for true and false?
--- when to go back and set jump table variable distance?
+I need to fix assignment statement when looking up variables in the hash table
+if the variable is in a different scope it retrieves null
+need to create a function to 
+
+dps symbol table until find current scope, then go back up parents to find variable (find out what scope variable is in)
 
 while-----
 start
