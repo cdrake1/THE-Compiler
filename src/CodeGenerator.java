@@ -18,7 +18,7 @@ public class CodeGenerator {
     int currentScope;   //keeps track of what scope we are in
     boolean rootCreated;    //assists when keeping track of scope
 
-    SymbolTableNode current;
+    SymbolTableNode currentSTScope;
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts -- directly after code
     int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
@@ -43,7 +43,7 @@ public class CodeGenerator {
         this.rootCreated = false;
 
 
-        this.current = null;
+        this.currentSTScope = null;
         this.codePointer = 0;
         this.stackPointer = 0;
         this.heapPointer = 244;
@@ -150,7 +150,7 @@ public class CodeGenerator {
     //function to increment the scope pointer and keep track of the scope we are on
     private void codeGenOpenScope(){
         if(rootCreated == false){
-            current = symbolTable.root;
+            currentSTScope = symbolTable.root;
             rootCreated = true; //root flag
         }
         else{
@@ -193,7 +193,9 @@ public class CodeGenerator {
         String tempKey = idNode.name + Integer.toString(currentScope);
         staticTableVariable tempVar = staticTable.get(tempKey);
         if(tempVar == null){
-            lookupVariable(idNode.name);
+            int correctScope = lookupVariable(idNode.name);
+            tempKey = idNode.name + Integer.toString(correctScope);
+            tempVar = staticTable.get(tempKey);
         }
         
         //check the token type of the expression node (right node)
@@ -204,6 +206,11 @@ public class CodeGenerator {
                 //get the expr variables temp address (right node)
                 String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+                if(tempVarExpr == null){
+                    int correctScope = lookupVariable(exprNode.name);
+                    tempKeyExpr = exprNode.name + Integer.toString(correctScope);
+                    tempVarExpr = staticTable.get(tempKeyExpr);
+                }
 
                 addOpCode(tempVarExpr.tempAddress); //add the temp address
                 addOpCode("00");
@@ -263,6 +270,11 @@ public class CodeGenerator {
                 //get the variables temp address
                 String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+                if(tempVarExpr == null){
+                    int correctScope = lookupVariable(exprNode.name);
+                    tempKeyExpr = exprNode.name + Integer.toString(correctScope);
+                    tempVarExpr = staticTable.get(tempKeyExpr);
+                }
 
                 addOpCode(tempVarExpr.tempAddress);
                 addOpCode("00");
@@ -342,6 +354,11 @@ public class CodeGenerator {
                 //get the right nodes temp address (right node)
                 String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+                if(tempVarExpr == null){
+                    int correctScope = lookupVariable(rightNode.name);
+                    tempKeyExpr = rightNode.name + Integer.toString(correctScope);
+                    tempVarExpr = staticTable.get(tempKeyExpr);
+                }
 
                 //add the temp address
                 addOpCode(tempVarExpr.tempAddress);
@@ -381,6 +398,11 @@ public class CodeGenerator {
                 //get the right nodes temp address (right node)
                 String tempKeyExpr = leftNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+                if(tempVarExpr == null){
+                    int correctScope = lookupVariable(leftNode.name);
+                    tempKeyExpr = leftNode.name + Integer.toString(correctScope);
+                    tempVarExpr = staticTable.get(tempKeyExpr);
+                }
 
                 //add the temp address
                 addOpCode(tempVarExpr.tempAddress);
@@ -436,6 +458,11 @@ public class CodeGenerator {
                 //get the right nodes temp address (right node)
                 String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
+                if(tempVarExpr == null){
+                    int correctScope = lookupVariable(rightNode.name);
+                    tempKeyExpr = rightNode.name + Integer.toString(correctScope);
+                    tempVarExpr = staticTable.get(tempKeyExpr);
+                }
 
                 //add the temp address
                 addOpCode(tempVarExpr.tempAddress);
@@ -526,11 +553,12 @@ public class CodeGenerator {
         //save information for later
         int tempindex = currentIndex;
         String currentBranchNumber = "J" + tempJumpCounter;
+    
 
         //create a branch table variable and add it to the hashtable
         branchTableVariable branchtemp = new branchTableVariable("J" + tempJumpCounter, currentIndex);
-        tempJumpCounter++;
         branchTable.put("J" + tempJumpCounter, branchtemp); //add to jump table.. jump table node (distance of jump)
+        tempJumpCounter++;
 
         inOrder(blockNode); //call in order recursively
         int jumpDistance = currentIndex - tempindex;    //calculate how far to jump
@@ -540,10 +568,38 @@ public class CodeGenerator {
         branchTempTwo.distance = jumpDistance;
     }
 
-    private void lookupVariable(String idName){
+    private int lookupVariable(String idName){
+        findScope(currentSTScope);
+
+        //temp variables and pointers used to traverse through the tree
+        Symbol temp = null;
+        SymbolTableNode tempNode = currentSTScope;
+        int tempPointer = currentScope;
         
+        //continuously iterate until you find it or return null
+        while(tempPointer != -1 && temp == null && tempNode != null){
+            temp = tempNode.symbols.get(idName);
+            if(temp != null){
+                return temp.scope;
+            }
+            else{
+                tempPointer--;
+                tempNode = tempNode.parent;
+            }
+        }
+        return 0;
         //if not found in the current scope go back until its found
         //we need its temp address, but to figure out if its the correct variable we need to have the correct scope
+    }
+
+    private void findScope(SymbolTableNode currentNodeST){
+        if(currentSTScope == null || currentSTScope.scope == currentScope){
+            return;
+        }
+
+        for(SymbolTableNode child : currentNodeST.children){
+            findScope(child);
+        }
     }
 
     //adds opcodes to the array and increments the index

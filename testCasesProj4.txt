@@ -22,3 +22,11 @@ print(b)
 print(2+2)
 print((2 == 3))
 }$
+{
+    int a
+    a = 5
+    if(true == false){
+        a = 7
+        print(a)
+    }
+}$

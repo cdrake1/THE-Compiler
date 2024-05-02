@@ -1,7 +1,7 @@
 {
     int a
     a = 5
-    if(true == true){
+    if(true == false){
         a = 7
         print(a)
     }
