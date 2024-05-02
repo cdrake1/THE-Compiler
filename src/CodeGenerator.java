@@ -18,7 +18,7 @@ public class CodeGenerator {
     int currentScope;   //keeps track of what scope we are in
     boolean rootCreated;    //assists when keeping track of scope
 
-    SymbolTableNode currentSTScope;
+    SymbolTableNode currentSTScope; //helps with obtaining values from the correct scope by keeping track of the current scope within the ST
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts -- directly after code
     int heapPointer;    //pointer to where the heap starts -- builds from end of the array until it crashes into the stack
