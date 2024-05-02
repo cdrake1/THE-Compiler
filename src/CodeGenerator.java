@@ -106,6 +106,7 @@ public class CodeGenerator {
 
     //function for the depth first in order traversal of the AST
     public void inOrder(ASTNode node){
+        System.out.println(node.name);
         //if the node is null return to avoid errors
         if(node == null){
             return;
@@ -551,7 +552,7 @@ public class CodeGenerator {
         addOpCode("J" + tempJumpCounter);    //add jump table var
 
         //save information for later
-        int tempindex = currentIndex;
+        int startJumpAddress = currentIndex;
         String currentBranchNumber = "J" + tempJumpCounter;
     
 
@@ -561,7 +562,7 @@ public class CodeGenerator {
         tempJumpCounter++;
 
         inOrder(blockNode); //call in order recursively
-        int jumpDistance = currentIndex - tempindex;    //calculate how far to jump
+        int jumpDistance = currentIndex - startJumpAddress;    //calculate how far to jump
 
         //update the branch variables distance
         branchTableVariable branchTempTwo = branchTable.get(currentBranchNumber);
@@ -648,11 +649,12 @@ public class CodeGenerator {
     private void backPatchBranch(){
         for(branchTableVariable branchVariable : branchTable.values()){
             String currentBranchVariableName = branchVariable.temp;
-            String jumpDistanceHex = Integer.toHexString(branchVariable.distance);
+            String jumpDistanceHex = Integer.toHexString(branchVariable.distance).toUpperCase();
+            System.out.println(jumpDistanceHex + "jump distance");
 
             for(int i = 0; i < memory.length; i++){
                 if(memory[i].equals(currentBranchVariableName)){
-                    memory[i] = jumpDistanceHex;
+                    memory[i] = "0" + jumpDistanceHex;
                 }
             }
         }
