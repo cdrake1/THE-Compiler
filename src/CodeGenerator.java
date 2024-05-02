@@ -106,9 +106,8 @@ public class CodeGenerator {
 
     //function for the depth first in order traversal of the AST
     public void inOrder(ASTNode node){
-        System.out.println(node.name);
         //if the node is null return to avoid errors
-        if(node == null){
+        if(node == null || node.processed == true){
             return;
         }
 
@@ -136,6 +135,8 @@ public class CodeGenerator {
                 //do nothing
                 break;
         }
+
+        node.processed = true;
 
         //iterate through all of the nodes children recursively
         for(ASTNode child : node.children){
@@ -194,7 +195,7 @@ public class CodeGenerator {
         String tempKey = idNode.name + Integer.toString(currentScope);
         staticTableVariable tempVar = staticTable.get(tempKey);
         if(tempVar == null){
-            int correctScope = lookupVariable(idNode.name);
+            int correctScope = lookupVariable(idNode.name).scope;
             tempKey = idNode.name + Integer.toString(correctScope);
             tempVar = staticTable.get(tempKey);
         }
@@ -208,7 +209,7 @@ public class CodeGenerator {
                 String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
                 if(tempVarExpr == null){
-                    int correctScope = lookupVariable(exprNode.name);
+                    int correctScope = lookupVariable(exprNode.name).scope;
                     tempKeyExpr = exprNode.name + Integer.toString(correctScope);
                     tempVarExpr = staticTable.get(tempKeyExpr);
                 }
@@ -272,7 +273,7 @@ public class CodeGenerator {
                 String tempKeyExpr = exprNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
                 if(tempVarExpr == null){
-                    int correctScope = lookupVariable(exprNode.name);
+                    int correctScope = lookupVariable(exprNode.name).scope;
                     tempKeyExpr = exprNode.name + Integer.toString(correctScope);
                     tempVarExpr = staticTable.get(tempKeyExpr);
                 }
@@ -331,7 +332,7 @@ public class CodeGenerator {
         }
 
         //if the expr is a string/boolean/boolop then load 2 into the Y register. Otherwise load 1
-        Symbol symbol = symbolTable.lookupSymbol(exprNode.name);
+        Symbol symbol =  lookupVariable(exprNode.name);
         if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || exprNode.token.tokenType.equals("EQUALITY_OP") || exprNode.token.tokenType.equals("INEQUALITY_OP") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
             addOpCode("A2");
             addOpCode("02");
@@ -356,7 +357,7 @@ public class CodeGenerator {
                 String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
                 if(tempVarExpr == null){
-                    int correctScope = lookupVariable(rightNode.name);
+                    int correctScope = lookupVariable(rightNode.name).scope;
                     tempKeyExpr = rightNode.name + Integer.toString(correctScope);
                     tempVarExpr = staticTable.get(tempKeyExpr);
                 }
@@ -400,7 +401,7 @@ public class CodeGenerator {
                 String tempKeyExpr = leftNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
                 if(tempVarExpr == null){
-                    int correctScope = lookupVariable(leftNode.name);
+                    int correctScope = lookupVariable(leftNode.name).scope;
                     tempKeyExpr = leftNode.name + Integer.toString(correctScope);
                     tempVarExpr = staticTable.get(tempKeyExpr);
                 }
@@ -460,7 +461,7 @@ public class CodeGenerator {
                 String tempKeyExpr = rightNode.name + Integer.toString(currentScope);
                 staticTableVariable tempVarExpr = staticTable.get(tempKeyExpr);
                 if(tempVarExpr == null){
-                    int correctScope = lookupVariable(rightNode.name);
+                    int correctScope = lookupVariable(rightNode.name).scope;
                     tempKeyExpr = rightNode.name + Integer.toString(correctScope);
                     tempVarExpr = staticTable.get(tempKeyExpr);
                 }
@@ -569,8 +570,8 @@ public class CodeGenerator {
         branchTempTwo.distance = jumpDistance;
     }
 
-    private int lookupVariable(String idName){
-        findScope(currentSTScope);
+    private Symbol lookupVariable(String idName){
+        findScope(symbolTable.root);
 
         //temp variables and pointers used to traverse through the tree
         Symbol temp = null;
@@ -581,14 +582,14 @@ public class CodeGenerator {
         while(tempPointer != -1 && temp == null && tempNode != null){
             temp = tempNode.symbols.get(idName);
             if(temp != null){
-                return temp.scope;
+                return temp;
             }
             else{
                 tempPointer--;
                 tempNode = tempNode.parent;
             }
         }
-        return 0;
+        return null;
         //if not found in the current scope go back until its found
         //we need its temp address, but to figure out if its the correct variable we need to have the correct scope
     }
@@ -650,7 +651,6 @@ public class CodeGenerator {
         for(branchTableVariable branchVariable : branchTable.values()){
             String currentBranchVariableName = branchVariable.temp;
             String jumpDistanceHex = Integer.toHexString(branchVariable.distance).toUpperCase();
-            System.out.println(jumpDistanceHex + "jump distance");
 
             for(int i = 0; i < memory.length; i++){
                 if(memory[i].equals(currentBranchVariableName)){

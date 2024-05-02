@@ -1,7 +1,9 @@
 TDL for project 4 - Code Generation
 
-
-if statement processing inner block and generating the op codes twice becuase of recursion -- maybe create an AST Node flag to prevent this?
+if-----
+maybe 1 or 2 fixes regarding scope at line 337
 
 while-----
 start
+
+fix parser while true or if true?

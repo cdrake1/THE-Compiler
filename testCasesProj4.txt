@@ -30,3 +30,18 @@ print((2 == 3))
         print(a)
     }
 }$
+{
+    int a
+    a = 5
+    if(2==2){
+        a = 7
+        print(a)
+        if(2==3){
+            print(a)
+        }
+        string b
+        b = "you win" 
+        print(b)
+    }
+    print(true)
+}$

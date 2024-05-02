@@ -13,6 +13,7 @@ public class ASTNode {
     Token token;    //if the node contains a token...
     ASTNode parent;    //pointer to the nodes parent
     ArrayList<ASTNode> children;   //list of pointers to child nodes
+    boolean processed;  //for code gen to keep track of what nodes have been processed already
 
     //AST Node constructor -- creates a node and initializes its variables
     public ASTNode(String label, Token token){
@@ -20,5 +21,6 @@ public class ASTNode {
         this.token = token;
         this.parent = null;
         this.children = new ArrayList<>();
+        this.processed = false;
     }   
 }
