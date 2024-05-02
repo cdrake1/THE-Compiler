@@ -593,12 +593,15 @@ public class CodeGenerator {
     }
 
     private void findScope(SymbolTableNode currentNodeST){
-        if(currentSTScope == null || currentSTScope.scope == currentScope){
-            return;
-        }
-
+        //iterate through the symbol table until you finc the scope we are currently in
         for(SymbolTableNode child : currentNodeST.children){
-            findScope(child);
+            if(child.scope == currentScope){
+                currentSTScope = child;
+                return;
+            }
+            else{
+                findScope(child);
+            }
         }
     }
 
