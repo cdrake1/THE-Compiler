@@ -561,15 +561,30 @@ public class CodeGenerator {
                 codeGenBoolOps(boolExprNode);   //call bool op
                 break;
             case "BOOL_TRUE":
-                addOpCode("A2");
-                addOpCode(boolTrueAddress); //point to location in memory (heap)
-                addOpCode("EC");
-                addOpCode(boolTrueAddress); //point to location in memory (heap)
                 //always fall in
-                //how to set z flag for true and false?
+                addOpCode("A9");    //load 1 into memory
+                addOpCode("01");
+                addOpCode("8D");
+                addOpCode("00");    //some temp address
+                addOpCode("00");
+                addOpCode("A2");
+                addOpCode("01");    //compare x reg to mem (1 to 1)
+                addOpCode("EC");
+                addOpCode("00");    //some temp address
+                addOpCode("00");
                 break;
             case "BOOL_FALSE":
                 //always branch
+                addOpCode("A9");    //load 1 into memory
+                addOpCode("01");
+                addOpCode("8D");
+                addOpCode("00");    //some temp address
+                addOpCode("00");
+                addOpCode("A2");
+                addOpCode("02");    //compare x reg to mem (1 to 2)
+                addOpCode("EC");
+                addOpCode("00");    //some temp address
+                addOpCode("00");
                 break;
             default:
                 //do nothing
