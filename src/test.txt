@@ -11,5 +11,7 @@
         b = "you win" 
         print(b)
     }
-    print(true)
+    string c
+    c = "work"
+    print(c)
 }$

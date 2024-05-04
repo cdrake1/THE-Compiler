@@ -331,13 +331,11 @@ public class CodeGenerator {
                 break;
         }
 
-        Symbol symbol =  null;
-        //if the expr is a string/boolean/boolop then load 2 into the Y register. Otherwise load 1
-        if(exprNode.token.tokenType.equals("ID")){
-            symbol = lookupVariable(exprNode.name);
-        }
+        //grab symbol from the symbol table
+        Symbol symbol = lookupVariable(exprNode.name);
 
-        if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || exprNode.token.tokenType.equals("EQUALITY_OP") || exprNode.token.tokenType.equals("INEQUALITY_OP") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
+        //if the expr is a string/boolean/boolop then load 2 into the Y register. Otherwise load 1
+        if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || exprNode.token.tokenType.equals("EQUALITY_OP") || exprNode.token.tokenType.equals("INEQUALITY_OP") || (exprNode.token.tokenType.equals("ID") && symbol != null && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol != null && symbol.type.equals("boolean"))){
             addOpCode("A2");
             addOpCode("02");
         }
@@ -575,7 +573,7 @@ public class CodeGenerator {
     }
 
     private Symbol lookupVariable(String idName){
-        findScope(symbolTable.root);
+        findScope(symbolTable.root);    //find the current scope we are in using the ST
 
         //temp variables and pointers used to traverse through the tree
         Symbol temp = null;
@@ -594,11 +592,15 @@ public class CodeGenerator {
             }
         }
         return null;
-        //if not found in the current scope go back until its found
-        //we need its temp address, but to figure out if its the correct variable we need to have the correct scope
     }
 
     private void findScope(SymbolTableNode currentNodeST){
+        //if the current scope is the root, set it and return
+        if(currentScope == 0){
+            currentSTScope = symbolTable.root;
+            return;
+        }
+
         //iterate through the symbol table until you finc the scope we are currently in
         for(SymbolTableNode child : currentNodeST.children){
             if(child.scope == currentScope){

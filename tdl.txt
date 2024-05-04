@@ -1,9 +1,4 @@
 TDL for project 4 - Code Generation
 
-if-----
-maybe 1 or 2 fixes regarding scope at line 337
-
 while-----
 start
-
-fix parser while true or if true?
