@@ -3,6 +3,7 @@
     Creates 6502 op codes
 */
 
+//import arraylists and hashtables
 import java.util.ArrayList;
 import java.util.Hashtable;
 
@@ -41,8 +42,6 @@ public class CodeGenerator {
         this.tempCounter = 0;
         this.currentScope = 0;
         this.rootCreated = false;
-
-
         this.currentSTScope = null;
         this.codePointer = 0;
         this.stackPointer = 0;
@@ -50,7 +49,6 @@ public class CodeGenerator {
         this.staticTableOffset = 0;
         boolTrueAddress = Integer.toHexString(250).toUpperCase();
         boolFalseAddress = Integer.toHexString(244).toUpperCase();
-
         this.programCounter = programCounter;
         this.codeGenErrors = 0;
         this.ast = ast;
@@ -70,13 +68,13 @@ public class CodeGenerator {
         backPatch();    //fill out the stack
 
         //code generation finished. Did errors occurr?
-        if(codeGenErrors == 0){
+        if(codeGenErrors == 0){ //succeeded
             codeGeneratorLog("Code Generation Complete... Errors: " + codeGenErrors + "\n");
             for(int i = 0; i < memory.length; i++){
                 System.out.print(" " + memory[i]);
             }
         }
-        else{
+        else{   //failed
             codeGeneratorLog("Code Generation Failed... Errors: " + codeGenErrors);
         }
     }
@@ -136,6 +134,7 @@ public class CodeGenerator {
                 break;
         }
 
+        //mark nodes as processed when done -- implemented to mitigate code generation of if statements blocks twice
         node.processed = true;
 
         //iterate through all of the nodes children recursively
@@ -151,8 +150,8 @@ public class CodeGenerator {
 
     //function to increment the scope pointer and keep track of the scope we are on
     private void codeGenOpenScope(){
-        if(rootCreated == false){
-            currentSTScope = symbolTable.root;
+        if(rootCreated == false){   //check if we scope 0 exists
+            currentSTScope = symbolTable.root;  //set symbol table node to root
             rootCreated = true; //root flag
         }
         else{
@@ -369,11 +368,12 @@ public class CodeGenerator {
                 addOpCode("00");
                 break;
             case "DIGIT":
+                //just add digit
                 addOpCode("A9");
                 addOpCode("0" + rightNode.name);
                 break;
             case "ADD":
-                codeGenIntOp(rightNode);
+                codeGenIntOp(rightNode);    //call int op
                 break;
             default:
                 //do nothing
@@ -413,6 +413,7 @@ public class CodeGenerator {
                 addOpCode("00");
                 break;
             case "DIGIT":
+                //just add the digit
                 addOpCode("A9");
                 addOpCode("0" + leftNode.name);
                 break;
@@ -439,11 +440,11 @@ public class CodeGenerator {
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "ADD":
-                codeGenIntOp(leftNode);
+                codeGenIntOp(leftNode); //call int op
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
-                codeGenBoolOps(leftNode);
+                codeGenBoolOps(leftNode);   //call bool op
                 //temp op codes?
                 break;
             default:
@@ -473,6 +474,7 @@ public class CodeGenerator {
                 addOpCode("00");
                 break;
             case "DIGIT":
+                //just add digit
                 addOpCode("A2");
                 addOpCode("0" + rightNode.name);
                 break;
@@ -499,11 +501,11 @@ public class CodeGenerator {
                 addOpCode(boolFalseAddress);    //point to location in memory (heap)
                 break;
             case "ADD":
-                codeGenIntOp(rightNode);
+                codeGenIntOp(rightNode);    //call int op
                 break;
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
-                codeGenBoolOps(rightNode);
+                codeGenBoolOps(rightNode);  //call bool op
                 //temp opcodes?
                 break;
             default:
@@ -522,7 +524,30 @@ public class CodeGenerator {
         addOpCode(boolTrueAddress); //true pointer
     }
 
-    private void codeGenWhileStatement(ASTNode currentNode){}
+    //creates op codes for while statement nodes
+    private void codeGenWhileStatement(ASTNode currentNode){
+        ASTNode boolExprNode = currentNode.children.get(0); //boolop or boolval
+        ASTNode blockNode = currentNode.children.get(1);    //block node
+
+        //check what type the boolean expr node is
+        switch (boolExprNode.token.tokenType) {
+            case "EQUALITY_OP":
+            case "INEQUALITY_OP":
+                codeGenBoolOps(boolExprNode);   //call bool op
+                break;
+            case "BOOL_TRUE":
+            case "BOOL_FALSE":
+                //always fall in
+                //limited space?
+                break;
+            default:
+                //do nothing
+                break;
+        }
+
+        inOrder(blockNode); //process the block node
+        //need to add opcodes for while loop or branch
+    }
 
     //creates op codes for if statement nodes
     private void codeGenIfStatement(ASTNode currentNode){
@@ -533,7 +558,7 @@ public class CodeGenerator {
         switch(boolExprNode.token.tokenType){
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
-                codeGenBoolOps(boolExprNode);
+                codeGenBoolOps(boolExprNode);   //call bool op
                 break;
             case "BOOL_TRUE":
                 addOpCode("A2");
@@ -572,6 +597,7 @@ public class CodeGenerator {
         branchTempTwo.distance = jumpDistance;
     }
 
+    //lookups the variable we need within the symbol table and returns it -- changes made for code gen
     private Symbol lookupVariable(String idName){
         findScope(symbolTable.root);    //find the current scope we are in using the ST
 
@@ -594,21 +620,22 @@ public class CodeGenerator {
         return null;
     }
 
+    //finds the current scope we are in and sets the ST node
     private void findScope(SymbolTableNode currentNodeST){
         //if the current scope is the root, set it and return
         if(currentScope == 0){
-            currentSTScope = symbolTable.root;
+            currentSTScope = symbolTable.root;  //set to root
             return;
         }
 
         //iterate through the symbol table until you finc the scope we are currently in
         for(SymbolTableNode child : currentNodeST.children){
-            if(child.scope == currentScope){
+            if(child.scope == currentScope){    //check what scope the child is
                 currentSTScope = child;
                 return;
             }
             else{
-                findScope(child);
+                findScope(child);   //call itself recursively
             }
         }
     }
@@ -654,11 +681,14 @@ public class CodeGenerator {
 
     //backpatches branch table jumps
     private void backPatchBranch(){
+        //iterate through all of the branch table
         for(branchTableVariable branchVariable : branchTable.values()){
             String currentBranchVariableName = branchVariable.temp;
-            String jumpDistanceHex = Integer.toHexString(branchVariable.distance).toUpperCase();
+            String jumpDistanceHex = Integer.toHexString(branchVariable.distance).toUpperCase();    //calculate hex value
 
+            //iterate through all of memory
             for(int i = 0; i < memory.length; i++){
+                //find and replace
                 if(memory[i].equals(currentBranchVariableName)){
                     if(jumpDistanceHex.length() == 1){
                         memory[i] = "0" + jumpDistanceHex;
