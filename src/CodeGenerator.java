@@ -545,8 +545,39 @@ public class CodeGenerator {
                 break;
         }
 
+        addOpCode("D0");    //branch n bytes if Z flag = 0: D0
+        addOpCode("J" + tempJumpCounter);    //add jump table var
+
+        //save information for later
+        int startJumpAddress = currentIndex;
+
+        //create a branch table variable and add it to the hashtable
+        branchTableVariable branchTemp = new branchTableVariable("J" + tempJumpCounter, currentIndex);
+        branchTable.put("J" + tempJumpCounter, branchTemp); //add to jump table.. jump table node (distance of jump)
+        tempJumpCounter++;
+
         inOrder(blockNode); //process the block node
-        //need to add opcodes for while loop or branch
+        int jumpDistance = currentIndex - startJumpAddress;    //calculate how far to jump
+
+        //update the branch variables distance
+        branchTemp.distance = jumpDistance;
+
+        //branch always taken -- z flag never set
+        addOpCode("A2");    //load x with 1
+        addOpCode("01");
+        addOpCode("EC");
+        addOpCode("FF");    //compare with last byte because always 0
+        addOpCode("00");
+        addOpCode("D0");
+        addOpCode("J" + tempJumpCounter);    //add jump table var
+
+        branchTableVariable branchTempTwo = new branchTableVariable("J" + tempJumpCounter, currentIndex);
+        branchTable.put("J" + tempJumpCounter, branchTempTwo); //add to jump table.. jump table node (distance of jump)
+        tempJumpCounter++;
+        jumpDistance = 255 - (currentIndex - startJumpAddress); //calculate jump to beginning of block
+
+        //update the second branch variables distance
+        branchTempTwo.distance = jumpDistance;
     }
 
     //creates op codes for if statement nodes
