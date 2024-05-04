@@ -331,8 +331,12 @@ public class CodeGenerator {
                 break;
         }
 
+        Symbol symbol =  null;
         //if the expr is a string/boolean/boolop then load 2 into the Y register. Otherwise load 1
-        Symbol symbol =  lookupVariable(exprNode.name);
+        if(exprNode.token.tokenType.equals("ID")){
+            symbol = lookupVariable(exprNode.name);
+        }
+
         if(exprNode.token.tokenType.equals("String Literal") || exprNode.token.tokenType.equals("BOOL_FALSE") || exprNode.token.tokenType.equals("BOOL_TRUE") || exprNode.token.tokenType.equals("EQUALITY_OP") || exprNode.token.tokenType.equals("INEQUALITY_OP") || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("string")) || (exprNode.token.tokenType.equals("ID") && symbol.type.equals("boolean"))){
             addOpCode("A2");
             addOpCode("02");
@@ -654,7 +658,12 @@ public class CodeGenerator {
 
             for(int i = 0; i < memory.length; i++){
                 if(memory[i].equals(currentBranchVariableName)){
-                    memory[i] = "0" + jumpDistanceHex;
+                    if(jumpDistanceHex.length() == 1){
+                        memory[i] = "0" + jumpDistanceHex;
+                    }
+                    else{
+                        memory[i] = jumpDistanceHex;
+                    }
                 }
             }
         }
