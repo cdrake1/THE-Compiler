@@ -1,0 +1,332 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% CMPT 432
+% Spring 2024
+% Project 4
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Short Sectioned Assignment
+% LaTeX Template
+% Version 1.0 (5/5/12)
+%
+% This template has been downloaded from: http://www.LaTeXTemplates.com
+% Original author: % Frits Wenneker (http://www.howtotex.com)
+% License: CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+% Modified by Alan G. Labouseur  - alan@labouseur.com
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass[letterpaper, 10pt,DIV=13]{scrartcl} 
+
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage[english]{babel} % English language/hyphenation
+\usepackage{amsmath,amsfonts,amsthm,xfrac} % Math packages
+\usepackage{sectsty} % Allows customizing section commands
+\usepackage{graphicx}
+\usepackage[lined,linesnumbered,commentsnumbered]{algorithm2e}
+\usepackage{parskip}
+\usepackage{lastpage}
+\usepackage{listings}
+\usepackage[colorlinks=true, urlcolor=blue]{hyperref}
+\lstset{
+    language=Java
+}
+
+\allsectionsfont{\normalfont\scshape} % Make all section titles in default font and small caps.
+
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{page \thepage\ of \pageref{LastPage}} % Page numbering for right footer
+
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs.
+
+\binoppenalty=3000
+\relpenalty=3000
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+   \normalfont \normalsize 
+   \textsc{CMPT 432 - Spring 2024 - Dr. Labouseur} \\[10pt] % Header stuff.
+   \horrule{0.5pt} \\[0.25cm] 	% Top horizontal rule
+   \huge Project Four  \\     	    % Assignment title
+   \horrule{0.5pt} \\[0.25cm] 	% Bottom horizontal rule
+}
+
+\author{Collin Drake \\ \normalsize Collin.Drake1@Marist.edu}
+
+\date{\normalsize\today} 	% Today's date.
+
+\begin{document}
+\maketitle % Print the title
+
+%----------------------------------------------------------------------------------------
+%   START LAB NINE
+%----------------------------------------------------------------------------------------
+\section*{Lab 9}
+
+\subsection*{Crafting a Compiler Exercises:}
+
+\subsubsection*{Exercise: 5.5}
+Transform the following grammar into LL(1) form using the techniques presented in Section 5.5:  \newline
+
+1   DeclList        ->  DeclList ; Decl\newline
+2                   ->  Decl\newline
+3   Decl            ->  IdList : Type\newline
+4   IdList          ->  IdList , id\newline
+5                   ->  id\newline
+6   Type            ->  ScalarType\newline
+7                   ->  array ( ScalarTypeList ) of Type\newline
+8   ScalarType      ->  id\newline
+9                   ->  Bound . . Bound\newline
+10  Bound           ->  Sign intconstant\newline
+11                  ->  id\newline
+12  Sign            ->  +\newline
+13                  ->  -\newline
+14                  ->  $\lambda$\newline
+15  ScalarTypelist  ->  ScalarTypeList , ScalarType\newline
+16                  ->  ScalarType\newline
+
+
+
+\begin{center}
+        \includegraphics[width=10cm]{CC5.5.png}
+\end{center}
+
+\pagebreak
+
+\subsection*{Dragon Exercises:}
+
+\subsubsection*{Exercise: 4.5.3}
+Give bottom-up parses for the following input strings and grammars: \newline
+
+a) The input 000111 according to the grammar of Exercise 4.5.1.\newline
+
+\begin{center}
+        \includegraphics[width=10cm]{DragonA.jpeg}
+\end{center}
+
+b) The input aaa * a + + according to the grammar of Exercise 4.5.2.\newline
+
+\begin{center}
+        \includegraphics[width=10cm]{DragonB.jpeg}
+\end{center}
+
+
+
+
+%----------------------------------------------------------------------------------------
+%   END LAB NINE
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   START PROJECT DETAILS
+%----------------------------------------------------------------------------------------
+\section*{Project 4}
+
+\subsection*{Code Generation}
+In the Compilation process, Code Generation is the fourth and final step. In this step, we accept the Abstract Syntax Tree and Symbol Table produced by the Semantic Analyzer and make the 6502 Op Codes needed to execute our programs in a specific Operating System.
+
+To test my Code Generator I used the test cases below:
+
+
+\subsubsection*{Test Case 1}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {
+      int a
+      a = 1
+      {
+        int a
+        a = 2
+        print(a)
+      }
+      string b
+      b = "drake"
+      print("collin")
+      print(a)
+      print(b)
+    }$
+    \end{lstlisting}
+
+\subsubsection*{Test Case 2}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {
+        int a
+        boolean b
+        a = 2+3+4
+        b = (2 == 2)
+        print(a)
+        print(b)
+        print(2+2)
+        print((2 == 3))
+    }$
+    \end{lstlisting}
+
+\subsubsection*{Test Case 3}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {
+        int a
+        a = 5
+        if(true == false){
+            a = 7
+            print(a)
+        }
+    }$
+        
+    \end{lstlisting}
+
+    \pagebreak
+
+\subsubsection*{Test Case 4}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {
+        int a
+        a = 5
+        if(2==2){
+            a = 7
+            print(a)
+            if(2==3){
+                print(a)
+            }
+            string b
+            b = "you win" 
+            print(b)
+        }
+        print(true)
+    }$
+        
+    \end{lstlisting}
+
+\subsubsection*{Test Case 5}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    {
+        int x
+        x = 9
+        print(x)
+        while (x == 9){
+            x = 1+x
+            print(x)
+        }
+    }$
+        
+    \end{lstlisting}
+
+
+%----------------------------------------------------------------------------------------
+%   END PROJECT FOUR
+%----------------------------------------------------------------------------------------
+
+\pagebreak
+
+%----------------------------------------------------------------------------------------
+%   APPENDIX
+%----------------------------------------------------------------------------------------
+
+\section*{Appendix}
+
+\subsubsection*{BranchTableVariable.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    /*
+        Branch table variable file
+        Creates objects for the code generation branch table
+    */
+    
+    //The branch table variable class!
+    public class branchTableVariable {
+        String temp;    //jump to variable
+        int distance;    //how many bytes to jump
+    
+        //Static table variable constructor -- initializes all variables
+        public branchTableVariable(String temp, int distance){
+            this.temp = temp;
+            this.distance = distance;
+        }
+    }
+    \end{lstlisting}
+
+\subsubsection*{StaticTableVariable.java}
+    \lstset{numbers=left, numberstyle=\tiny, stepnumber=1, numbersep=5pt, basicstyle=\footnotesize\ttfamily}
+    \begin{lstlisting}[frame=single, ]
+    /*
+        Static table variable file
+        Creates objects for the code generation variable table
+    */
+    
+    //The static table variable object class!
+    public class staticTableVariable {
+        String tempAddress;    //store the accumulator in a temp location/address TX
+        String var; //what variable is this?
+        int scope;   //keeps track of the scope the variable is located in
+        int offset; //number of offset following code section of the array 
+        (location of variable stored)
+    
+        //Static table variable constructor -- initializes all variables
+        public staticTableVariable(String temp, String var, int scope, int offset){
+            this.tempAddress = temp;
+            this.var = var;
+            this.scope = scope;
+            this.offset = offset;
+        }
+    }
+    \end{lstlisting}
+
+%----------------------------------------------------------------------------------------
+%   LINKS AND REFERENCES
+%----------------------------------------------------------------------------------------
+\pagebreak
+
+\section*{References}
+
+\subsection*{Links}
+Below are the resources I have used to create simple, readable, and beautiful code.
+
+\begin{itemize}
+    \item 6502 op codes: \href{https://www.labouseur.com/commondocs/6502alan-instruction-set.pdf}{labouseur.com}
+    \item output checking: \href{https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html}{Arnell Compiler}
+\end{itemize}
+
+\pagebreak
+%----------------------------------------------------------------------------------------
+%   APA REFERENCES
+%----------------------------------------------------------------------------------------
+% The following two commands are all you need in the initial runs of your .tex file to
+% produce the bibliography for the citations in your paper.
+\bibliographystyle{abbrv}
+%\bibliography{lab1} 
+% You must have a proper ".bib" file and remember to run:
+% latex bibtex latex latex
+% to resolve all references.
+
+
+
+\end{document}

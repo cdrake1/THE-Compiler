@@ -18,7 +18,6 @@ public class CodeGenerator {
     int tempJumpCounter;    //keeps track of temp number for branch table variables
     int currentScope;   //keeps track of what scope we are in
     boolean rootCreated;    //assists when keeping track of scope
-
     SymbolTableNode currentSTScope; //helps with obtaining values from the correct scope by keeping track of the current scope within the ST
     int codePointer;    //pointer to where the code starts
     int stackPointer;   //pointer to where the stack starts -- directly after code
@@ -26,7 +25,6 @@ public class CodeGenerator {
     int staticTableOffset;  //the offset of the variables in the static table (var table) -- do I need this??
     String boolTrueAddress; //the starting memory address of the bool val true
     String boolFalseAddress;    //the starting memory address of the bool val false
-
     int programCounter; //what program are we on?
     int codeGenErrors;  //counts how many errors have occurred
     AST ast;    //ast from semantic analysis
@@ -345,7 +343,7 @@ public class CodeGenerator {
         addOpCode("FF");    //break
     }
 
-    //produces op codes for assignment statements int op nodes
+    //produces op codes for int op
     private void codeGenIntOp(ASTNode intOpNode){
         ASTNode leftNode = intOpNode.children.get(0);  //always a digit
         ASTNode rightNode = intOpNode.children.get(1); //digit, +, or ID
@@ -390,7 +388,7 @@ public class CodeGenerator {
         addOpCode("00");
     }
 
-    //produces op codes for assignment statements bool op nodes
+    //produces op codes for bool op
     private void codeGenBoolOps(ASTNode boolOpNode){
         ASTNode leftNode = boolOpNode.children.get(0); //expr
         ASTNode rightNode = boolOpNode.children.get(1);    //expr
@@ -446,6 +444,7 @@ public class CodeGenerator {
             case "INEQUALITY_OP":
                 codeGenBoolOps(leftNode);   //call bool op
                 //temp op codes?
+                //dont have time to complete
                 break;
             default:
                 //do nothing
@@ -507,6 +506,7 @@ public class CodeGenerator {
             case "INEQUALITY_OP":
                 codeGenBoolOps(rightNode);  //call bool op
                 //temp opcodes?
+                //dont have time to complete
                 break;
             default:
                 //do nothing
@@ -534,10 +534,11 @@ public class CodeGenerator {
             case "EQUALITY_OP":
             case "INEQUALITY_OP":
                 codeGenBoolOps(boolExprNode);   //call bool op
+                //!= not working
                 break;
             case "BOOL_TRUE":
             case "BOOL_FALSE":
-                //idk yet
+                //dont have time to complete
                 break;
             default:
                 //do nothing
@@ -574,14 +575,15 @@ public class CodeGenerator {
         branchTable.put(branchIntoWhileBranch, branchBackIntoWhileVar);
         tempJumpCounter++;
 
+        //second branch
         branchBackIntoWhileVar.distance = goBackIntoWhileLoop;  //go back and add correct distance to branch table
 
-        //replace the distance within the branch table
+        //replace the distance within the branch table - first branch
         int distanceToJumpWhileBlock = currentIndex - bodyJumpStart;
         whileBodyBranch.distance = distanceToJumpWhileBlock;
     }
 
-    //creates op codes for if statement nodes
+    //creates op codes for if statement
     private void codeGenIfStatement(ASTNode currentNode){
         ASTNode boolExprNode = currentNode.children.get(0); //boolop or boolval
         ASTNode blockNode = currentNode.children.get(1);    //block node
