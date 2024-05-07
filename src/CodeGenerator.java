@@ -537,47 +537,48 @@ public class CodeGenerator {
                 break;
             case "BOOL_TRUE":
             case "BOOL_FALSE":
-                //always fall in
-                //limited space?
+                //idk yet
                 break;
             default:
                 //do nothing
                 break;
         }
 
+        //---branch calculation to jump over block---
         addOpCode("D0");    //branch n bytes if Z flag = 0: D0
         addOpCode("J" + tempJumpCounter);    //add jump table var
 
-        //save information for later
-        int startJumpAddress = currentIndex;
-
-        //create a branch table variable and add it to the hashtable
-        branchTableVariable branchTemp = new branchTableVariable("J" + tempJumpCounter, currentIndex);
-        branchTable.put("J" + tempJumpCounter, branchTemp); //add to jump table.. jump table node (distance of jump)
+        //calculate the start of while body, the current jump node, and add that information to the branch table
+        int bodyJumpStart = currentIndex;
+        String bodyJumpBranch = "J" + tempJumpCounter;
+        branchTableVariable whileBodyBranch = new branchTableVariable(bodyJumpBranch, bodyJumpStart);
+        branchTable.put(bodyJumpBranch, whileBodyBranch); //add to jump table.. jump table node (distance of jump)
         tempJumpCounter++;
 
-        inOrder(blockNode); //process the block node
-        int jumpDistance = currentIndex - startJumpAddress;    //calculate how far to jump
+        inOrder(blockNode); //generate the op codes for the block node
 
-        //update the branch variables distance
-        branchTemp.distance = jumpDistance;
-
-        //branch always taken -- z flag never set
-        addOpCode("A2");    //load x with 1
+        //load op codes
+        addOpCode("A2");    //load 1 into x reg
         addOpCode("01");
-        addOpCode("EC");
-        addOpCode("FF");    //compare with last byte because always 0
+        addOpCode("EC");    //compare 1 to 0
+        addOpCode("FF");
         addOpCode("00");
-        addOpCode("D0");
+
+        //---branch calculation to jump back into while block---
+        addOpCode("D0");    //branch n bytes if Z flag = 0: D0
         addOpCode("J" + tempJumpCounter);    //add jump table var
 
-        branchTableVariable branchTempTwo = new branchTableVariable("J" + tempJumpCounter, currentIndex);
-        branchTable.put("J" + tempJumpCounter, branchTempTwo); //add to jump table.. jump table node (distance of jump)
+        int goBackIntoWhileLoop = (255 - (currentIndex - bodyJumpStart)) - 1;
+        String branchIntoWhileBranch = "J" + tempJumpCounter;
+        branchTableVariable branchBackIntoWhileVar = new branchTableVariable(branchIntoWhileBranch, currentIndex);
+        branchTable.put(branchIntoWhileBranch, branchBackIntoWhileVar);
         tempJumpCounter++;
-        jumpDistance = 255 - (currentIndex - startJumpAddress); //calculate jump to beginning of block
 
-        //update the second branch variables distance
-        branchTempTwo.distance = jumpDistance;
+        branchBackIntoWhileVar.distance = goBackIntoWhileLoop;  //go back and add correct distance to branch table
+
+        //replace the distance within the branch table
+        int distanceToJumpWhileBlock = currentIndex - bodyJumpStart;
+        whileBodyBranch.distance = distanceToJumpWhileBlock;
     }
 
     //creates op codes for if statement nodes
