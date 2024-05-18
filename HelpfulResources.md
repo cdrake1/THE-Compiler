@@ -41,3 +41,7 @@ Each reference will be listed below along with where it was used and how it help
 - The semantic analysis slides: [labouseur.com](https://www.labouseur.com/courses/compilers/semantic-analysis.pdf)
 - Test cases and output checking: [Arnell Compiler](https://www.labouseur.com/courses/compilers/compilers/arnell/dist/index.html)
 - Output and scope checking: [Nightingale Compiler](https://alexbadia1.github.io/AxiOS-Compiler/#/)
+
+## Code Generation Resources
+
+- None...

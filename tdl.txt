@@ -1,3 +1,7 @@
 TDL for project 4 - Code Generation
 
 Done...
+
+-- while !=, true, false
+
+-- boolop calls itself

@@ -539,6 +539,21 @@ public class CodeGenerator {
             case "BOOL_TRUE":
             case "BOOL_FALSE":
                 //dont have time to complete
+                if(boolExprNode.token.tokenType.equals("BOOL_TRUE")){
+                    addOpCode("A2");
+                    addOpCode("00");
+                    addOpCode("EC");
+                    addOpCode("FF");
+                    addOpCode("00");
+
+                }
+                else{
+                    addOpCode("A2");
+                    addOpCode("01");
+                    addOpCode("EC");
+                    addOpCode("FF");
+                    addOpCode("00");
+                }
                 break;
             default:
                 //do nothing
@@ -559,11 +574,22 @@ public class CodeGenerator {
         inOrder(blockNode); //generate the op codes for the block node
 
         //load op codes
-        addOpCode("A2");    //load 1 into x reg
-        addOpCode("01");
-        addOpCode("EC");    //compare 1 to 0
-        addOpCode("FF");
-        addOpCode("00");
+        if(boolExprNode.token.tokenType.equals("BOOL_TRUE")){
+            addOpCode("A2");    //load 1 into x reg
+            addOpCode("00");
+            addOpCode("EC");    //compare 1 to 0
+            addOpCode("FF");
+            addOpCode("00");
+
+        }
+        else{
+            addOpCode("A2");    //load 1 into x reg
+            addOpCode("01");
+            addOpCode("EC");    //compare 1 to 0
+            addOpCode("FF");
+            addOpCode("00");
+
+        }
 
         //---branch calculation to jump back into while block---
         addOpCode("D0");    //branch n bytes if Z flag = 0: D0
@@ -576,11 +602,25 @@ public class CodeGenerator {
         tempJumpCounter++;
 
         //second branch
-        branchBackIntoWhileVar.distance = goBackIntoWhileLoop;  //go back and add correct distance to branch table
+        if(boolExprNode.token.tokenType.equals("BOOL_TRUE")){
+            branchBackIntoWhileVar.distance = goBackIntoWhileLoop + 2;  //go back and add correct distance to branch table
+
+        }
+        else{
+            branchBackIntoWhileVar.distance = goBackIntoWhileLoop;  //go back and add correct distance to branch table
+
+        }
 
         //replace the distance within the branch table - first branch
         int distanceToJumpWhileBlock = currentIndex - bodyJumpStart;
-        whileBodyBranch.distance = distanceToJumpWhileBlock;
+        if(boolExprNode.token.tokenType.equals("BOOL_TRUE")){
+            whileBodyBranch.distance = distanceToJumpWhileBlock - 1;
+
+        }
+        else{
+            whileBodyBranch.distance = distanceToJumpWhileBlock;
+
+        }
     }
 
     //creates op codes for if statement
