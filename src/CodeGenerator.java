@@ -574,22 +574,11 @@ public class CodeGenerator {
         inOrder(blockNode); //generate the op codes for the block node
 
         //load op codes
-        if(boolExprNode.token.tokenType.equals("BOOL_TRUE")){
-            addOpCode("A2");    //load 1 into x reg
-            addOpCode("00");
-            addOpCode("EC");    //compare 1 to 0
-            addOpCode("FF");
-            addOpCode("00");
-
-        }
-        else{
-            addOpCode("A2");    //load 1 into x reg
-            addOpCode("01");
-            addOpCode("EC");    //compare 1 to 0
-            addOpCode("FF");
-            addOpCode("00");
-
-        }
+        addOpCode("A2");    //load 1 into x reg
+        addOpCode("01");
+        addOpCode("EC");    //compare 1 to 0
+        addOpCode("FF");
+        addOpCode("00");
 
         //---branch calculation to jump back into while block---
         addOpCode("D0");    //branch n bytes if Z flag = 0: D0
